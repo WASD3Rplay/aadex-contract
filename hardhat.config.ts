@@ -1,0 +1,37 @@
+import { HardhatUserConfig } from "hardhat/config"
+import "@nomicfoundation/hardhat-toolbox"
+
+const optimizedComilerSettings = {
+  version: "0.8.18",
+  settings: {
+    optimizer: {
+      enabled: true,
+      runs: 1000000,
+    },
+    viaIR: true,
+  },
+}
+
+const config: HardhatUserConfig = {
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.18",
+      },
+    ],
+    overrides: {
+      "contracts/aadex/Wasd3rDexEntryPoint.sol": optimizedComilerSettings,
+      "contracts/aadex/Wasd3rDexManager.sol": optimizedComilerSettings,
+    },
+  },
+  networks: {
+    hardhat: {
+      initialBaseFeePerGas: 0,
+    },
+    dev: {
+      url: "http://localhost:8545",
+    },
+  },
+}
+
+export default config

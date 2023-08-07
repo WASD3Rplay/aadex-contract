@@ -1,0 +1,51 @@
+{
+	"name": "@wasd3r/aadex-contract",
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"version": "0.1.0",
+	"description": "Wasd3r AA Dex smart contracts",
+	"license": "MIT",
+	"scripts": {
+		"clean": "hardhat clean",
+		"compile": "hardhat compile",
+		"build": "tsc --build"
+	},
+	"dependencies": {
+		"@ethersproject/abi": "^5.7.0",
+		"@ethersproject/abstract-provider": "^5.7.0",
+		"@ethersproject/bytes": "^5.7.0",
+		"@ethersproject/properties": "^5.7.0",
+		"@ethersproject/providers": "^5.7.2",
+		"@nomicfoundation/hardhat-toolbox": "^2",
+		"@openzeppelin/contracts": "^4.9.2",
+		"dotenv": "^16.3.1",
+		"ethers": "^5.7.2",
+		"hardhat": "^2.17.0",
+		"ts-node": "^10.9.1",
+		"typescript": "^5.1.6"
+	},
+	"devDependencies": {
+		"eslint": "^8.45.0"
+	},
+	"author": {
+		"name": "Wasd3r",
+		"email": "dev@wasd3r.xyz",
+		"url": "https://wasd3r.xyz"
+	},
+	"homepage": "https://github.com/WASD3Rplay/aadex-contract",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/WASD3Rplay/aadex-contract.git"
+	},
+	"keywords": [
+		"wasd3r",
+		"evm",
+		"solidity",
+		"account",
+		"abstraction",
+		"eip",
+		"4337",
+		"dex"
+	]
+}

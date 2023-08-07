@@ -1,0 +1,18 @@
+{
+  "jsxSingleQuote": false,
+  "singleQuote": false,
+  "trailingComma": "all",
+  "arrowParens": "always",
+  "tabWidth": 2,
+  "overrides": [
+    {
+      "files": "*.ts",
+      "options": {
+        "printWidth": 88,
+        "singleQuote": false,
+        "bracketSpacing": true,
+        "semi": false
+      }
+    }
+  ]
+}

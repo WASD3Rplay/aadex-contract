@@ -1,0 +1,47 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "globals": {
+        "artifacts": false,
+        "assert": false,
+        "contract": false,
+        "web3": false,
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "project": [
+            "./tsconfig.json"
+        ],
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "ignorePatterns": [
+        "dist/"
+    ],
+    "rules": {
+        "no-console": "off",
+        "comma-dangle": "off",
+        "prefer-const": "warn",
+        "spaced-comment": "warn",
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/return-await": "off",
+        "@typescript-eslint/no-unnecessary-type-assertion": "off",
+        "@typescript-eslint/space-before-function-paren": "off",
+        "@typescript-eslint/no-unused-vars": "warn",
+        "@typescript-eslint/require-array-sort-compare": [
+            "error",
+            {
+                "ignoreStringArrays": true
+            }
+        ]
+    }
+}
