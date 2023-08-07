@@ -1,0 +1,6 @@
+# !!! WARNING !!!
+# Do NOT use the below secret data in any mainnet blockchain network.
+# The below secrets are provided when hardhat dev node (`npx hardhat node`) is running.
+
+NODE_CHAIN_RPC_URL="http://127.0.0.1:8545/"
+NODE_SIGNER_SECRET="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
