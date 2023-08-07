@@ -9,7 +9,8 @@
 	"scripts": {
 		"clean": "hardhat clean",
 		"compile": "hardhat compile",
-		"build": "tsc --build"
+		"build": "tsc --build",
+		"deploy-sample-usdt": "ts-node scripts/deploy_sample_usdt.ts"
 	},
 	"dependencies": {
 		"@ethersproject/abi": "^5.7.0",
