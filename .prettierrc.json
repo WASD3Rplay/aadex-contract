@@ -6,6 +6,15 @@
   "tabWidth": 2,
   "overrides": [
     {
+      "files": "*.sol",
+      "options": {
+        "printWidth": 120,
+        "singleQuote": true,
+        "bracketSpacing": false,
+        "semi": true
+      }
+    },
+    {
       "files": "*.ts",
       "options": {
         "printWidth": 88,
