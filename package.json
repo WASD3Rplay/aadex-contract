@@ -10,7 +10,8 @@
 		"clean": "hardhat clean",
 		"compile": "hardhat compile",
 		"build": "tsc --build",
-		"deploy-sample-usdt": "ts-node scripts/deploy_sample_usdt.ts"
+		"deploy-sample-usdt": "ts-node scripts/deploy_sample_usdt.ts",
+		"test": "hardhat test"
 	},
 	"dependencies": {
 		"@ethersproject/abi": "^5.7.0",
@@ -18,7 +19,6 @@
 		"@ethersproject/bytes": "^5.7.0",
 		"@ethersproject/properties": "^5.7.0",
 		"@ethersproject/providers": "^5.7.2",
-		"@nomicfoundation/hardhat-toolbox": "^2",
 		"@openzeppelin/contracts": "^4.9.2",
 		"dotenv": "^16.3.1",
 		"ethers": "^5.7.2",
@@ -27,6 +27,8 @@
 		"typescript": "^5.1.6"
 	},
 	"devDependencies": {
+		"@nomicfoundation/hardhat-toolbox": "^2.0.2",
+		"@nomiclabs/hardhat-ethers": "^2.2.3",
 		"@trivago/prettier-plugin-sort-imports": "^4.2.0",
 		"eslint": "^8.45.0"
 	},

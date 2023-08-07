@@ -1,5 +1,5 @@
+import "@nomiclabs/hardhat-ethers"
 import { HardhatUserConfig } from "hardhat/config"
-import "@nomicfoundation/hardhat-toolbox"
 
 const optimizedComilerSettings = {
   version: "0.8.18",
