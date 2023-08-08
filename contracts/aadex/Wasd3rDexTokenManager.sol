@@ -5,8 +5,8 @@ pragma solidity ^0.8.12;
 
 import '../interfaces/IWasd3rERC20.sol';
 import '../interfaces/IWasd3rERC1155.sol';
-import '../lib/LibAddress.sol';
-import '../lib/LibUint.sol';
+import '../libs/LibAddress.sol';
+import '../libs/LibUint.sol';
 
 import './Wasd3rDexAccessControl.sol';
 
