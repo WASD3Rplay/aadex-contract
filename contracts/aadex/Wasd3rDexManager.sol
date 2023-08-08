@@ -14,6 +14,6 @@ import 'hardhat/console.sol';
  */
 contract Wasd3rDexManager is Wasd3rDexTokenManager {
   constructor() {
-    initDexToken();
+    initDexTokenManager();
   }
 }

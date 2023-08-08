@@ -59,7 +59,7 @@ abstract contract Wasd3rDexTokenManager is Wasd3rDexAccessControl {
   /**
    * (internal) Initialize this dex token contract.
    */
-  function initDexToken() internal {
+  function initDexTokenManager() internal {
     initDexAc();
     registerDexToken(0, address(0), 0, 18, '');
   }
