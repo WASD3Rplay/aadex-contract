@@ -3,7 +3,7 @@
 
 pragma solidity ^0.8.12;
 
-import './Wasd3rDexTokenManager.sol';
+import './Wasd3rDexAccountManager.sol';
 
 import 'hardhat/console.sol';
 
@@ -12,8 +12,12 @@ import 'hardhat/console.sol';
 /**
  * @title Wasd3rDexManager - manages Wasd3r Dex overall.
  */
-contract Wasd3rDexManager is Wasd3rDexTokenManager {
+contract Wasd3rDexManager is Wasd3rDexAccountManager {
   constructor() {
-    initDexTokenManager();
+    initDexAccountManager();
+  }
+
+  receive() external payable {
+    depositDexNativeToken(msg.sender);
   }
 }
