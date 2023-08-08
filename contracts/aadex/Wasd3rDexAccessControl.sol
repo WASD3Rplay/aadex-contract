@@ -3,8 +3,6 @@
 
 pragma solidity ^0.8.12;
 
-import 'hardhat/console.sol';
-
 /* solhint-disable avoid-low-level-calls */
 /* solhint-disable not-rely-on-time */
 /**
