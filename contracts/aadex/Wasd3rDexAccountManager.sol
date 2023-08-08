@@ -13,50 +13,55 @@ import 'hardhat/console.sol';
  * @title Wasd3rDexAccountManager - user accounts' deposited tokens by Wasd3r Dex.
  */
 abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
-  event DexAccountDeposited(address indexed from, address indexed to, string tokenKey, uint256 amount, uint256 total);
-  event DexAccountWithdrawn(address indexed from, address indexed to, string tokenKey, uint256 amount, uint256 total);
-
   /**
+   * @param isValid the deposit info is valid or invalid
    * @param amount the user deposited token amount
-   * @dev sizes were chosen so that (deposit) fit into one cell (used during handleOps)
-   *    and the rest fit into a 2nd cell.
-   *    112 bit allows for 10^15 eth
-   *    48 bit for full timestamp
-   *    32 bit allows 150 years for unstake delay
+   * @param lastDepositBlockNo the block number when a user deposited the token lastly
+   * @param lastDepositBlockNoIdx deposit index in the same block of the last deposit. If only once, it would be 0.
+   * @param lastWithdrawtBlockNo the block number when a user withdrew the token lastly
+   * @param lastWithdrawBlockNoIdx withdraw index in the same block of the last withdraw. If onle once, it would be 0.
    */
   struct DexDepositInfo {
     bool isValid;
     uint256 amount;
-    // Store when a user deposited the token lastly.
     uint lastDepositBlockNo;
-    // The deposit index of the same block.
-    // If the deposit is only once in a block, it would be 0.
     uint lastDepositBlockNoIdx;
-    // Store when a user withdrew the token lastly.
     uint lastWithdrawBlockNo;
-    // The withdraw index of the same block.
-    // If the deposit is only once in a block, it would be 0.
     uint lastWithdrawBlockNoIdx;
   }
 
+  /**
+   * @dev `dexAccounts` has
+   *    - an account address as the first key,
+   *    - a unique token key string as the second key, and
+   *    - `DexDepositInfo` as a value.
+   *
+   * e.g.
+   *    - Alice (0xalice00) has 10 ETH == dexAccounts['0xalice00']['0:__native__:0'] = 10 * 1e18
+   *    - Bill  (0xbill000) has 1 USDT == dexAccounts['0xbill000']['0:0xusdtAddr:0'] = 1 * 1e6
+   *    - Carl  (0xcarl000) has 1 QWER == dexAccounts['0xcarl000']['0:0xqwer1155:0'] = 1 * 1e8
+   */
+  mapping(address => mapping(string => DexDepositInfo)) public dexAccounts;
+  event DexAccountDeposited(address indexed from, address indexed to, string tokenKey, uint256 amount, uint256 total);
+  event DexAccountWithdrawn(address indexed from, address indexed to, string tokenKey, uint256 amount, uint256 total);
+  event DexAccountTokenDepositEnabled(address indexed addr, address indexed byWhom);
+  event DexAccountTokenDepositDisabled(address indexed addr, address indexed byWhom);
+
+  /**
+   * @param isInitialized the account is initialized or not
+   * @param isValid the account is valid or invalid
+   */
   struct DexAccountValid {
     bool isInitialized;
     bool isValid;
   }
 
   /**
-   * @dev `dexDeposits` has
-   *    - an account address as the first key,
-   *    - a unique token key string as the second key, and
-   *    - `DexDepositInfo` as a value.
-   *
-   * e.g.
-   *    - Alice (0xalice00) has 10 ETH == dexDeposits['0xalice00']['0:__native__:0'] = 10 * 1e18
-   *    - Bill  (0xbill000) has 1 USDT == dexDeposits['0xbill000']['0:0xusdtAddr:0'] = 1 * 1e6
-   *    - Carl  (0xcarl000) has 1 QWER == dexDeposits['0xcarl000']['0:0xqwer1155:0'] = 1 * 1e8
+   * @notice If the account is not valid, all `dexAccount`, that the account owned, would be also invalid.
    */
-  mapping(address => mapping(string => DexDepositInfo)) public dexAccounts;
   mapping(address => DexAccountValid) public dexAccountsValid;
+  event DexAccountEnabled(address indexed addr, address indexed byWhom);
+  event DexAccountDisabled(address indexed addr, address indexed byWhom);
 
   /**
    * (internal) Initialize this dex account deposit contract.
@@ -91,48 +96,19 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     return dexAccounts[account][tokenKey].amount;
   }
 
-  function _subDexToken(
-    address toAccount,
-    string memory tokenKey,
-    uint256 amount
-  ) internal returns (DexDepositInfo memory) {
-    DexAccountValid memory accountValid = dexAccountsValid[toAccount];
-    require(!accountValid.isInitialized || (accountValid.isInitialized && accountValid.isValid), 'account is invalid');
+  function _depositDexToken(address from, address to, string memory tokenKey, uint256 amount) private {
+    DexAccountValid memory dav = dexAccountsValid[to];
+    require(!dav.isInitialized || (dav.isInitialized && dav.isValid), 'deposit account (to address) is invalid');
 
-    DexDepositInfo storage ddi = dexAccounts[toAccount][tokenKey];
-    require(ddi.amount >= amount, 'token balance is not enough');
-    ddi.amount = ddi.amount - amount;
-    return ddi;
-  }
-
-  function _addDexToken(
-    address toAccount,
-    string memory tokenKey,
-    uint256 amount
-  ) internal returns (DexDepositInfo storage) {
-    DexAccountValid storage accountValid = dexAccountsValid[toAccount];
-
-    require(!accountValid.isInitialized || (accountValid.isInitialized && accountValid.isValid), 'account is invalid');
-
-    if (!accountValid.isInitialized) {
-      accountValid.isInitialized = true;
-    }
-    if (!accountValid.isValid) {
-      accountValid.isValid = true;
+    if (!dav.isInitialized) {
+      DexAccountValid storage sdav = dexAccountsValid[to];
+      sdav.isInitialized = true;
+      sdav.isValid = true;
     }
 
-    DexDepositInfo storage ddi = dexAccounts[toAccount][tokenKey];
+    DexDepositInfo storage ddi = dexAccounts[to][tokenKey];
     ddi.isValid = true;
     ddi.amount = ddi.amount + amount;
-    return ddi;
-  }
-
-  function _depositDexToken(address fromAddr, address toAddr, string memory tokenKey, uint256 amount) private {
-    /*
-    require(amount <= type(uint112).max, 'deposit token amount overflow');
-    */
-
-    DexDepositInfo storage ddi = _addDexToken(toAddr, tokenKey, amount);
 
     // Set the last deposit time.
     uint blockNo = ddi.lastDepositBlockNo;
@@ -143,52 +119,47 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
       ddi.lastDepositBlockNoIdx++;
     }
 
-    console.log(' >>>>> ', ddi.lastDepositBlockNo);
-
-    emit DexAccountDeposited(fromAddr, toAddr, tokenKey, amount, ddi.amount);
+    emit DexAccountDeposited(from, to, tokenKey, amount, ddi.amount);
   }
 
-  function depositDexNativeToken(address account) public payable {
-    _depositDexToken(msg.sender, account, DEX_TOKEN_NATIVE_TOKEN_KEY, msg.value);
+  function depositDexNativeToken(address to) public payable {
+    _depositDexToken(msg.sender, to, DEX_TOKEN_NATIVE_TOKEN_KEY, msg.value);
   }
 
   /**
    * Deposit given token amount into given user account.
    * Anyone can send a token amount to given user account.
-   * @param account user wallet address to receive given token amount
+   * @param to user wallet address to deposit given token amount
    * @param tokenKey unique token key string
    * @param amount deposit amount
    */
-  function depositDexToken(address account, string memory tokenKey, uint256 amount) public payable {
-    DexTokenInfo storage tokenInfo = dexTokens[tokenKey];
+  function depositDexToken(address to, string memory tokenKey, uint256 amount) public payable {
+    DexTokenInfo storage dti = dexTokens[tokenKey];
 
-    require(tokenInfo.isValid, 'token is invalid');
-
-    console.log('Token Type', tokenInfo.tokenType);
-    console.log('Token Amount', amount);
+    require(dti.isValid, 'token is invalid');
 
     // native token
-    if (tokenInfo.tokenType == 0) {
-      depositDexNativeToken(account);
+    if (dti.tokenType == 0) {
+      depositDexNativeToken(to);
       return;
     }
     // ERC20
-    else if (tokenInfo.tokenType == 1) {
-      IWasd3rERC20 tokenContract = IWasd3rERC20(tokenInfo.contractAddress);
+    else if (dti.tokenType == 1) {
+      IWasd3rERC20 tokenContract = IWasd3rERC20(dti.contractAddress);
 
-      uint256 allowAmount = tokenContract.allowance(account, address(this));
-      require(allowAmount >= amount, 'Amount is not allowed in the ERC20 contract');
+      uint256 allow = tokenContract.allowance(to, address(this));
+      require(allow >= amount, 'Amount is not allowed in the ERC20 contract');
 
-      bool success = tokenContract.transferFrom(account, address(this), amount);
+      bool success = tokenContract.transferFrom(to, address(this), amount);
       require(success, 'Fail to deposit ERC20 token');
     }
     // ERC1155
-    else if (tokenInfo.tokenType == 2) {
-      IWasd3rERC1155 tokenContract = IWasd3rERC1155(tokenInfo.contractAddress);
-      tokenContract.safeTransferFrom(msg.sender, address(this), tokenInfo.tokenId, amount, '');
+    else if (dti.tokenType == 2) {
+      IWasd3rERC1155 tokenContract = IWasd3rERC1155(dti.contractAddress);
+      tokenContract.safeTransferFrom(msg.sender, address(this), dti.tokenId, amount, '');
     }
 
-    _depositDexToken(msg.sender, account, tokenKey, amount);
+    _depositDexToken(msg.sender, to, tokenKey, amount);
   }
 
   /**
@@ -199,47 +170,43 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
    * @param amount withdraw token amount
    */
   function withdrawDexToken(address withdrawAddress, string memory tokenKey, uint256 amount) public {
-    DexAccountValid storage accountValid = dexAccountsValid[msg.sender];
-    DexDepositInfo storage depositInfo = dexAccounts[msg.sender][tokenKey];
-    DexTokenInfo storage tokenInfo = dexTokens[tokenKey];
+    DexAccountValid storage dav = dexAccountsValid[msg.sender];
+    DexDepositInfo storage ddi = dexAccounts[msg.sender][tokenKey];
+    DexTokenInfo storage dti = dexTokens[tokenKey];
 
-    require(accountValid.isInitialized && accountValid.isValid, 'account is invalid');
-    require(depositInfo.isValid, 'account token is invalid');
-    require(depositInfo.amount >= amount, 'not enough deposit');
+    require(dav.isInitialized && dav.isValid, 'withdraw account (from address) is invalid');
+    require(ddi.isValid, 'withdraw account token is invalid');
+    require(ddi.amount >= amount, 'not enough deposit to withdraw');
 
-    depositInfo.amount = depositInfo.amount - amount;
-    /*
-    require(newAmount <= type(uint112).max, 'deposit token amount overflow');
-    info.amount = uint112(newAmount);
-    */
+    ddi.amount = ddi.amount - amount;
 
     // native token
-    if (tokenInfo.tokenType == 0) {
+    if (dti.tokenType == 0) {
       (bool success, ) = withdrawAddress.call{value: amount}('');
       require(success, 'fail to withdraw');
     }
     // ERC20
-    else if (tokenInfo.tokenType == 1) {
-      IWasd3rERC20 tokenContract = IWasd3rERC20(tokenInfo.contractAddress);
+    else if (dti.tokenType == 1) {
+      IWasd3rERC20 tokenContract = IWasd3rERC20(dti.contractAddress);
       bool success = tokenContract.transfer(withdrawAddress, amount);
       require(success, 'fail to deposit ERC20 token');
     }
     // ERC1155
-    else if (tokenInfo.tokenType == 2) {
-      IWasd3rERC1155 tokenContract = IWasd3rERC1155(tokenInfo.contractAddress);
-      tokenContract.safeTransferFrom(address(this), withdrawAddress, tokenInfo.tokenId, amount, '');
+    else if (dti.tokenType == 2) {
+      IWasd3rERC1155 tokenContract = IWasd3rERC1155(dti.contractAddress);
+      tokenContract.safeTransferFrom(address(this), withdrawAddress, dti.tokenId, amount, '');
     }
 
     // Set the last withdraw time.
-    uint blockNo = depositInfo.lastWithdrawBlockNo;
+    uint blockNo = ddi.lastWithdrawBlockNo;
     if (blockNo != block.number) {
-      depositInfo.lastWithdrawBlockNo = block.number;
-      depositInfo.lastWithdrawBlockNoIdx = 0;
+      ddi.lastWithdrawBlockNo = block.number;
+      ddi.lastWithdrawBlockNoIdx = 0;
     } else {
-      depositInfo.lastWithdrawBlockNoIdx++;
+      ddi.lastWithdrawBlockNoIdx++;
     }
 
-    emit DexAccountWithdrawn(msg.sender, withdrawAddress, tokenKey, amount, depositInfo.amount);
+    emit DexAccountWithdrawn(msg.sender, withdrawAddress, tokenKey, amount, ddi.amount);
   }
 
   /**
@@ -248,10 +215,10 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
    */
   function disableAccount(address account) public {
     require(dexAdmins[msg.sender] || msg.sender == account, 'Only admin or account owner can call this function');
-
-    DexAccountValid storage accountValid = dexAccountsValid[account];
-    accountValid.isInitialized = true;
-    accountValid.isValid = false;
+    DexAccountValid storage dav = dexAccountsValid[account];
+    dav.isInitialized = true;
+    dav.isValid = false;
+    emit DexAccountDisabled(account, msg.sender);
   }
 
   /**
@@ -259,9 +226,10 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
    * @param account user wallet address
    */
   function enableAccount(address account) public onlyDexAdmin {
-    DexAccountValid storage accountValid = dexAccountsValid[account];
-    accountValid.isInitialized = true;
-    accountValid.isValid = true;
+    DexAccountValid storage dav = dexAccountsValid[account];
+    dav.isInitialized = true;
+    dav.isValid = true;
+    emit DexAccountEnabled(account, msg.sender);
   }
 
   /**
@@ -272,6 +240,7 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
   function disableAccountToken(address account, string memory tokenKey) public {
     require(dexAdmins[msg.sender] || msg.sender == account, 'Only admin or account owner can call this function');
     dexAccounts[account][tokenKey].isValid = false;
+    emit DexAccountTokenDepositDisabled(account, msg.sender);
   }
 
   /**
@@ -281,5 +250,6 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
    */
   function enableAccountToken(address account, string memory tokenKey) public onlyDexAdmin {
     dexAccounts[account][tokenKey].isValid = true;
+    emit DexAccountTokenDepositEnabled(account, msg.sender);
   }
 }

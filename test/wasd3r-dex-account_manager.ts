@@ -39,9 +39,8 @@ describe("Wasd3r AA Dex: Account Manager", function () {
     )
   })
 
-  it("Should be able to deposit native token", async function () {
+  it("Should deposit native token", async function () {
     const nativeTokenKey = await dexManagerContract.DEX_TOKEN_NATIVE_TOKEN_KEY()
-    const ethProvider = new EthProvider(hre.ethers.provider)
 
     let dexBalance = await dexManagerContract.getDexNativeBalanceOf(suSigner.address)
     expect(dexBalance).to.equal(BigInt("0"))
@@ -117,7 +116,7 @@ describe("Wasd3r AA Dex: Account Manager", function () {
       )
   })
 
-  it("Should be able to deposit ERC20 token", async function () {
+  it("Should deposit ERC20 token", async function () {
     expect(await dexManagerContract.isValidDexToken(usdtTokenKey)).to.equal(true)
 
     // 1. approve first
@@ -184,12 +183,56 @@ describe("Wasd3r AA Dex: Account Manager", function () {
   })
 
   it("Should enable/disable account", async function () {
+    const account = (await hre.ethers.getSigners())[2]
     // Check account validation
-    let accountValid = await dexManagerContract.dexAccountsValid(suSigner.address)
+    let accountValid = await dexManagerContract.dexAccountsValid(account.address)
     expect(accountValid.isInitialized).to.equal(false)
     expect(accountValid.isValid).to.equal(false)
 
-    // TODO: add event
-    await expect(dexManagerContract.enableAccount(suSigner.address))
+    await expect(dexManagerContract.enableAccount(account.address))
+      .to.emit(dexManagerContract, "DexAccountEnabled")
+      .withArgs(account.address, suSigner.address)
+
+    accountValid = await dexManagerContract.dexAccountsValid(account.address)
+    expect(accountValid.isInitialized).to.equal(true)
+    expect(accountValid.isValid).to.equal(true)
+
+    await expect(dexManagerContract.disableAccount(account.address))
+      .to.emit(dexManagerContract, "DexAccountDisabled")
+      .withArgs(account.address, suSigner.address)
+
+    accountValid = await dexManagerContract.dexAccountsValid(account.address)
+    expect(accountValid.isInitialized).to.equal(true)
+    expect(accountValid.isValid).to.equal(false)
+  })
+
+  it("Should enable/disable account token deposit", async function () {
+    const account = (await hre.ethers.getSigners())[2]
+    // Check account validation
+    let accountUsdtDepositInfo = await dexManagerContract.dexAccounts(
+      account.address,
+      usdtTokenKey,
+    )
+    expect(accountUsdtDepositInfo.isValid).to.equal(false)
+
+    await expect(dexManagerContract.enableAccountToken(account.address, usdtTokenKey))
+      .to.emit(dexManagerContract, "DexAccountTokenDepositEnabled")
+      .withArgs(account.address, suSigner.address)
+
+    accountUsdtDepositInfo = await dexManagerContract.dexAccounts(
+      account.address,
+      usdtTokenKey,
+    )
+    expect(accountUsdtDepositInfo.isValid).to.equal(true)
+
+    await expect(dexManagerContract.disableAccountToken(account.address, usdtTokenKey))
+      .to.emit(dexManagerContract, "DexAccountTokenDepositDisabled")
+      .withArgs(account.address, suSigner.address)
+
+    accountUsdtDepositInfo = await dexManagerContract.dexAccounts(
+      account.address,
+      usdtTokenKey,
+    )
+    expect(accountUsdtDepositInfo.isValid).to.equal(false)
   })
 })
