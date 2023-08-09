@@ -6,7 +6,7 @@ pragma solidity ^0.8.12;
 /* solhint-disable no-inline-assembly */
 
 /**
- * Dex Order struct
+ * Dex order created by user
  * @param orderId order ID
  * @param orderType BUY:0, SELL:1
  * @param baseTokenAddr token address for base ticker (native token: address(0))
@@ -17,7 +17,6 @@ pragma solidity ^0.8.12;
  */
 struct DexOrder {
   uint256 orderId;
-  // hash below
   uint256 orderType;
   address baseTokenAddr;
   address quoteTokenAddr;
@@ -27,10 +26,11 @@ struct DexOrder {
 }
 
 /**
- * Utility functions helpful when working with UserOperation structs.
+ * Utility functions helpful when working with DexOrder struct.
  */
 library LibDexOrder {
   function packForVerify(DexOrder calldata dexOrder) internal pure returns (bytes memory ret) {
+    // `orderId` is not included in the signed data because it isn't set by user.
     uint256 orderType = dexOrder.orderType;
     address baseTokenAddr = dexOrder.baseTokenAddr;
     address quoteTokenAddr = dexOrder.quoteTokenAddr;
