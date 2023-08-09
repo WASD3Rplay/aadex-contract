@@ -62,11 +62,18 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager {
     uint256 quoteTokenAmount,
     address feeCollector
   ) public {
-    // 1. Verify buyer signature.
+    // 1. Verify buyer and seller signature.
     require(_verifyOrderSign(buyer, buyerOrder), 'Order is not signed by buyer');
-
-    // 2. Verify seller signature.
     require(_verifyOrderSign(seller, sellerOrder), 'Order is not signed by seller');
+
+    DexTokenInfo memory baseDti = dexTokens[baseTokenKey];
+
+    // 2. Verify parameters
+    require(baseTokenAmount <= sellerOrder.requestAmount, 'Request amount is not acceptable in seller dex order');
+    require(
+      quoteTokenAmount <= (buyerOrder.requestAmount / 10 ** baseDti.decimals) * buyerOrder.price,
+      'Request amount is not acceptable in buyer dex order'
+    );
 
     // 3. Process base token related
     // Increase BUYER base token amount

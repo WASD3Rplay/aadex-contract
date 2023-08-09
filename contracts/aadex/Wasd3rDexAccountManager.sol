@@ -102,7 +102,7 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     DexAccountValid memory dav = dexAccountsValid[to];
     require(
       !dav.isInitialized || (dav.isInitialized && dav.isValid),
-      'deposit account (to address) is invalid to add the input amount'
+      'Deposit account (to address) is invalid to add the input amount'
     );
 
     if (!dav.isInitialized) {
@@ -130,11 +130,11 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     DexAccountValid memory dav = dexAccountsValid[from];
     require(
       !dav.isInitialized || (dav.isInitialized && dav.isValid),
-      'deposit account (from address) is invalid to subtract the input amount'
+      'Deposit account (from address) is invalid to subtract the input amount'
     );
 
     DexDepositInfo storage ddi = dexAccounts[from][tokenKey];
-    require(ddi.amount >= amount, 'deposit amount is less than the input amount to subtract');
+    require(ddi.amount >= amount, 'Deposit amount is less than the input amount to subtract');
 
     ddi.amount = ddi.amount - amount;
     return ddi;
@@ -207,21 +207,21 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     DexDepositInfo storage ddi = dexAccounts[msg.sender][tokenKey];
     DexTokenInfo storage dti = dexTokens[tokenKey];
 
-    require(dav.isInitialized && dav.isValid, 'withdraw account (from address) is invalid');
-    require(ddi.amount >= amount, 'not enough deposit to withdraw');
+    require(dav.isInitialized && dav.isValid, 'Withdraw account (from address) is invalid');
+    require(ddi.amount >= amount, 'Not enough deposit to withdraw');
 
     ddi.amount = ddi.amount - amount;
 
     // native token
     if (dti.tokenType == 0) {
       (bool success, ) = withdrawAddress.call{value: amount}('');
-      require(success, 'fail to withdraw');
+      require(success, 'Fail to withdraw native token');
     }
     // ERC20
     else if (dti.tokenType == 1) {
       IWasd3rERC20 tokenContract = IWasd3rERC20(dti.contractAddress);
       bool success = tokenContract.transfer(withdrawAddress, amount);
-      require(success, 'fail to deposit ERC20 token');
+      require(success, 'Fail to deposit ERC20 token');
     }
     // ERC1155
     else if (dti.tokenType == 2) {
