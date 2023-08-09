@@ -42,7 +42,7 @@ describe("Wasd3r AA Dex: Access Control", function () {
     }
   })
 
-  it("Should be able to delete an admin by superuser", async function () {
+  it("Should delete an admin by superuser", async function () {
     const adminSigner = (await hre.ethers.getSigners())[1]
     await expect(contract.addAdmin(adminSigner.address))
       .to.emit(contract, "DexAcAdminAdded")
@@ -57,7 +57,7 @@ describe("Wasd3r AA Dex: Access Control", function () {
     expect(await contract.dexAdmins(adminSigner.address)).to.equal(false)
   })
 
-  it("Should be able to delete an admin by admin", async function () {
+  it("Should delete an admin by admin", async function () {
     const adminSigner1 = (await hre.ethers.getSigners())[1]
     const adminSigner2 = (await hre.ethers.getSigners())[2]
 
@@ -81,7 +81,7 @@ describe("Wasd3r AA Dex: Access Control", function () {
     expect(await contract.dexAdmins(adminSigner2.address)).to.equal(false)
   })
 
-  it("Should NOT be able to delete an admin by anonymous user", async function () {
+  it("Should NOT delete an admin by anonymous user", async function () {
     const adminSigner = (await hre.ethers.getSigners())[1]
     await expect(contract.addAdmin(adminSigner.address))
       .to.emit(contract, "DexAcAdminAdded")
@@ -104,7 +104,7 @@ describe("Wasd3r AA Dex: Access Control", function () {
     }
   })
 
-  it("Should be able to replace the superuser", async function () {
+  it("Should replace the superuser", async function () {
     expect(await contract.dexSuperuser()).to.equal(suSigner.address)
 
     const adminSigner = (await hre.ethers.getSigners())[1]
