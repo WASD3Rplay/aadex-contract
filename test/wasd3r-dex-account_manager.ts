@@ -2,8 +2,6 @@ import { expect } from "chai"
 import { ethers } from "ethers"
 import hre from "hardhat"
 
-import { EthProvider } from "../src/eth"
-
 describe("Wasd3r AA Dex: Account Manager", function () {
   let suSigner
   let dexManagerContract
