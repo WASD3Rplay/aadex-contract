@@ -1,4 +1,4 @@
-import { BigNumberish, Wallet, ethers } from "ethers"
+import { BigNumberish, Wallet } from "ethers"
 import { arrayify, defaultAbiCoder, keccak256 } from "ethers/lib/utils"
 
 export enum DexOrderType {
@@ -56,9 +56,6 @@ export const createNSignDexOrder = async (
     requestAmount,
   )
   const signature = await signer.signMessage(dexOrderData)
-
-  const addr = ethers.utils.verifyMessage(dexOrderData, signature)
-  console.debug(">>>>>", addr)
 
   const dexOrder = {
     orderId,

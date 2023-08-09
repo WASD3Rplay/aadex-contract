@@ -12,7 +12,6 @@ import './Wasd3rDexTokenManager.sol';
  */
 abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
   /**
-   * @param isValid the deposit info is valid or invalid
    * @param amount the user deposited token amount
    * @param lastDepositBlockNo the block number when a user deposited the token lastly
    * @param lastDepositBlockNoIdx deposit index in the same block of the last deposit. If only once, it would be 0.
@@ -20,7 +19,6 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
    * @param lastWithdrawBlockNoIdx withdraw index in the same block of the last withdraw. If onle once, it would be 0.
    */
   struct DexDepositInfo {
-    bool isValid;
     uint256 amount;
     uint lastDepositBlockNo;
     uint lastDepositBlockNoIdx;
@@ -114,7 +112,6 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     }
 
     DexDepositInfo storage ddi = dexAccounts[to][tokenKey];
-    ddi.isValid = true;
     ddi.amount = ddi.amount + amount;
     return ddi;
   }
@@ -133,12 +130,13 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     DexAccountValid memory dav = dexAccountsValid[from];
     require(
       !dav.isInitialized || (dav.isInitialized && dav.isValid),
-      'deposit account (to address) is invalid to subtract the input amount'
+      'deposit account (from address) is invalid to subtract the input amount'
     );
 
     DexDepositInfo storage ddi = dexAccounts[from][tokenKey];
-    ddi.isValid = true;
-    ddi.amount = ddi.amount + amount;
+    require(ddi.amount >= amount, 'deposit amount is less than the input amount to subtract');
+
+    ddi.amount = ddi.amount - amount;
     return ddi;
   }
 
@@ -210,7 +208,6 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     DexTokenInfo storage dti = dexTokens[tokenKey];
 
     require(dav.isInitialized && dav.isValid, 'withdraw account (from address) is invalid');
-    require(ddi.isValid, 'withdraw account token is invalid');
     require(ddi.amount >= amount, 'not enough deposit to withdraw');
 
     ddi.amount = ddi.amount - amount;
@@ -265,26 +262,5 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     dav.isInitialized = true;
     dav.isValid = true;
     emit DexAccountEnabled(account, msg.sender);
-  }
-
-  /**
-   * Disable given account token deposit.
-   * @param account user wallet address
-   * @param tokenKey unique token key string
-   */
-  function disableAccountToken(address account, string memory tokenKey) public {
-    require(dexAdmins[msg.sender] || msg.sender == account, 'Only admin or account owner can call this function');
-    dexAccounts[account][tokenKey].isValid = false;
-    emit DexAccountTokenDepositDisabled(account, msg.sender);
-  }
-
-  /**
-   * Enable given account token deposit.
-   * @param account user wallet address
-   * @param tokenKey unique token key string
-   */
-  function enableAccountToken(address account, string memory tokenKey) public onlyDexAdmin {
-    dexAccounts[account][tokenKey].isValid = true;
-    emit DexAccountTokenDepositEnabled(account, msg.sender);
   }
 }

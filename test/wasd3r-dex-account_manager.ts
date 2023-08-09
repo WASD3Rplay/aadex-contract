@@ -48,7 +48,6 @@ describe("Wasd3r AA Dex: Account Manager", function () {
       suSigner.address,
       nativeTokenKey,
     )
-    expect(depositInfo.isValid).to.equal(false)
     expect(depositInfo.amount).to.equal(BigInt("0"))
     expect(depositInfo.lastDepositBlockNo).to.equal(0)
     expect(depositInfo.lastDepositBlockNoIdx).to.equal(0)
@@ -87,7 +86,6 @@ describe("Wasd3r AA Dex: Account Manager", function () {
       suSigner.address,
       nativeTokenKey,
     )
-    expect(depositInfo.isValid).to.equal(true)
     expect(depositInfo.amount).to.equal(BigInt(1e18))
     expect(depositInfo.lastDepositBlockNo).to.equal(txReceipt.blockNumber)
     expect(depositInfo.lastDepositBlockNoIdx).to.equal(0)
@@ -196,35 +194,5 @@ describe("Wasd3r AA Dex: Account Manager", function () {
     accountValid = await dexManagerContract.dexAccountsValid(account.address)
     expect(accountValid.isInitialized).to.equal(true)
     expect(accountValid.isValid).to.equal(false)
-  })
-
-  it("Should enable/disable account token deposit", async function () {
-    const account = (await hre.ethers.getSigners())[2]
-    // Check account validation
-    let accountUsdtDepositInfo = await dexManagerContract.dexAccounts(
-      account.address,
-      usdtTokenKey,
-    )
-    expect(accountUsdtDepositInfo.isValid).to.equal(false)
-
-    await expect(dexManagerContract.enableAccountToken(account.address, usdtTokenKey))
-      .to.emit(dexManagerContract, "DexAccountTokenDepositEnabled")
-      .withArgs(account.address, suSigner.address)
-
-    accountUsdtDepositInfo = await dexManagerContract.dexAccounts(
-      account.address,
-      usdtTokenKey,
-    )
-    expect(accountUsdtDepositInfo.isValid).to.equal(true)
-
-    await expect(dexManagerContract.disableAccountToken(account.address, usdtTokenKey))
-      .to.emit(dexManagerContract, "DexAccountTokenDepositDisabled")
-      .withArgs(account.address, suSigner.address)
-
-    accountUsdtDepositInfo = await dexManagerContract.dexAccounts(
-      account.address,
-      usdtTokenKey,
-    )
-    expect(accountUsdtDepositInfo.isValid).to.equal(false)
   })
 })
