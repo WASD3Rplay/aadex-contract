@@ -1,4 +1,6 @@
 import "@nomiclabs/hardhat-ethers"
+import "@nomiclabs/hardhat-waffle"
+import "@typechain/hardhat"
 import { HardhatUserConfig } from "hardhat/config"
 
 const optimizedComilerSettings = {

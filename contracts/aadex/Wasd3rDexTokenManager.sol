@@ -8,14 +8,14 @@ import '../interfaces/IWasd3rERC1155.sol';
 import '../lib/LibAddress.sol';
 import '../lib/LibUint.sol';
 
-import './Wasd3rDexAC.sol';
+import './Wasd3rDexAccessControl.sol';
 
 /* solhint-disable avoid-low-level-calls */
 /* solhint-disable not-rely-on-time */
 /**
  * @title Wasd3rDexTokenManager - manages registered tokens in Wasd3r AA Dex.
  */
-abstract contract Wasd3rDexTokenManager {
+abstract contract Wasd3rDexTokenManager is Wasd3rDexAccessControl {
   using LibAddress for address;
   using LibUint for uint256;
   using LibUint for uint8;
@@ -59,7 +59,8 @@ abstract contract Wasd3rDexTokenManager {
   /**
    * (internal) Initialize this dex token contract.
    */
-  function initDexToken() internal {
+  function initDexTokenManager() internal {
+    initDexAc();
     registerDexToken(0, address(0), 0, 18, '');
   }
 
@@ -95,7 +96,7 @@ abstract contract Wasd3rDexTokenManager {
   }
 
   /**
-   * (ADMIN) Registers new token info.
+   * (ADMIN) Registers a new token info.
    * @param tokenType token type (native:0, ERC20:1, ERC1155: 2)
    * @param tokenAddress token contract address
    * @param tokenId token ID using for ERC1155, 0 for others
