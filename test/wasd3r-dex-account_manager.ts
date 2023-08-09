@@ -117,67 +117,61 @@ describe("Wasd3r AA Dex: Account Manager", function () {
   it("Should deposit ERC20 token", async function () {
     expect(await dexManagerContract.isValidDexToken(usdtTokenKey)).to.equal(true)
 
-    // 1. approve first
-    await expect(
-      usdtContract.approve(
-        dexManagerContract.address,
-        ethers.utils.parseUnits("1000", 6),
-      ),
+    let dexBalance = await dexManagerContract.getDexBalanceOf(
+      suSigner.address,
+      usdtTokenKey,
     )
+    expect(dexBalance).to.equal(BigInt("0"))
+
+    const depositAmount = ethers.utils.parseUnits("1000", 6)
+
+    // 1. approve first
+    await expect(usdtContract.approve(dexManagerContract.address, depositAmount))
       .to.emit(usdtContract, "Approval")
-      .withArgs(
-        suSigner.address,
-        dexManagerContract.address,
-        ethers.utils.parseUnits("1000", 6),
-      )
+      .withArgs(suSigner.address, dexManagerContract.address, depositAmount)
 
     // 2. Deposit into DexManager
     await expect(
-      dexManagerContract.depositDexToken(
-        suSigner.address,
-        usdtTokenKey,
-        ethers.utils.parseUnits("1000", 6),
-      ),
+      dexManagerContract.depositDexToken(suSigner.address, usdtTokenKey, depositAmount),
     )
       .to.emit(dexManagerContract, "DexAccountDeposited")
       .withArgs(
         suSigner.address,
         suSigner.address,
         usdtTokenKey,
-        ethers.utils.parseUnits("1000", 6),
-        ethers.utils.parseUnits("1000", 6),
+        depositAmount,
+        depositAmount,
       )
 
-    // 1. approve first
-    await expect(
-      usdtContract.approve(
-        dexManagerContract.address,
-        ethers.utils.parseUnits("1000", 6),
-      ),
+    dexBalance = await dexManagerContract.getDexBalanceOf(
+      suSigner.address,
+      usdtTokenKey,
     )
+    expect(dexBalance).to.equal(depositAmount)
+
+    // 1. approve first
+    await expect(usdtContract.approve(dexManagerContract.address, depositAmount))
       .to.emit(usdtContract, "Approval")
-      .withArgs(
-        suSigner.address,
-        dexManagerContract.address,
-        ethers.utils.parseUnits("1000", 6),
-      )
+      .withArgs(suSigner.address, dexManagerContract.address, depositAmount)
 
     // 2. Deposit into DexManager
     await expect(
-      dexManagerContract.depositDexToken(
-        suSigner.address,
-        usdtTokenKey,
-        ethers.utils.parseUnits("1000", 6),
-      ),
+      dexManagerContract.depositDexToken(suSigner.address, usdtTokenKey, depositAmount),
     )
       .to.emit(dexManagerContract, "DexAccountDeposited")
       .withArgs(
         suSigner.address,
         suSigner.address,
         usdtTokenKey,
-        ethers.utils.parseUnits("1000", 6),
-        ethers.utils.parseUnits("2000", 6),
+        depositAmount,
+        depositAmount.mul(2),
       )
+
+    dexBalance = await dexManagerContract.getDexBalanceOf(
+      suSigner.address,
+      usdtTokenKey,
+    )
+    expect(dexBalance).to.equal(depositAmount.mul(2))
   })
 
   it("Should enable/disable account", async function () {

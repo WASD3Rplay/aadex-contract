@@ -94,9 +94,18 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     return dexAccounts[account][tokenKey].amount;
   }
 
-  function _depositDexToken(address from, address to, string memory tokenKey, uint256 amount) private {
+  /**
+   * Adds the input amount to the target address by token.
+   * @param to target address
+   * @param tokenKey token key
+   * @param amount token amount adding to the target address
+   */
+  function addDexToken(address to, string memory tokenKey, uint256 amount) internal returns (DexDepositInfo storage) {
     DexAccountValid memory dav = dexAccountsValid[to];
-    require(!dav.isInitialized || (dav.isInitialized && dav.isValid), 'deposit account (to address) is invalid');
+    require(
+      !dav.isInitialized || (dav.isInitialized && dav.isValid),
+      'deposit account (to address) is invalid to add the input amount'
+    );
 
     if (!dav.isInitialized) {
       DexAccountValid storage sdav = dexAccountsValid[to];
@@ -107,6 +116,34 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     DexDepositInfo storage ddi = dexAccounts[to][tokenKey];
     ddi.isValid = true;
     ddi.amount = ddi.amount + amount;
+    return ddi;
+  }
+
+  /**
+   * Subtracts the input amount from the target address by token.
+   * @param from target address
+   * @param tokenKey token key
+   * @param amount token amount subtracting from the target address
+   */
+  function subtractDexToken(
+    address from,
+    string memory tokenKey,
+    uint256 amount
+  ) internal returns (DexDepositInfo storage) {
+    DexAccountValid memory dav = dexAccountsValid[from];
+    require(
+      !dav.isInitialized || (dav.isInitialized && dav.isValid),
+      'deposit account (to address) is invalid to subtract the input amount'
+    );
+
+    DexDepositInfo storage ddi = dexAccounts[from][tokenKey];
+    ddi.isValid = true;
+    ddi.amount = ddi.amount + amount;
+    return ddi;
+  }
+
+  function _depositDexToken(address from, address to, string memory tokenKey, uint256 amount) private {
+    DexDepositInfo storage ddi = addDexToken(to, tokenKey, amount);
 
     // Set the last deposit time.
     uint blockNo = ddi.lastDepositBlockNo;
