@@ -109,7 +109,7 @@ abstract contract Wasd3rDexTokenManager is Wasd3rDexAccessControl {
     uint256 tokenId,
     uint8 tokenDecimals,
     string memory tokenName
-  ) public {
+  ) public onlyDexAdmin {
     string memory tokenKey;
     address contractAddress = tokenAddress;
     uint8 decimals = tokenDecimals;
@@ -159,10 +159,10 @@ abstract contract Wasd3rDexTokenManager is Wasd3rDexAccessControl {
   }
 
   /**
-   * (ADMIN) Deregisters the token info from the managed map.
+   * (SU) Deregisters the token info from the managed map.
    * @param tokenKey unique token key string
    */
-  function deregisterDexToken(string memory tokenKey) public {
+  function deregisterDexToken(string memory tokenKey) public onlyDexSu {
     delete dexTokens[tokenKey];
 
     emit DexTokenDeregistered(msg.sender, tokenKey);

@@ -3,7 +3,7 @@ import hre from "hardhat"
 
 import { ZERO_ADDRESS } from "../src/constants"
 
-describe("Wasd3r AA Dex: Token Management", function () {
+describe("Wasd3r AA Dex: Token Manager", function () {
   let suSigner
   let contract
 

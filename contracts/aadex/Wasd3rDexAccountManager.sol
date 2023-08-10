@@ -254,7 +254,7 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
   }
 
   /**
-   * Enable given account.
+   * (ADMIN) Enable given account.
    * @param account user wallet address
    */
   function enableAccount(address account) public onlyDexAdmin {

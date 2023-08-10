@@ -156,7 +156,7 @@ describe("Wasd3r AA Dex: Dex Manager", function () {
 
     // swap ERROR: swap base ticker amount is bigger than buyer's request base ticker amount in the buy dex order
     try {
-      await dexManagerContract.swap(
+      await dexManagerContract.swapByAdmin(
         1000,
         100,
         buyDexOrder,
@@ -180,7 +180,7 @@ describe("Wasd3r AA Dex: Dex Manager", function () {
 
     // swap ERROR: swap quote ticker amount is bigger thant seller's request quote ticker amount in the sell dex order
     try {
-      await dexManagerContract.swap(
+      await dexManagerContract.swapByAdmin(
         1000,
         100,
         buyDexOrder,
@@ -208,7 +208,7 @@ describe("Wasd3r AA Dex: Dex Manager", function () {
     const swapBaseFeeAmount = swapBaseAmount.div(100)
     const swapQuoteFeeAmount = swapQuoteAmount.div(100)
     await expect(
-      dexManagerContract.swap(
+      dexManagerContract.swapByAdmin(
         1000,
         100,
         buyDexOrder,
@@ -276,7 +276,7 @@ describe("Wasd3r AA Dex: Dex Manager", function () {
 
     // swap ERROR: seller doesn't have enough ETH to subtract
     try {
-      await dexManagerContract.swap(
+      await dexManagerContract.swapByAdmin(
         1000,
         100,
         buyDexOrder,
@@ -302,7 +302,7 @@ describe("Wasd3r AA Dex: Dex Manager", function () {
 
     // swap ERROR: buyer doesn't have enough USDT to subtract
     try {
-      await dexManagerContract.swap(
+      await dexManagerContract.swapByAdmin(
         1000,
         100,
         buyDexOrder,
