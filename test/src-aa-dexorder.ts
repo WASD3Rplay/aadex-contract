@@ -2,9 +2,13 @@ import { expect } from "chai"
 import { ethers } from "ethers"
 import hre from "hardhat"
 
-import { DexOrderType, createNSignDexOrder, getDexOrderData } from "../src/aa/dexorder"
-import { ZERO_ADDRESS } from "../src/constants"
-import { EthProvider } from "../src/eth/provider"
+import {
+  DexOrderType,
+  EthProvider,
+  ZERO_ADDRESS,
+  createNSignDexOrder,
+  getDexOrderData,
+} from "../src"
 
 describe("src > aa > dexorder", function () {
   it("Should create a new dex order and sign it", async function () {

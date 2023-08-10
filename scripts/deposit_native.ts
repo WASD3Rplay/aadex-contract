@@ -2,11 +2,11 @@ import { Wallet } from "ethers"
 
 import {
   getDexManagerAddress,
+  getDexManagerContractCtrl,
   getEntryPointAddress,
+  getEthProvider,
   getSignerSecret,
-} from "../src/config"
-import { getDexManagerContractCtrl } from "../src/contract/dexmanager"
-import { getEthProvider } from "../src/eth"
+} from "../src"
 
 const main = async (): Promise<void> => {
   const ethProvider = getEthProvider()

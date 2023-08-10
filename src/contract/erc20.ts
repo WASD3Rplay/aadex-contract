@@ -1,13 +1,14 @@
 import { BigNumber, Wallet, ethers } from "ethers"
 
-import { EthProvider, TxReceipt } from "../eth"
+import { EthProvider, TxContractReceipt } from "../eth"
 
-export const deployWasd3rERC20Contract = async (
+export const deployERC20Contract = async (
   contractFactoryClass: any,
   ethProvider: EthProvider,
   signer: Wallet,
 ): Promise<ERC20ContractCtrl> => {
   const contract = await new contractFactoryClass(signer).deploy()
+  await contract.deployed()
 
   return new ERC20ContractCtrl(
     contractFactoryClass,
@@ -17,14 +18,14 @@ export const deployWasd3rERC20Contract = async (
   )
 }
 
-export const getWasd3rERC20ContractCtrl = async (
+export const getERC20ContractCtrl = async (
   contractFactoryClass: any,
   ethProvider: EthProvider,
   signer: Wallet,
   contractAddr?: string,
 ): Promise<ERC20ContractCtrl> => {
   if (contractAddr === undefined) {
-    return await deployWasd3rERC20Contract(ethProvider, contractFactoryClass, signer)
+    return await deployERC20Contract(ethProvider, contractFactoryClass, signer)
   }
 
   return new ERC20ContractCtrl(contractFactoryClass, ethProvider, contractAddr, signer)
@@ -56,14 +57,14 @@ export class ERC20ContractCtrl {
   approve = async (
     toAddress: string,
     amount: string | number | BigNumber,
-  ): Promise<TxReceipt> => {
+  ): Promise<TxContractReceipt> => {
     if (typeof amount === "string") {
       amount = Number(ethers.utils.parseUnits(amount, await this.getDecimals()))
     }
 
     const tx = await this.contract.approve(toAddress, amount)
     const receipt = await tx.wait()
-    return new TxReceipt(receipt)
+    return new TxContractReceipt(receipt)
   }
 
   getDecimals = async (): Promise<number> => {
@@ -82,26 +83,26 @@ export class ERC20ContractCtrl {
   mintToken = async (
     toAddress: string,
     amount: string | number | BigNumber,
-  ): Promise<TxReceipt> => {
+  ): Promise<TxContractReceipt> => {
     if (typeof amount === "string") {
       amount = ethers.utils.parseUnits(amount, await this.getDecimals())
     }
 
     const tx = await this.contract.mint(toAddress, amount)
     const receipt = await tx.wait()
-    return new TxReceipt(receipt)
+    return new TxContractReceipt(receipt)
   }
 
   transferToken = async (
     toAddr: string,
     amount: string | number | BigNumber,
-  ): Promise<TxReceipt> => {
+  ): Promise<TxContractReceipt> => {
     if (typeof amount === "string") {
       amount = Number(ethers.utils.parseUnits(amount, await this.getDecimals()))
     }
 
     const tx = await this.contract.transfer(toAddr, amount)
     const receipt = await tx.wait()
-    return new TxReceipt(receipt)
+    return new TxContractReceipt(receipt)
   }
 }

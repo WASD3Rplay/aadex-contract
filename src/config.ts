@@ -35,3 +35,11 @@ export const getTokenContractAddress = (symbol: string, throwErr = true): string
   }
   return value ?? ""
 }
+
+export const getAccountSecret = (name: string, throwErr = true): string => {
+  const value = process.env[`NODE_DEX_ACCOUNT_SECRET_${name}`]
+  if (throwErr && value === undefined) {
+    throw new Error(`Cannot find a account secret of ${name}`)
+  }
+  return value ?? ""
+}

@@ -1,3 +1,6 @@
+import { TransactionReceipt } from "@ethersproject/abstract-provider"
+import { ContractReceipt } from "ethers"
+
 export class TxReceipt {
   txhash: string
   gasUsed: string
@@ -5,7 +8,7 @@ export class TxReceipt {
   toAddr: string
   blockNo: number
 
-  constructor(receipt: any) {
+  constructor(readonly receipt: ContractReceipt | TransactionReceipt) {
     this.txhash = receipt.transactionHash
     this.gasUsed = receipt.gasUsed.toString()
     this.fromAddr = receipt.from

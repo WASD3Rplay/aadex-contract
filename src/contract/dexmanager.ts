@@ -1,10 +1,13 @@
 import { BigNumber, Signer, Wallet, ethers } from "ethers"
 
 import { getDexManagerAddress, getEntryPointAddress, getSignerSecret } from "../config"
-import { ZERO_ADDRESS } from "../constants"
-import { EthProvider, TxReceipt, getEthProvider } from "../eth"
+import { EthProvider, TxContractReceipt, getEthProvider } from "../eth"
 
-import { Wasd3rDexManager, Wasd3rDexManager__factory } from "./types"
+import {
+  Wasd3rDexAccountManager,
+  Wasd3rDexManager,
+  Wasd3rDexManager__factory,
+} from "./types"
 
 export const depositEth = async (
   depositAmount: string,
@@ -12,7 +15,7 @@ export const depositEth = async (
   tokenOwnerSecret?: string,
   entryPointContractAddr?: string,
   dexManagerContractAddr?: string,
-): Promise<{ ctrl: DexManagerContractCtrl; txreceipt: TxReceipt }> => {
+): Promise<{ ctrl: DexManagerContractCtrl; txreceipt: TxContractReceipt }> => {
   const ethProvider = getEthProvider()
 
   const entryPointContractAddress = entryPointContractAddr ?? getEntryPointAddress()
@@ -53,7 +56,7 @@ export const depositToken = async (
   tokenOwnerSecret?: string,
   entryPointContractAddr?: string,
   dexManagerContractAddr?: string,
-): Promise<{ ctrl: DexManagerContractCtrl; txreceipt: TxReceipt }> => {
+): Promise<{ ctrl: DexManagerContractCtrl; txreceipt: TxContractReceipt }> => {
   const ethProvider = getEthProvider()
 
   const entryPointContractAddress = entryPointContractAddr ?? getEntryPointAddress()
@@ -95,6 +98,7 @@ export const deployDexManager = async (
   entryPointContractAddr: string,
 ): Promise<DexManagerContractCtrl> => {
   const contract = await new Wasd3rDexManager__factory(signer).deploy()
+  await contract.deployed()
   await (await contract.setEntryPoint(entryPointContractAddr)).wait()
 
   return new DexManagerContractCtrl(ethProvider, contract.address, signer)
@@ -132,15 +136,14 @@ export class DexManagerContractCtrl {
     return Number(nonce)
   }
 
-  addAdmin = async (adminAddr: string): Promise<TxReceipt> => {
+  addAdmin = async (adminAddr: string): Promise<TxContractReceipt> => {
     const tx = await this.contract.addAdmin(adminAddr)
     const receipt = await tx.wait()
-    return new TxReceipt(receipt)
+    return new TxContractReceipt(receipt)
   }
 
   getNativeTokenKey = async (): Promise<string> => {
-    const tokenKey = await this.getTokenKey(0, ZERO_ADDRESS, 0, 0)
-    return tokenKey
+    return await this.contract.DEX_TOKEN_NATIVE_TOKEN_KEY()
   }
 
   getTokenKey = async (
@@ -163,13 +166,17 @@ export class DexManagerContractCtrl {
     return tokenInfo
   }
 
+  isValidDexToken = async (tokenKey: string): Promise<boolean> => {
+    return await this.contract.isValidDexToken(tokenKey)
+  }
+
   registerDexToken = async (
     tokenType: 0 | 1 | 2, // native:0, ERC20:1, ERC1155:2
     tokenAddr: string,
     tokenName: string,
     tokenDecimals: number,
     tokenId = 0,
-  ): Promise<TxReceipt> => {
+  ): Promise<TxContractReceipt> => {
     const tx = await this.contract.registerDexToken(
       tokenType,
       tokenAddr,
@@ -178,13 +185,13 @@ export class DexManagerContractCtrl {
       tokenName,
     )
     const receipt = await tx.wait()
-    return new TxReceipt(receipt)
+    return new TxContractReceipt(receipt)
   }
 
   depositNativeToken = async (
     depositAccount: string,
     value?: string | number | BigNumber,
-  ): Promise<TxReceipt> => {
+  ): Promise<TxContractReceipt> => {
     if (value !== undefined && typeof value === "string") {
       value = ethers.utils.parseEther(value)
     }
@@ -195,7 +202,7 @@ export class DexManagerContractCtrl {
       value,
     })
     const receipt = await tx.wait()
-    return new TxReceipt(receipt)
+    return new TxContractReceipt(receipt)
   }
 
   depositDexToken = async (
@@ -203,7 +210,7 @@ export class DexManagerContractCtrl {
     tokenKey: string,
     amount: number | BigNumber,
     value?: string | number | BigNumber,
-  ): Promise<TxReceipt> => {
+  ): Promise<TxContractReceipt> => {
     if (value !== undefined && typeof value === "string") {
       value = ethers.utils.parseEther(value)
     }
@@ -212,26 +219,55 @@ export class DexManagerContractCtrl {
       value,
     })
     const receipt = await tx.wait()
-    return new TxReceipt(receipt)
+    return new TxContractReceipt(receipt)
   }
 
   withdrawDexToken = async (
     withdrawAddr: string,
     tokenKey: string,
     amount: number,
-  ): Promise<TxReceipt> => {
+  ): Promise<TxContractReceipt> => {
     const tx = await this.contract.withdrawDexToken(withdrawAddr, tokenKey, amount)
     const receipt = await tx.wait()
-    return new TxReceipt(receipt)
+    return new TxContractReceipt(receipt)
   }
 
-  getDexNativeBalanceOf = async (addr: string): Promise<string> => {
+  getDexNativeBalanceOf = async (addr: string): Promise<BigNumber> => {
     const balance = await this.contract.getDexNativeBalanceOf(addr)
-    return ethers.utils.formatEther(balance)
+    //return ethers.utils.formatEther(balance)
+    return balance
   }
 
-  getDexBalanceOf = async (addr: string, tokenKey: string): Promise<string> => {
+  getDexBalanceOf = async (addr: string, tokenKey: string): Promise<BigNumber> => {
     const balance = await this.contract.getDexBalanceOf(addr, tokenKey)
-    return ethers.utils.formatUnits(balance, tokenKey.split(":")[3])
+    //return ethers.utils.formatUnits(balance, tokenKey.split(":")[3])
+    return balance
+  }
+
+  getDexDepositInfo = async (
+    addr: string,
+    tokenKey: string,
+  ): Promise<Wasd3rDexAccountManager.DexDepositInfoStructOutput> => {
+    const depositInfo = await this.contract.getDexDepositInfo(addr, tokenKey)
+    return depositInfo
+  }
+
+  getDexAccountValid = async (
+    addr: string,
+  ): Promise<[boolean, boolean] & { isInitialized: boolean; isValid: boolean }> => {
+    const accountValid = await this.contract.dexAccountsValid(addr)
+    return accountValid
+  }
+
+  enableAccount = async (addr: string): Promise<TxContractReceipt> => {
+    const tx = await this.contract.enableAccount(addr)
+    const receipt = await tx.wait()
+    return new TxContractReceipt(receipt)
+  }
+
+  disableAccount = async (addr: string): Promise<TxContractReceipt> => {
+    const tx = await this.contract.disableAccount(addr)
+    const receipt = await tx.wait()
+    return new TxContractReceipt(receipt)
   }
 }

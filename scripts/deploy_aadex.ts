@@ -1,7 +1,6 @@
 import { Wallet } from "ethers"
 
-import { getEthProvider } from "../src"
-import { getSignerSecret } from "../src/config"
+import { getEthProvider, getSignerSecret } from "../src"
 import { deployDexManager } from "../src/contract/dexmanager"
 import { deployEntryPoint } from "../src/contract/entrypoint"
 

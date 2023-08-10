@@ -24,14 +24,14 @@ abstract contract Wasd3rDexTokenManager is Wasd3rDexAccessControl {
 
   event DexTokenRegistered(
     address indexed byWhom,
-    string indexed tokenKey,
+    string tokenKey,
     address indexed tokenAddress,
     string tokenName,
     uint8 tokenType,
     uint8 tokenDecimals,
     uint256 tokenId
   );
-  event DexTokenDeregistered(address indexed byWhom, string indexed tokenKey);
+  event DexTokenDeregistered(address indexed byWhom, string tokenKey);
 
   /**
    * @param contractAddress the token contract address

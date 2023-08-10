@@ -2,21 +2,21 @@ import { Wallet, ethers } from "ethers"
 
 import {
   getDexManagerAddress,
+  getDexManagerContractCtrl,
+  getERC20ContractCtrl,
   getEntryPointAddress,
+  getEthProvider,
   getSignerSecret,
   getTokenContractAddress,
-} from "../src/config"
-import { getDexManagerContractCtrl } from "../src/contract/dexmanager"
-import { getWasd3rERC20ContractCtrl } from "../src/contract/erc20"
+} from "../src"
 import { Wasd3rSampleErc20USDT__factory } from "../src/contract/types"
-import { getEthProvider } from "../src/eth"
 
 const main = async (): Promise<void> => {
   const ethProvider = getEthProvider()
 
   const signerWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 
-  const usdtContract = await getWasd3rERC20ContractCtrl(
+  const usdtContract = await getERC20ContractCtrl(
     Wasd3rSampleErc20USDT__factory,
     ethProvider,
     signerWallet,

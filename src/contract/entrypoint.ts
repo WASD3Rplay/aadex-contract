@@ -10,6 +10,7 @@ export const deployEntryPoint = async (
   signer: Signer,
 ): Promise<EntryPointContractCtrl> => {
   const contract = await new Wasd3rDexEntryPoint__factory(signer).deploy()
+  await contract.deployed()
 
   return new EntryPointContractCtrl(ethProvider, contract.address, signer)
 }

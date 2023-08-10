@@ -1,8 +1,7 @@
 import { Wallet } from "ethers"
 
-import { getSignerSecret } from "../src/config"
+import { getEthProvider, getSignerSecret } from "../src"
 import { Wasd3rSampleErc20USDT__factory } from "../src/contract/types"
-import { getEthProvider } from "../src/eth/provider"
 
 const main = async (): Promise<void> => {
   const ethProvider = getEthProvider()

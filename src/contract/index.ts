@@ -1,5 +1,7 @@
-export { DexManagerContractCtrl } from "./dexmanager"
-export { EntryPointContractCtrl } from "./entrypoint"
+export { AADexManagerContractCtrl } from "./aadexmanager"
+export { DexManagerContractCtrl, getDexManagerContractCtrl } from "./dexmanager"
+export { EntryPointContractCtrl, getEntryPointContractCtrl } from "./entrypoint"
+export { ERC20ContractCtrl, getERC20ContractCtrl } from "./erc20"
 export {
   Wasd3rDexEntryPoint,
   Wasd3rDexEntryPoint__factory,
