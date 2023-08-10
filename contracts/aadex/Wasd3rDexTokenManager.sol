@@ -147,13 +147,13 @@ abstract contract Wasd3rDexTokenManager is Wasd3rDexAccessControl {
       id = tokenId;
     }
 
-    DexTokenInfo storage info = dexTokens[tokenKey];
-    info.isValid = true;
-    info.contractAddress = contractAddress;
-    info.decimals = decimals;
-    info.tokenType = tokenType;
-    info.tokenName = name;
-    info.tokenId = id;
+    DexTokenInfo storage dti = dexTokens[tokenKey];
+    dti.isValid = true;
+    dti.contractAddress = contractAddress;
+    dti.decimals = decimals;
+    dti.tokenType = tokenType;
+    dti.tokenName = name;
+    dti.tokenId = id;
 
     emit DexTokenRegistered(msg.sender, tokenKey, contractAddress, name, tokenType, decimals, id);
   }
