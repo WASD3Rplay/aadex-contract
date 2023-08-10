@@ -1,7 +1,7 @@
 import { expect } from "chai"
 import hre from "hardhat"
 
-import { ZERO_ADDRESS } from "../src/constants"
+import { ZERO_ADDRESS } from "../src"
 
 describe("Wasd3r AA Dex: Token Manager", function () {
   let suSigner
@@ -38,12 +38,12 @@ describe("Wasd3r AA Dex: Token Manager", function () {
   })
 
   it("Should handle non-registered token", async function () {
-    const nativeTokenInfo = await contract.dexTokens("non-exist-token-key")
-    expect(nativeTokenInfo.isValid).to.equal(false)
-    expect(nativeTokenInfo.decimals).to.equal(0)
-    expect(nativeTokenInfo.tokenType).to.equal(0)
-    expect(nativeTokenInfo.tokenName).to.equal("")
-    expect(Number(nativeTokenInfo.tokenId)).to.equal(0)
+    const tokenInfo = await contract.dexTokens("non-exist-token-key")
+    expect(tokenInfo.isValid).to.equal(false)
+    expect(tokenInfo.decimals).to.equal(0)
+    expect(tokenInfo.tokenType).to.equal(0)
+    expect(tokenInfo.tokenName).to.equal("")
+    expect(Number(tokenInfo.tokenId)).to.equal(0)
 
     expect(!(await contract.isValidDexToken("non-exist-token-key")))
   })

@@ -1,7 +1,7 @@
 import { expect } from "chai"
 import hre from "hardhat"
 
-import { Wasd3rDexManager__factory } from "../src/contract/types"
+import { Wasd3rDexManager__factory } from "../src"
 
 describe("Wasd3r AA Dex: Access Control", function () {
   let suSigner
