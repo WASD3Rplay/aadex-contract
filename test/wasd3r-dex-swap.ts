@@ -2,7 +2,7 @@ import { expect } from "chai"
 import { ethers } from "ethers"
 import hre from "hardhat"
 
-import { DexOrderType, createNSignDexOrder, getDexOrderData } from "../src/aa/dexorder"
+import { DexOrderType, createNSignDexOrder } from "../src/aa/dexorder"
 import { ZERO_ADDRESS } from "../src/constants"
 import {
   Wasd3rDexManager__factory,
