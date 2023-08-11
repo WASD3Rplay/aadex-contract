@@ -38,6 +38,7 @@
 		"@trivago/prettier-plugin-sort-imports": "^4.2.0",
 		"eslint": "^8.45.0"
 	},
+	"main": "./lib/src/index.js",
 	"author": {
 		"name": "Wasd3r",
 		"email": "dev@wasd3r.xyz",
@@ -56,6 +57,7 @@
 		"abstraction",
 		"eip",
 		"4337",
+		"aadex",
 		"dex"
 	]
 }

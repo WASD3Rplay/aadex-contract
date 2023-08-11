@@ -1,0 +1,14 @@
+abi/*.py
+artifacts/
+cache/
+node_modules/
+contracts/
+scripts/
+test/
+typechain-types/
+lib/typechain-types/**/samples/
+.env
+.eslintrc.json
+.prettierrc.json
+dotenv
+hardhat.config.ts

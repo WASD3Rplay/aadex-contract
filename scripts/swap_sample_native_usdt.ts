@@ -235,13 +235,15 @@ const createDexOrder = async (
 
 const getDexNativeBalanceOf = async (addr: string): Promise<string> => {
   const dexManagerContractCtrl = await getAdminDexManagerContractCtrl()
-  return dexManagerContractCtrl.getDexNativeBalanceOf(addr)
+  const balance = await dexManagerContractCtrl.getDexNativeBalanceOf(addr)
+  return ethers.utils.formatEther(balance)
 }
 
 const getDexUSDTBalanceOf = async (addr: string): Promise<string> => {
   const dexManagerContractCtrl = await getAdminDexManagerContractCtrl()
   const usdtTokenKey = await getUSDTTokenKey()
-  return dexManagerContractCtrl.getDexBalanceOf(addr, usdtTokenKey)
+  const balance = await dexManagerContractCtrl.getDexBalanceOf(addr, usdtTokenKey)
+  return ethers.utils.formatUnits(balance, usdtTokenKey.split(":")[3])
 }
 
 const printAccountBalances = async () => {
