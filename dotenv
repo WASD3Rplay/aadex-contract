@@ -16,11 +16,11 @@ NODE_TOKEN_CONTRACT_ADDRESS_IVE="0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
 
 
 # -------------- optimism goerli
-# https://chainlist.org/chain/420
-# https://goerli-optimism.etherscan.io/
+# Chain Info: https://chainlist.org/chain/420
+# Block Explorer: https://goerli-optimism.etherscan.io/
 # ------------------------------------------------
-# NODE_CHAIN_RPC_URL="https://optimism-goerli.infura.io/v3/018da52b2d7344eab13d20abbe08f945"
-# # https://goerli-optimism.etherscan.io/address/0x75ce7aee59347612ed29ff5c249e34ed1bc17d15
+# NODE_CHAIN_RPC_URL="https://goerli.optimism.io"
+# # Signer Info: https://goerli-optimism.etherscan.io/address/0x75ce7aee59347612ed29ff5c249e34ed1bc17d15
 # NODE_SIGNER_SECRET=""
 # NODE_ENTRY_POINT_ADDRESS="0x7A72c167643e58b879829e45e0680F03b438cbf8"
 # NODE_DEX_MANAGER_ADDRESS="0x205576b546d57E9eD42648F62eA60A2E598dE4A1"
@@ -37,11 +37,11 @@ NODE_TOKEN_CONTRACT_ADDRESS_IVE="0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
 
 
 # -------------- base goerli
-# https://chainlist.org/chain/84531
-# https://goerli.basescan.org/
+# Chain Info: https://chainlist.org/chain/84531
+# Block Explorer: https://goerli.basescan.org/
 # ------------------------------------------------
 # NODE_CHAIN_RPC_URL="https://goerli.base.org"
-# # https://goerli.basescan.org/address/0x75ce7aee59347612ed29ff5c249e34ed1bc17d15
+# # Signer Info: https://goerli.basescan.org/address/0x75ce7aee59347612ed29ff5c249e34ed1bc17d15
 # NODE_SIGNER_SECRET=""
 # NODE_ENTRY_POINT_ADDRESS="0x7A72c167643e58b879829e45e0680F03b438cbf8"
 # NODE_DEX_MANAGER_ADDRESS="0x205576b546d57E9eD42648F62eA60A2E598dE4A1"

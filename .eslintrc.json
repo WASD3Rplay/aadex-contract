@@ -7,7 +7,7 @@
         "artifacts": false,
         "assert": false,
         "contract": false,
-        "web3": false,
+        "web3": false
     },
     "extends": [
         "eslint:recommended",

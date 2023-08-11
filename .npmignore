@@ -5,8 +5,6 @@ node_modules/
 contracts/
 scripts/
 test/
-typechain-types/
-lib/typechain-types/**/samples/
 .env
 .eslintrc.json
 .prettierrc.json

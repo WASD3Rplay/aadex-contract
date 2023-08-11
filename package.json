@@ -1,63 +1,67 @@
 {
-	"name": "@wasd3r/aadex-contract",
-	"engines": {
-		"node": ">=18.0.0"
-	},
-	"version": "0.1.0",
-	"description": "Wasd3r AA Dex smart contracts",
-	"license": "MIT",
-	"scripts": {
-		"clean": "hardhat clean",
-		"compile": "hardhat compile",
-		"build": "tsc --build",
-		"deploy-aadex": "ts-node scripts/deploy_aadex.ts",
-		"deposit-native": "ts-node scripts/deposit_native.ts",
-		"deploy-sample-usdt": "ts-node scripts/deploy_sample_usdt.ts",
-		"deposit-sample-usdt": "ts-node scripts/deposit_sample_usdt.ts",
-		"deploy-sample-weth": "ts-node scripts/deploy_sample_weth.ts",
-		"swap-sample-native-usdt": "ts-node scripts/swap_sample_native_usdt.ts",
-		"test": "hardhat test"
-	},
-	"dependencies": {
-		"@ethersproject/abi": "^5.7.0",
-		"@ethersproject/abstract-provider": "^5.7.0",
-		"@ethersproject/bytes": "^5.7.0",
-		"@ethersproject/properties": "^5.7.0",
-		"@ethersproject/providers": "^5.7.2",
-		"@openzeppelin/contracts": "^4.9.2",
-		"dotenv": "^16.3.1",
-		"ethers": "^5.7.2",
-		"hardhat": "^2.17.0",
-		"ts-node": "^10.9.1",
-		"typescript": "^5.1.6"
-	},
-	"devDependencies": {
-		"@nomicfoundation/hardhat-toolbox": "^2.0.2",
-		"@nomiclabs/hardhat-ethers": "^2.2.3",
-		"@nomiclabs/hardhat-waffle": "^2.0.6",
-		"@trivago/prettier-plugin-sort-imports": "^4.2.0",
-		"eslint": "^8.45.0"
-	},
-	"main": "./lib/src/index.js",
-	"author": {
-		"name": "Wasd3r",
-		"email": "dev@wasd3r.xyz",
-		"url": "https://wasd3r.xyz"
-	},
-	"homepage": "https://github.com/WASD3Rplay/aadex-contract",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/WASD3Rplay/aadex-contract.git"
-	},
-	"keywords": [
-		"wasd3r",
-		"evm",
-		"solidity",
-		"account",
-		"abstraction",
-		"eip",
-		"4337",
-		"aadex",
-		"dex"
-	]
+  "name": "@wasd3rplay/aadex-contract",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "version": "0.1.2",
+  "description": "Wasd3r AA Dex smart contracts",
+  "license": "MIT",
+  "scripts": {
+    "clean": "hardhat clean",
+    "compile": "hardhat compile",
+    "build": "tsc --build",
+    "deploy-aadex": "ts-node scripts/deploy_aadex.ts",
+    "deposit-native": "ts-node scripts/deposit_native.ts",
+    "deploy-sample-usdt": "ts-node scripts/deploy_sample_usdt.ts",
+    "deposit-sample-usdt": "ts-node scripts/deposit_sample_usdt.ts",
+    "deploy-sample-weth": "ts-node scripts/deploy_sample_weth.ts",
+    "swap-sample-native-usdt": "ts-node scripts/swap_sample_native_usdt.ts",
+    "test": "hardhat test"
+  },
+  "dependencies": {
+    "@ethersproject/abi": "^5.7.0",
+    "@ethersproject/abstract-provider": "^5.7.0",
+    "@ethersproject/bytes": "^5.7.0",
+    "@ethersproject/properties": "^5.7.0",
+    "@ethersproject/providers": "^5.7.2",
+    "@openzeppelin/contracts": "^4.9.2",
+    "dotenv": "^16.3.1",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.17.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-waffle": "^2.0.6",
+    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
+    "eslint": "^8.45.0"
+  },
+  "main": "./lib/src/index.js",
+  "author": "Wasd3r <dev@wasd3r.xyz> (https://wasd3r.xyz)",
+  "homepage": "https://github.com/WASD3Rplay/aadex-contract",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WASD3Rplay/aadex-contract.git"
+  },
+  "keywords": [
+    "wasd3r",
+    "evm",
+    "solidity",
+    "account",
+    "abstraction",
+    "eip",
+    "4337",
+    "aadex",
+    "dex"
+  ],
+  "types": "./lib/src/index.d.ts",
+  "bugs": {
+    "url": "https://github.com/WASD3Rplay/aadex-contract/issues"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  }
 }
