@@ -1,2 +1,3 @@
 lib/
 typechain-types/
+dotenv

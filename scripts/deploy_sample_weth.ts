@@ -10,24 +10,24 @@ import {
   getTokenContractAddress,
 } from "../src"
 import { deployERC20Contract } from "../src/contract/erc20"
-import { Wasd3rSampleErc20USDT__factory } from "../src/contract/types"
+import { Wasd3rSampleErc20WrappedETH__factory } from "../src/contract/types"
 
 const main = async (): Promise<void> => {
   const ethProvider = getEthProvider()
-  const usdtOwnerWallet = new Wallet(getSignerSecret(), ethProvider.provider)
+  const wethOwnerWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 
-  const usdtCtrl = await deployERC20Contract(
-    Wasd3rSampleErc20USDT__factory,
+  const wethCtrl = await deployERC20Contract(
+    Wasd3rSampleErc20WrappedETH__factory,
     ethProvider,
-    usdtOwnerWallet,
+    wethOwnerWallet,
   )
   // For register only, comment the above and comment out the below
   /*
-  const usdtCtrl = await getERC20ContractCtrl(
-    Wasd3rSampleErc20USDT__factory,
+  const wethCtrl = await getERC20ContractCtrl(
+    Wasd3rSampleErc20WrappedETH__factory,
     ethProvider,
-    usdtOwnerWallet,
-    getTokenContractAddress("USDT"),
+    wethOwnerWallet,
+    getTokenContractAddress("WETH"),
   )
   */
 
@@ -43,16 +43,16 @@ const main = async (): Promise<void> => {
   // Register deployed USDT in AADex
   const txreceipt = await dexmanagerCtrl.registerDexToken(
     1,
-    usdtCtrl.contractAddress,
+    wethCtrl.contractAddress,
     "USDT",
-    await usdtCtrl.getDecimals(),
+    await wethCtrl.getDecimals(),
     0,
   )
-  const usdtTokenKey = txreceipt.events[0].args?.[1]
+  const wethTokenKey = txreceipt.events[0].args?.[1]
 
-  console.log("USDT owner address:", usdtOwnerWallet.address)
-  console.log("Sample USDT contract address:", usdtCtrl.contractAddress)
-  console.log("Sample USDT token key:", usdtTokenKey)
+  console.log("WETH owner address:", wethOwnerWallet.address)
+  console.log("Sample WETH contract address:", wethCtrl.contractAddress)
+  console.log("Sample WETH token key:", wethTokenKey)
 }
 
 main().catch((error) => {
