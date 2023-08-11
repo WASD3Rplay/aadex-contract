@@ -1,4 +1,4 @@
-import { Wallet, ethers } from "ethers"
+import { ethers } from "ethers"
 
 import {
   getDexManagerAddress,
@@ -14,7 +14,7 @@ import { Wasd3rSampleErc20USDT__factory } from "../src/contract/types"
 const main = async (): Promise<void> => {
   const ethProvider = getEthProvider()
 
-  const signerWallet = new Wallet(getSignerSecret(), ethProvider.provider)
+  const signerWallet = ethProvider.loadWallet(getSignerSecret())
 
   const usdtContract = await getERC20ContractCtrl(
     Wasd3rSampleErc20USDT__factory,

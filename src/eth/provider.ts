@@ -1,4 +1,4 @@
-import { BigNumber, BytesLike, ethers } from "ethers"
+import { BigNumber, BytesLike, Wallet, ethers } from "ethers"
 
 import { getChainRpcUrl } from "../config"
 
@@ -42,6 +42,18 @@ export class EthProvider {
   getBaseFeePerGas = async (): Promise<BigNumber> => {
     const block = await this.provider.getBlock("latest")
     return block.baseFeePerGas
+  }
+
+  getWallet = (addressOrIndex?: string | number): Wallet => {
+    return this.provider.getSigner(addressOrIndex)
+  }
+
+  loadWallet = (privateKey: string): Wallet => {
+    return new Wallet(privateKey, this.provider)
+  }
+
+  loadWalletFromMnemonic = (mnemonic: string): Wallet => {
+    return Wallet.fromMnemonic(mnemonic).connect(this.provider)
   }
 }
 

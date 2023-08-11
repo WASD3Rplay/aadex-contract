@@ -2,6 +2,39 @@
 
 Smart Contracts for AA (EIP-4337) decentrelized exchange, DEX.
 
+## Install
+
+```shell
+npm add @wasd3rplay/aadex-contract
+```
+
+### Quickstart
+
+```typescript
+import {
+  getDexManagerContractCtrl,
+  getEthProvider,
+} from "@wasd3rplay/aadex-contract";
+import { Wallet } from "ethers";
+
+const ENTRY_POINT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const DEX_MANAGER_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+
+const ethProvider = getEthProvider("http://127.0.0.1:8545/");
+const signerWallet = ethProvider.loadWalletFromMnemonic(
+  "announce room limb pattern dry unit scale effort smooth jazz weasel alcohol",
+);
+
+const contractCtrl = await getDexManagerContractCtrl(
+  ethProvider,
+  signerWallet,
+  ENTRY_POINT_ADDRESS,
+  DEX_MANAGER_ADDRESS,
+);
+const nativeTokenKey = await contractCtrl.getNativeTokenKey();
+console.log("Native token (ETH) key in AA DEX:", nativeTokenKey);
+```
+
 ## Setup Dev Env
 
 ### Clone repository
