@@ -44,7 +44,7 @@ const main = async (): Promise<void> => {
   const txreceipt = await dexmanagerCtrl.registerDexToken(
     1,
     wethCtrl.contractAddress,
-    "USDT",
+    "WETH",
     await wethCtrl.getDecimals(),
     0,
   )

@@ -16,6 +16,7 @@
     "deposit-sample-usdt": "ts-node scripts/deposit_sample_usdt.ts",
     "deploy-sample-weth": "ts-node scripts/deploy_sample_weth.ts",
     "swap-sample-native-usdt": "ts-node scripts/swap_sample_native_usdt.ts",
+    "swap-sample-simple-native-usdt": "ts-node scripts/swap_sample_simple_native_usdt.ts",
     "test": "hardhat test"
   },
   "dependencies": {
