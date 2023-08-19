@@ -1,4 +1,6 @@
 # AA DEX contract
+[![GitHub version](https://badge.fury.io/gh/wasd3rplay%2Faadex-contract.svg)](https://badge.fury.io/gh/wasd3rplay%2Faadex-contract)
+[![npm version](https://badge.fury.io/js/@wasd3rplay%2Faadex-contract.svg)](https://badge.fury.io/js/@wasd3rplay%2Faadex-contract)
 
 Smart Contracts for AA (EIP-4337) decentrelized exchange, DEX.
 
