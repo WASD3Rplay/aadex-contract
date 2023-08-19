@@ -18,6 +18,18 @@ export class EthProvider {
     return this.provider.getBlockNumber()
   }
 
+  getTx = async (txhash: string) => {
+    return this.provider.getTransaction(txhash)
+  }
+
+  waitForTx = async (txhash: string) => {
+    return this.provider.waitForTransaction(txhash)
+  }
+
+  getTxReceipt = async (txhash: string) => {
+    return this.provider.getTransactionReceipt(txhash)
+  }
+
   getBalance = async (addr: string): Promise<string> => {
     const balance = await this.provider.getBalance(addr)
     return ethers.utils.formatEther(balance)
