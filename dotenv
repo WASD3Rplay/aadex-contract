@@ -15,6 +15,27 @@ NODE_TOKEN_CONTRACT_ADDRESS_USDT="0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
 NODE_TOKEN_CONTRACT_ADDRESS_IVE="0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
 
 
+# -------------- klaytn baobab
+# Chain Info: https://chainlist.org/chain/1001
+# Block Explorer: https://baobab.klaytnfinder.io/
+# ------------------------------------------------
+# NODE_CHAIN_RPC_URL="https://public-node-api.klaytnapi.com/v1/baobab"
+# # Signer Info: https://baobab.klaytnfinder.io/account/0x38d4077Fb8986f1A12C04Ff7d17F78d82a15C0Fb
+# NODE_SIGNER_SECRET=""
+# NODE_ENTRY_POINT_ADDRESS="0x6293106b2b5144ef523962de5b4542ba890f3418"
+# NODE_DEX_MANAGER_ADDRESS="0x5a5c469526d9e12f1e06acd8ae70950e5014e1f1"
+
+# # Token contract addresses
+# # USDT owner address: 0x38d4077Fb8986f1A12C04Ff7d17F78d82a15C0Fb
+# # Sample USDT contract address: 0xB70168BDD43981D156fd4e83376Bdf3b36a8d4b4
+# # Sample USDT token key: 1:0xb70168bdd43981d156fd4e83376bdf3b36a8d4b4:0:6
+# NODE_TOKEN_CONTRACT_ADDRESS_USDT="0xB70168BDD43981D156fd4e83376Bdf3b36a8d4b4"
+# # WETH owner address: 0x38d4077Fb8986f1A12C04Ff7d17F78d82a15C0Fb
+# # Sample WETH contract address: 0xbB51b32D3953E972902fb5E6E21E91AE07b6F2C1
+# # Sample WETH token key: 1:0xbb51b32d3953e972902fb5e6e21e91ae07b6f2c1:0:18
+# NODE_TOKEN_CONTRACT_ADDRESS_WETH="0xbB51b32D3953E972902fb5E6E21E91AE07b6F2C1"
+
+
 # -------------- optimism goerli
 # Chain Info: https://chainlist.org/chain/420
 # Block Explorer: https://goerli-optimism.etherscan.io/

@@ -1,34 +1,35 @@
 import { BigNumber, Wallet, ethers } from "ethers"
 
+import { SampleErc20__factory } from "../contract/types"
 import { EthProvider, TxContractReceipt } from "../eth"
 
 export const deployERC20Contract = async (
-  contractFactoryClass: any,
   ethProvider: EthProvider,
   signer: Wallet,
+  contractFactoryClass: any,
 ): Promise<ERC20ContractCtrl> => {
   const contract = await new contractFactoryClass(signer).deploy()
   await contract.deployed()
 
   return new ERC20ContractCtrl(
-    contractFactoryClass,
     ethProvider,
     contract.address,
     signer,
+    contractFactoryClass,
   )
 }
 
 export const getERC20ContractCtrl = async (
-  contractFactoryClass: any,
   ethProvider: EthProvider,
   signer: Wallet,
   contractAddr?: string,
+  contractFactoryClass?: any,
 ): Promise<ERC20ContractCtrl> => {
   if (contractAddr === undefined) {
     return await deployERC20Contract(ethProvider, contractFactoryClass, signer)
   }
 
-  return new ERC20ContractCtrl(contractFactoryClass, ethProvider, contractAddr, signer)
+  return new ERC20ContractCtrl(ethProvider, contractAddr, signer, contractFactoryClass)
 }
 
 export class ERC20ContractCtrl {
@@ -36,10 +37,10 @@ export class ERC20ContractCtrl {
   decimals: number = 0
 
   constructor(
-    readonly contractFactoryClass: any,
     readonly ethProvider: EthProvider,
     readonly contractAddress: string,
     readonly signer: Wallet,
+    readonly contractFactoryClass: any = SampleErc20__factory,
   ) {
     this.contract = this.contractFactoryClass.connect(this.contractAddress, this.signer)
   }
@@ -47,10 +48,10 @@ export class ERC20ContractCtrl {
   getNewContract = (signer: Wallet): any => {
     // eslint-disable-next-line new-cap
     return new ERC20ContractCtrl(
-      this.contractFactoryClass,
       this.ethProvider,
       this.contractAddress,
       signer,
+      this.contractFactoryClass,
     )
   }
 

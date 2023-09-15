@@ -3,7 +3,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "Wasd3r AA Dex smart contracts",
   "license": "MIT",
   "scripts": {

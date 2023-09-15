@@ -17,9 +17,9 @@ const main = async (): Promise<void> => {
   const wethOwnerWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 
   const wethCtrl = await deployERC20Contract(
-    Wasd3rSampleErc20WrappedETH__factory,
     ethProvider,
     wethOwnerWallet,
+    Wasd3rSampleErc20WrappedETH__factory,
   )
   // For register only, comment the above and comment out the below
   /*

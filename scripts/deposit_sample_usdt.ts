@@ -17,10 +17,10 @@ const main = async (): Promise<void> => {
   const signerWallet = ethProvider.loadWallet(getSignerSecret())
 
   const usdtContract = await getERC20ContractCtrl(
-    Wasd3rSampleErc20USDT__factory,
     ethProvider,
     signerWallet,
     getTokenContractAddress("USDT"),
+    Wasd3rSampleErc20USDT__factory,
   )
 
   const dexManagerContractCtrl = await getDexManagerContractCtrl(
