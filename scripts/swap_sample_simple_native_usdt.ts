@@ -55,10 +55,10 @@ const getAdminDexManagerContractCtrl = async () => {
 const getAdminUSDTContractCtrl = async () => {
   if (_usdtContractCtrl === undefined) {
     _usdtContractCtrl = await getERC20ContractCtrl(
-      Wasd3rSampleErc20USDT__factory,
       ethProvider,
       adminWallet,
       getTokenContractAddress("USDT"),
+      Wasd3rSampleErc20USDT__factory,
     )
   }
   return _usdtContractCtrl
@@ -115,10 +115,10 @@ const depositUSDT = async (signer: Wallet, amount: string): Promise<void> => {
   //console.debug(`Account (${signer.address}):`)
 
   const usdtContract = await getERC20ContractCtrl(
-    Wasd3rSampleErc20USDT__factory,
     ethProvider,
     signer,
     getTokenContractAddress("USDT"),
+    Wasd3rSampleErc20USDT__factory,
   )
 
   const dexManagerContractCtrl = await getDexManagerContractCtrl(
@@ -158,6 +158,21 @@ const localUserOpsSender = (signer: Signer, beneficiary?: string): SendUserOpsFu
   )
 
   return async function (maxPriorityFeePerGas, maxFeePerGas, userOps) {
+    console.log(" !!!! ", {
+      s2: `${maxPriorityFeePerGas}`,
+      s3: `${maxFeePerGas}`,
+    })
+    for (let i = 0; i < userOps.length; i++) {
+      const userOp = userOps[i]
+      console.log(" >>>>>> ", {
+        preVGs: `${userOp.preVerificationGas}`,
+        vgls: `${userOp.verificationGasLimit}`,
+        cgls: `${userOp.callGasLimit}`,
+        mpfpgs: `${userOp.maxPriorityFeePerGas}`,
+        mfpgs: `${userOp.maxFeePerGas}`,
+      })
+    }
+
     const tx = await entryPoint.handleOps(
       userOps,
       beneficiary ?? (await signer.getAddress()),
@@ -207,10 +222,10 @@ const createDexOrder = async (
   const usdtContractAddress = getTokenContractAddress("USDT")
 
   const usdtContract = await getERC20ContractCtrl(
-    Wasd3rSampleErc20USDT__factory,
     ethProvider,
     signer,
     usdtContractAddress,
+    Wasd3rSampleErc20USDT__factory,
   )
   const usdtDecimals = await usdtContract.getDecimals()
 
@@ -246,10 +261,10 @@ const getDexUSDTBalanceOf = async (addr: string): Promise<string> => {
 const getAdminWETHContractCtrl = async () => {
   if (_wethContractCtrl === undefined) {
     _wethContractCtrl = await getERC20ContractCtrl(
-      Wasd3rSampleErc20WrappedETH__factory,
       ethProvider,
       adminWallet,
       getTokenContractAddress("WETH"),
+      Wasd3rSampleErc20WrappedETH__factory,
     )
   }
   return _wethContractCtrl
@@ -301,10 +316,32 @@ const printAccountBalances = async () => {
 }
 
 const main = async (): Promise<void> => {
+  /*
+  try {
+    const txhash = "0x5a9e17335cd06f45afb4e11571dd0a27b45173994a38c7548009e9f4fe6ed1d3"
+    const tx123 = await ethProvider.getTx(txhash)
+    //console.log(tx123)
+    let txreceipt123 = await ethProvider.waitForTx(txhash)
+    console.log("Wait For TX:", txreceipt123)
+    //console.log(txreceipt123.receipt)
+    //console.log(`${txreceipt123.receipt.gasUsed}`)
+    //txreceipt123 = await ethProvider.getTxReceipt(txhash)
+    //console.log(txreceipt123)
+  } catch (error: any) {
+    let txreceipt123 = error.receipt
+    console.log(txreceipt123)
+    console.log(`${txreceipt123.gasUsed}`, `${txreceipt123.cumulativeGasUsed}`)
+  }
+  return
+
   console.info("Before deposit ..........")
   await printAccountBalances()
   console.info("")
   return
+  */
+
+  console.info("Before deposit ..........")
+  await printAccountBalances()
 
   // deposits ETH
   await depositNativeToken(adminWallet, "0.01")

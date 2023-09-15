@@ -54,10 +54,10 @@ const getAdminDexManagerContractCtrl = async () => {
 const getAdminUSDTContractCtrl = async () => {
   if (_usdtContractCtrl === undefined) {
     _usdtContractCtrl = await getERC20ContractCtrl(
-      Wasd3rSampleErc20USDT__factory,
       ethProvider,
       adminWallet,
       getTokenContractAddress("USDT"),
+      Wasd3rSampleErc20USDT__factory,
     )
   }
   return _usdtContractCtrl
@@ -114,10 +114,10 @@ const depositUSDT = async (signer: Wallet, amount: string): Promise<void> => {
   //console.debug(`Account (${signer.address}):`)
 
   const usdtContract = await getERC20ContractCtrl(
-    Wasd3rSampleErc20USDT__factory,
     ethProvider,
     signer,
     getTokenContractAddress("USDT"),
+    Wasd3rSampleErc20USDT__factory,
   )
 
   const dexManagerContractCtrl = await getDexManagerContractCtrl(
@@ -210,10 +210,10 @@ const createDexOrder = async (
   const usdtContractAddress = getTokenContractAddress("USDT")
 
   const usdtContract = await getERC20ContractCtrl(
-    Wasd3rSampleErc20USDT__factory,
     ethProvider,
     signer,
     usdtContractAddress,
+    Wasd3rSampleErc20USDT__factory,
   )
   const usdtDecimals = await usdtContract.getDecimals()
 

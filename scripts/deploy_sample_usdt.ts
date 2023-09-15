@@ -17,9 +17,9 @@ const main = async (): Promise<void> => {
   const usdtOwnerWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 
   const usdtCtrl = await deployERC20Contract(
-    Wasd3rSampleErc20USDT__factory,
     ethProvider,
     usdtOwnerWallet,
+    Wasd3rSampleErc20USDT__factory,
   )
   // For register only, comment the above and comment out the below
   /*

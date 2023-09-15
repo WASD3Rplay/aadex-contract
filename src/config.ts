@@ -6,7 +6,7 @@ export const getChainRpcUrl = (): string => {
 
 export const getSignerSecret = (throwErr = true): string => {
   const value = process.env.NODE_SIGNER_SECRET
-  if (throwErr && value === undefined) {
+  if (throwErr && (value === undefined || value.length === 0)) {
     throw new Error("Cannot find a signer secret")
   }
   return value ?? ""
