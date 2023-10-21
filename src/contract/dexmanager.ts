@@ -225,7 +225,7 @@ export class DexManagerContractCtrl {
   withdrawDexToken = async (
     withdrawAddr: string,
     tokenKey: string,
-    amount: number,
+    amount: number | BigNumber,
   ): Promise<TxContractReceipt> => {
     const tx = await this.contract.withdrawDexToken(withdrawAddr, tokenKey, amount)
     const receipt = await tx.wait()
