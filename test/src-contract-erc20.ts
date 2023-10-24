@@ -9,11 +9,11 @@ describe("src > contract > erc20", function () {
 
   before("deploy the contract", async function () {
     contractCtrl = await deployERC20Contract(
-      Wasd3rSampleErc20USDT__factory,
       hre.ethers.provider,
       (
         await hre.ethers.getSigners()
       )[0],
+      Wasd3rSampleErc20USDT__factory,
     )
   })
 

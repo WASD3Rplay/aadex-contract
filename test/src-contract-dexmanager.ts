@@ -294,6 +294,68 @@ describe("src > contract > dexmanager", function () {
     expect(dexBalance).to.equal(depositAmount.mul(2))
   })
 
+  it("Should deposit ERC20 token with native together", async function () {
+    expect(await dexmanagerCtrl.isValidDexToken(usdtTokenKey)).to.equal(true)
+
+    let dexBalance = await dexmanagerCtrl.getDexBalanceOf(
+      suSigner.address,
+      usdtTokenKey,
+    )
+    expect(dexBalance).to.equal(BigInt("2000000000"))
+
+    const depositAmount = ethers.utils.parseUnits("1000", 6) // 1000 USDT
+
+    // 1. approve first
+    const txreceipt1 = await usdtCtrl.approve(
+      dexmanagerCtrl.contractAddress,
+      depositAmount,
+    )
+    expect(txreceipt1.events.length).to.equal(1)
+    expect(txreceipt1.events[0].event).to.equal("Approval")
+    expect(txreceipt1.events[0].args[0]).to.equal(suSigner.address)
+    expect(txreceipt1.events[0].args[1]).to.equal(dexmanagerCtrl.contractAddress)
+    expect(txreceipt1.events[0].args[2]).to.equal(depositAmount)
+
+    // 2. Deposit into DexManager
+    const txreceipt2 = await dexmanagerCtrl.depositDexToken(
+      suSigner.address,
+      usdtTokenKey,
+      depositAmount,
+      "1", // 1 ETH
+    )
+    expect(txreceipt2.events.length >= 2).to.true
+    let event1, event2
+    for (let i = 0; i < txreceipt2.events.length; i++) {
+      if (txreceipt2.events[i].event === "DexAccountDeposited") {
+        if (event1 === undefined) {
+          event1 = txreceipt2.events[i]
+        } else {
+          event2 = txreceipt2.events[i]
+          break
+        }
+      }
+    }
+    expect(event1.event).to.equal("DexAccountDeposited")
+    expect(event1.args[0]).to.equal(suSigner.address)
+    expect(event1.args[1]).to.equal(suSigner.address)
+    expect(event1.args[2]).to.equal(nativeTokenKey)
+    expect(event1.args[3]).to.equal(ethers.utils.parseEther("1"))
+    expect(event1.args[4]).to.equal(ethers.utils.parseEther("3"))
+
+    expect(event2.event).to.equal("DexAccountDeposited")
+    expect(event2.args[0]).to.equal(suSigner.address)
+    expect(event2.args[1]).to.equal(suSigner.address)
+    expect(event2.args[2]).to.equal(usdtTokenKey)
+    expect(event2.args[3]).to.equal(depositAmount)
+    expect(event2.args[4]).to.equal(ethers.utils.parseUnits("3000", 6))
+
+    dexBalance = await dexmanagerCtrl.getDexBalanceOf(suSigner.address, usdtTokenKey)
+    expect(dexBalance).to.equal(ethers.utils.parseUnits("3000", 6))
+
+    dexBalance = await dexmanagerCtrl.getDexBalanceOf(suSigner.address, nativeTokenKey)
+    expect(dexBalance).to.equal(ethers.utils.parseEther("3"))
+  })
+
   /*
   it("Should enable/disable account", async function () {
     const account = (await hre.ethers.getSigners())[2]

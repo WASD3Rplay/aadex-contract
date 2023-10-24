@@ -327,4 +327,129 @@ describe("Wasd3r AA Dex: Dex Manager", function () {
       ).to.true
     }
   })
+
+  it("Should swap between buyer and seller 2", async function () {
+    // Superuser has 0.01 ETH and 15 USDT by the previous swap
+    let suNativeBalance = await dexManagerContract.getDexNativeBalanceOf(
+      suSigner.address,
+    )
+    expect(suNativeBalance).to.equal(ethers.utils.parseEther("0.01"))
+    let suUsdtBalance = await dexManagerContract.getDexBalanceOf(
+      suSigner.address,
+      usdtTokenKey,
+    )
+    expect(suUsdtBalance).to.equal(ethers.utils.parseUnits("15", 6))
+    // Alice has 9 ETH and 1485 USDT by the previous swap
+    let aliceNativeBalance = await dexManagerContract.getDexNativeBalanceOf(
+      alice.address,
+    )
+    expect(aliceNativeBalance).to.equal(ethers.utils.parseEther("9"))
+    let aliceUsdtBalance = await dexManagerContract.getDexBalanceOf(
+      alice.address,
+      usdtTokenKey,
+    )
+    expect(aliceUsdtBalance).to.equal(ethers.utils.parseUnits("1485", 6))
+    // Bob has 0.99 ETH and 8500 USDT by the previous swap
+    let bobNativeBalance = await dexManagerContract.getDexNativeBalanceOf(bob.address)
+    expect(bobNativeBalance).to.equal(ethers.utils.parseEther("0.99"))
+    let bobUsdtBalance = await dexManagerContract.getDexBalanceOf(
+      bob.address,
+      usdtTokenKey,
+    )
+    expect(bobUsdtBalance).to.equal(ethers.utils.parseUnits("8500", 6))
+
+    const ethProvider = new EthProvider(hre.ethers.provider)
+    const chainId = await ethProvider.getChainId()
+    const price = ethers.utils.parseUnits("0.99", 6) // 0.99 USDT for 1 USDT
+
+    // create buy dex order: Bob wants to buy 8.5 USDT.
+    const buyDexOrder = await createNSignDexOrder(
+      chainId,
+      dexManagerContract.address,
+      bob,
+      1, // orderId
+      DexOrderType.BUY,
+      usdtContract.address, // base ticker contract address
+      usdtContract.address, // quote ticker contract address
+      price,
+      ethers.utils.parseUnits("8.5", 6), // 8.5 USDT, request amount
+    )
+
+    // create sell dex order: Alice wants to sell 10 USDT.
+    const sellDexOrder = await createNSignDexOrder(
+      chainId,
+      dexManagerContract.address,
+      alice,
+      2, // orderId
+      DexOrderType.SELL,
+      usdtContract.address, // base ticker contract address
+      usdtContract.address, // quote ticker contract address
+      price,
+      ethers.utils.parseUnits("10", 6),
+    )
+
+    // swap: Alice sells 8.5 USDT for 0.99 USDT to Bob, fee is 1% each.
+    const swapBaseAmount = ethers.utils.parseUnits("8.5", 6)
+    const swapQuoteAmount = ethers.utils.parseUnits("8.415", 6)
+    const swapBaseFeeAmount = swapBaseAmount.div(100)
+    const swapQuoteFeeAmount = swapQuoteAmount.div(100)
+    await expect(
+      dexManagerContract.swapByAdmin(
+        1000, // tradeId
+        100, // tradeItemId
+        buyDexOrder,
+        bob.address,
+        swapBaseFeeAmount, // buyer's fee as the base ticker
+        sellDexOrder,
+        alice.address,
+        swapQuoteFeeAmount, // seller's fee as the quote ticker
+        usdtTokenKey,
+        swapBaseAmount,
+        usdtTokenKey,
+        swapQuoteAmount,
+        suSigner.address,
+      ),
+    )
+      .to.emit(dexManagerContract, "DexSwapped")
+      .withArgs(
+        1000,
+        100,
+        bob.address,
+        alice.address,
+        swapBaseFeeAmount,
+        swapQuoteFeeAmount,
+        usdtTokenKey,
+        swapBaseAmount,
+        usdtTokenKey,
+        swapQuoteAmount,
+        suSigner.address,
+      )
+
+    // Superuser should have base fee amount and quote fee amount
+    const suUsdtBalance2 = await dexManagerContract.getDexBalanceOf(
+      suSigner.address,
+      usdtTokenKey,
+    )
+    expect(suUsdtBalance2).to.equal(
+      suUsdtBalance.add(swapBaseFeeAmount).add(swapQuoteFeeAmount),
+    )
+
+    // Alice's new balance is old_balance - swapBaseAmount + swapQuoteAmount - swapQuoteFeeAmount
+    const aliceNewUsdtBalance = await dexManagerContract.getDexBalanceOf(
+      alice.address,
+      usdtTokenKey,
+    )
+    expect(aliceNewUsdtBalance).to.equal(
+      aliceUsdtBalance.sub(swapBaseAmount).add(swapQuoteAmount).sub(swapQuoteFeeAmount),
+    )
+
+    // Bob's new balance is old_balance - swapQuoteAmount + swapBaseAmount - swapBaseFeeAmount
+    const bobNewUsdtBalance = await dexManagerContract.getDexBalanceOf(
+      bob.address,
+      usdtTokenKey,
+    )
+    expect(bobNewUsdtBalance).to.equal(
+      bobUsdtBalance.sub(swapQuoteAmount).add(swapBaseAmount).sub(swapBaseFeeAmount),
+    )
+  })
 })
