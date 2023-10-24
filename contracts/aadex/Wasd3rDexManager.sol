@@ -56,7 +56,9 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
     bytes32 hash = userOpHash.toEthSignedMessageHash();
     address userOpSigner = hash.recover(userOp.signature);
 
-    if (!dexAdmins[userOpSigner]) return SIG_VALIDATION_FAILED;
+    if (!dexAdmins[userOpSigner]) {
+      return _packValidationData(true, 0, 0);
+    }
     return 0;
   }
 
@@ -125,7 +127,7 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
     // 2. Verify parameters
     require(baseTokenAmount <= sellerOrder.requestAmount, 'Request amount is not acceptable in seller dex order');
     require(
-      quoteTokenAmount <= (buyerOrder.requestAmount / 10 ** baseDti.decimals) * buyerOrder.price,
+      quoteTokenAmount <= (buyerOrder.requestAmount * buyerOrder.price) / 10 ** baseDti.decimals,
       'Request amount is not acceptable in buyer dex order'
     );
 
