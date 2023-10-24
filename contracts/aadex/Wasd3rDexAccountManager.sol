@@ -190,6 +190,13 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     else if (dti.tokenType == 2) {
       IWasd3rERC1155 tokenContract = IWasd3rERC1155(dti.contractAddress);
       tokenContract.safeTransferFrom(msg.sender, address(this), dti.tokenId, amount, '');
+    } else {
+      require(false, 'Unsupported token type');
+    }
+
+    // When the message sender sends native token accidently,
+    if (msg.value > 0) {
+      depositDexNativeToken(to);
     }
 
     _depositDexToken(msg.sender, to, tokenKey, amount);
@@ -227,6 +234,8 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     else if (dti.tokenType == 2) {
       IWasd3rERC1155 tokenContract = IWasd3rERC1155(dti.contractAddress);
       tokenContract.safeTransferFrom(address(this), withdrawAddress, dti.tokenId, amount, '');
+    } else {
+      require(false, 'Unsupported token type');
     }
 
     // Set the last withdraw time.

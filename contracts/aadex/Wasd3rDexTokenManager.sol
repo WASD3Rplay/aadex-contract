@@ -145,6 +145,8 @@ abstract contract Wasd3rDexTokenManager is Wasd3rDexAccessControl {
       // ERC1155 token
       // IWasd3rERC1155 tokenContract = IWasd3rERC1155(contractAddress);
       id = tokenId;
+    } else {
+      require(false, 'Unsupported token type');
     }
 
     DexTokenInfo storage dti = dexTokens[tokenKey];

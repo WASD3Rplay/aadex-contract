@@ -27,9 +27,9 @@ describe("src > contract > dexmanager", function () {
       entrypointCtrl.contractAddress,
     )
     usdtCtrl = await deployERC20Contract(
-      Wasd3rSampleErc20USDT__factory,
       hre.ethers.provider,
       suSigner,
+      Wasd3rSampleErc20USDT__factory,
     )
     usdtDecimals = await usdtCtrl.getDecimals()
 
@@ -116,6 +116,28 @@ describe("src > contract > dexmanager", function () {
     expect(txreceipt.events[0].args[6]).to.equal(0)
 
     expect(await dexmanagerCtrl.isValidDexToken(tokenKey)).to.equal(true)
+  })
+
+  it("Should fail to register unsupproted token type", async function () {
+    const tokenKey = `3:${usdtCtrl.contractAddress}:0:18`
+    expect(await dexmanagerCtrl.isValidDexToken(tokenKey)).to.equal(false)
+
+    // Register unsupported token
+    try {
+      await dexmanagerCtrl.registerDexToken(
+        3, // non-exist token type
+        usdtCtrl.contractAddress, // Not registered token contract address
+        "unsupproted_tokenm", // token name
+        18,
+        0,
+      )
+      expect(false).to.true // shouldn't be here
+    } catch (err) {
+      expect(err.reason).to.equal(
+        "VM Exception while processing transaction: reverted with reason string 'Unsupported token type'",
+      )
+    }
+    expect(await dexmanagerCtrl.isValidDexToken(tokenKey)).to.equal(false)
   })
 
   it("Should deposit native token", async function () {
