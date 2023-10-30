@@ -56,6 +56,7 @@ abstract contract Wasd3rDexAccessControl {
     require(!_isAcInit, 'The contract is already initialized');
     dexSuperuser = msg.sender;
     dexAdmins[msg.sender] = true;
+    _isAcInit = true;
   }
 
   /**
