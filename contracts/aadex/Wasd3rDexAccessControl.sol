@@ -110,7 +110,7 @@ abstract contract Wasd3rDexAccessControl {
    * (SU or ADMIN) Delete admin.
    * @param admin admin wallet address
    */
-  function deleteAdmin(address admin) public onlyDexSuOrAdmin {
+  function deleteAdmin(address admin) public onlyDexSu {
     dexAdmins[admin] = false;
     emit DexAcAdminDeleted(admin, msg.sender);
   }
