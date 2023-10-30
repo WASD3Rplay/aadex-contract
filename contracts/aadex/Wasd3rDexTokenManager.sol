@@ -43,6 +43,7 @@ abstract contract Wasd3rDexTokenManager is Wasd3rDexAccessControl {
    *    32 bit allows 150 years for unstake delay
    */
   struct DexTokenInfo {
+    bool isValid;
     address contractAddress;
     uint8 decimals;
     uint8 tokenType; // native (e.g. ETH): 0, ERC20: 1, ERC1155: 2
@@ -124,9 +125,7 @@ abstract contract Wasd3rDexTokenManager is Wasd3rDexAccessControl {
         decimals = 18;
       }
 
-      if (bytes(name).length == 0) {
-        name = '__native__';
-      }
+      name = '__native__';
     } else if (tokenType == 1) {
       tokenKey = getTokenKey(tokenType, tokenAddress, tokenId, tokenDecimals);
       // ERC20 token
@@ -149,6 +148,7 @@ abstract contract Wasd3rDexTokenManager is Wasd3rDexAccessControl {
     }
 
     DexTokenInfo storage dti = dexTokens[tokenKey];
+    dti.isValid = true;
     dti.contractAddress = contractAddress;
     dti.decimals = decimals;
     dti.tokenType = tokenType;
@@ -166,5 +166,13 @@ abstract contract Wasd3rDexTokenManager is Wasd3rDexAccessControl {
     delete dexTokens[tokenKey];
 
     emit DexTokenDeregistered(msg.sender, tokenKey);
+  }
+
+  /**
+   * Returns whether the token exists or not.
+   * @param tokenKey unique token key string
+   */
+  function isValidDexToken(string memory tokenKey) public view returns (bool) {
+    return dexTokens[tokenKey].isValid;
   }
 }

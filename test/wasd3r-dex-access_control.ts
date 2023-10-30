@@ -57,30 +57,6 @@ describe("Wasd3r AA Dex: Access Control", function () {
     expect(await contract.dexAdmins(adminSigner.address)).to.equal(false)
   })
 
-  it("Should delete an admin by admin", async function () {
-    const adminSigner1 = (await hre.ethers.getSigners())[1]
-    const adminSigner2 = (await hre.ethers.getSigners())[2]
-
-    await expect(contract.addAdmin(adminSigner1.address))
-      .to.emit(contract, "DexAcAdminAdded")
-      .withArgs(adminSigner1.address, suSigner.address)
-    expect(await contract.dexAdmins(adminSigner1.address)).to.equal(true)
-
-    await expect(contract.addAdmin(adminSigner2.address))
-      .to.emit(contract, "DexAcAdminAdded")
-      .withArgs(adminSigner2.address, suSigner.address)
-    expect(await contract.dexAdmins(adminSigner2.address)).to.equal(true)
-
-    // An admin can delete an admin.
-    const contract2 = Wasd3rDexManager__factory.connect(contract.address, adminSigner1)
-    await expect(contract2.deleteAdmin(adminSigner2.address))
-      .to.emit(contract2, "DexAcAdminDeleted")
-      .withArgs(adminSigner2.address, adminSigner1.address)
-
-    expect(await contract.dexAdmins(adminSigner1.address)).to.equal(true)
-    expect(await contract.dexAdmins(adminSigner2.address)).to.equal(false)
-  })
-
   it("Should NOT delete an admin by anonymous user", async function () {
     const adminSigner = (await hre.ethers.getSigners())[1]
     await expect(contract.addAdmin(adminSigner.address))
@@ -99,7 +75,7 @@ describe("Wasd3r AA Dex: Access Control", function () {
       expect(false, "Should not be here").to.equal(true)
     } catch (error) {
       expect(
-        error.reason.includes("Only the superuser or admin can call this function"),
+        error.reason.includes("Only the superuser can call this function"),
       ).to.equal(true)
     }
   })
