@@ -169,6 +169,8 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
   function depositDexToken(address to, string memory tokenKey, uint256 amount) public payable {
     DexTokenInfo storage dti = dexTokens[tokenKey];
 
+    require(dti.isValid, 'token is invalid');
+
     // native token
     if (dti.tokenType == 0) {
       depositDexNativeToken(to);
