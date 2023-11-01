@@ -27,7 +27,7 @@ const main = async (): Promise<void> => {
   )
   console.log("DexManager contract address:", dexManagerContractCtrl.contractAddress)
   console.log(
-    "DexManager contract address:",
+    "DexManager contract tx:",
     dexManagerDeployedContract.deployTransaction.hash,
   )
 }
