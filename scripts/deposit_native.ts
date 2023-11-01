@@ -1,6 +1,7 @@
-import { Wallet } from "ethers"
+import { Wallet, ethers } from "ethers"
 
 import {
+  ZERO_ADDRESS,
   getDexManagerAddress,
   getDexManagerContractCtrl,
   getEntryPointAddress,
@@ -26,12 +27,22 @@ const main = async (): Promise<void> => {
   )
   console.log("Native token deposit result:", receipt)
 
-  const balance = await dexManagerContractCtrl.getDexNativeBalanceOf(
-    signerWallet.address,
-  )
+  let balance = await dexManagerContractCtrl.getDexNativeBalanceOf(signerWallet.address)
 
   console.log("Native token owner address:", signerWallet.address)
-  console.log("Native token owner's balance:", balance)
+  console.log("Native token owner's balance:", ethers.utils.formatEther(balance))
+
+  const tokenKey = await dexManagerContractCtrl.getTokenKey(0, ZERO_ADDRESS, 18, 0)
+  await dexManagerContractCtrl.withdrawDexToken(
+    ZERO_ADDRESS,
+    tokenKey,
+    ethers.utils.parseEther("1"),
+  )
+
+  balance = await dexManagerContractCtrl.getDexNativeBalanceOf(signerWallet.address)
+
+  console.log("Native token owner address:", signerWallet.address)
+  console.log("Native token owner's balance:", ethers.utils.formatEther(balance))
 }
 
 main().catch((error) => {

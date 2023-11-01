@@ -96,12 +96,15 @@ export const deployDexManager = async (
   ethProvider: EthProvider,
   signer: Signer,
   entryPointContractAddr: string,
-): Promise<DexManagerContractCtrl> => {
+): Promise<{ ctrl: DexManagerContractCtrl; contract: any }> => {
   const contract = await new Wasd3rDexManager__factory(signer).deploy()
   await contract.deployed()
   await (await contract.setEntryPoint(entryPointContractAddr)).wait()
 
-  return new DexManagerContractCtrl(ethProvider, contract.address, signer)
+  return {
+    ctrl: new DexManagerContractCtrl(ethProvider, contract.address, signer),
+    contract,
+  }
 }
 
 export const getDexManagerContractCtrl = async (
@@ -111,7 +114,8 @@ export const getDexManagerContractCtrl = async (
   dexManagerContractAddr?: string,
 ): Promise<DexManagerContractCtrl> => {
   if (dexManagerContractAddr === undefined || dexManagerContractAddr.length === 0) {
-    return await deployDexManager(ethProvider, signer, entryPointContractAddr)
+    const ret = await deployDexManager(ethProvider, signer, entryPointContractAddr)
+    return ret.ctrl
   }
   return new DexManagerContractCtrl(ethProvider, dexManagerContractAddr, signer)
 }

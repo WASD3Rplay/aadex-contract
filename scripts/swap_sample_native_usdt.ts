@@ -318,14 +318,14 @@ const main = async (): Promise<void> => {
   // which price is 1 ETH for 1200 USDT.
   const dexOrder5 = await createDexOrder(daisyWallet, 5, DexOrderType.BUY, "1200", "1")
 
-  const tradeId = 1000
+  const tradeId = 1
   const usdtDecimals = await getUSDTDecimals()
 
   const baseTickerTokenkey = await getNativeTokenKey()
   const quoteTickerTokenKey = await getUSDTTokenKey()
 
   // Add swap1 (trade item 1)
-  const tradeItem1Id = 100
+  const tradeItem1Id = 1
   const swap1BuyerFee = ethers.utils.parseEther("0.001") // 0.001 ETH
   const swap1SellerFee = ethers.utils.parseUnits("1.2", usdtDecimals) // 1.2 USDT
   // Alice will sell `swap1BaseAmount` and Bill will get `swap1BaseAmount`.
@@ -349,7 +349,7 @@ const main = async (): Promise<void> => {
   )
 
   // Add swap2 (trade item 2)
-  const tradeItem2Id = 101
+  const tradeItem2Id = 2
   const swap2BuyerFee = ethers.utils.parseEther("0.004") // 0.004 ETH
   const swap2SellerFee = ethers.utils.parseUnits("4", usdtDecimals) // 4 USDT
   // Alice will sell `swap2BaseAmount` and Bill will get `swap2BaseAmount`.
@@ -373,7 +373,7 @@ const main = async (): Promise<void> => {
   )
 
   // Add swap3 (trade item 3)
-  const tradeItem3Id = 102
+  const tradeItem3Id = 3
   const swap3BuyerFee = ethers.utils.parseEther("0.01")
   const swap3SellerFee = ethers.utils.parseUnits("12", usdtDecimals)
   const swap3BaseAmount = ethers.utils.parseEther("1")
@@ -401,7 +401,7 @@ const main = async (): Promise<void> => {
   // Add swap4 (trade item 4)
   const aadexManagerContractCtrl2 = await getAADexManagerContractCtrl()
   await aadexManagerContractCtrl2.swap(
-    tradeId,
+    tradeId + 1,
     tradeItem3Id + 1,
     dexOrder3,
     billWallet.address,

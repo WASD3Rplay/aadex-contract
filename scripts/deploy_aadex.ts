@@ -9,17 +9,27 @@ const main = async (): Promise<void> => {
 
   const superuserWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 
-  const entryPointContractCtrl = await deployEntryPoint(ethProvider, superuserWallet)
+  const { ctrl: entryPointContractCtrl, contract: entryPointDeployedContract } =
+    await deployEntryPoint(ethProvider, superuserWallet)
 
-  const dexManagerContractCtrl = await deployDexManager(
-    ethProvider,
-    superuserWallet,
-    entryPointContractCtrl.contractAddress,
-  )
+  const { ctrl: dexManagerContractCtrl, contract: dexManagerDeployedContract } =
+    await deployDexManager(
+      ethProvider,
+      superuserWallet,
+      entryPointContractCtrl.contractAddress,
+    )
 
   console.log("Superuser address:", superuserWallet.address)
   console.log("EntryPoint contract address:", entryPointContractCtrl.contractAddress)
+  console.log(
+    "EntryPoint contract tx:",
+    entryPointDeployedContract.deployTransaction.hash,
+  )
   console.log("DexManager contract address:", dexManagerContractCtrl.contractAddress)
+  console.log(
+    "DexManager contract address:",
+    dexManagerDeployedContract.deployTransaction.hash,
+  )
 }
 
 main().catch((error) => {

@@ -22,14 +22,12 @@ const main = async (): Promise<void> => {
     Wasd3rSampleErc20USDT__factory,
   )
   // For register only, comment the above and comment out the below
-  /*
-  const usdtCtrl = await getERC20ContractCtrl(
-    Wasd3rSampleErc20USDT__factory,
-    ethProvider,
-    usdtOwnerWallet,
-    getTokenContractAddress("USDT"),
-  )
-  */
+  // const usdtCtrl = await getERC20ContractCtrl(
+  //   ethProvider,
+  //   usdtOwnerWallet,
+  //   getTokenContractAddress("USDT"),
+  //   Wasd3rSampleErc20USDT__factory,
+  // )
 
   const superuserWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 

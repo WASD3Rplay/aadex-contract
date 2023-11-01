@@ -8,11 +8,14 @@ import { Wasd3rDexEntryPoint, Wasd3rDexEntryPoint__factory } from "./types"
 export const deployEntryPoint = async (
   ethProvider: EthProvider,
   signer: Signer,
-): Promise<EntryPointContractCtrl> => {
+): Promise<{ ctrl: EntryPointContractCtrl; contract: any }> => {
   const contract = await new Wasd3rDexEntryPoint__factory(signer).deploy()
   await contract.deployed()
 
-  return new EntryPointContractCtrl(ethProvider, contract.address, signer)
+  return {
+    ctrl: new EntryPointContractCtrl(ethProvider, contract.address, signer),
+    contract: contract,
+  }
 }
 
 export const getEntryPointContractCtrl = async (
@@ -21,7 +24,8 @@ export const getEntryPointContractCtrl = async (
   contractAddr?: string,
 ): Promise<EntryPointContractCtrl> => {
   if (contractAddr === undefined || contractAddr.length === 0) {
-    return await deployEntryPoint(ethProvider, signer)
+    const ret = await deployEntryPoint(ethProvider, signer)
+    return ret.ctrl
   }
   return new EntryPointContractCtrl(ethProvider, contractAddr, signer)
 }
