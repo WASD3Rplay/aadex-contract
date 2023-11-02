@@ -170,6 +170,7 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     DexTokenInfo storage dti = dexTokens[tokenKey];
 
     require(dti.isValid, 'token is invalid');
+    require(msg.sender == to || dexAdmins[msg.sender], 'Only admin or owner can call this function');
 
     // native token
     if (dti.tokenType == 0) {

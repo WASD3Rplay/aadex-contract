@@ -3,84 +3,21 @@
 # The below secrets are provided when hardhat dev node (`npx hardhat node`) is running.
 
 
-# -------------- hardhat
-# ------------------------------------------------
-NODE_CHAIN_RPC_URL="http://127.0.0.1:8545/"
-NODE_SIGNER_SECRET="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
-NODE_ENTRY_POINT_ADDRESS="0x5FbDB2315678afecb367f032d93F642f64180aa3"
-NODE_DEX_MANAGER_ADDRESS="0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-
-# Token contract addresses
-NODE_TOKEN_CONTRACT_ADDRESS_USDT="0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
-NODE_TOKEN_CONTRACT_ADDRESS_IVE="0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
-
-
-# -------------- klaytn baobab
-# Chain Info: https://chainlist.org/chain/1001
-# Block Explorer: https://baobab.klaytnfinder.io/
-# ------------------------------------------------
-# NODE_CHAIN_RPC_URL="https://public-node-api.klaytnapi.com/v1/baobab"
-# # Signer Info: https://baobab.klaytnfinder.io/account/0x38d4077Fb8986f1A12C04Ff7d17F78d82a15C0Fb
-# NODE_SIGNER_SECRET=""
-# NODE_ENTRY_POINT_ADDRESS="0x6293106b2b5144ef523962de5b4542ba890f3418"
-# NODE_DEX_MANAGER_ADDRESS="0x5a5c469526d9e12f1e06acd8ae70950e5014e1f1"
-
-# # Token contract addresses
-# # USDT owner address: 0x38d4077Fb8986f1A12C04Ff7d17F78d82a15C0Fb
-# # Sample USDT contract address: 0xB70168BDD43981D156fd4e83376Bdf3b36a8d4b4
-# # Sample USDT token key: 1:0xb70168bdd43981d156fd4e83376bdf3b36a8d4b4:0:6
-# NODE_TOKEN_CONTRACT_ADDRESS_USDT="0xB70168BDD43981D156fd4e83376Bdf3b36a8d4b4"
-# # WETH owner address: 0x38d4077Fb8986f1A12C04Ff7d17F78d82a15C0Fb
-# # Sample WETH contract address: 0xbB51b32D3953E972902fb5E6E21E91AE07b6F2C1
-# # Sample WETH token key: 1:0xbb51b32d3953e972902fb5e6e21e91ae07b6f2c1:0:18
-# NODE_TOKEN_CONTRACT_ADDRESS_WETH="0xbB51b32D3953E972902fb5E6E21E91AE07b6F2C1"
-
-
-# -------------- optimism goerli
-# Chain Info: https://chainlist.org/chain/420
-# Block Explorer: https://goerli-optimism.etherscan.io/
-# ------------------------------------------------
-# NODE_CHAIN_RPC_URL="https://goerli.optimism.io"
-# # Signer Info: https://goerli-optimism.etherscan.io/address/0x75ce7aee59347612ed29ff5c249e34ed1bc17d15
-# NODE_SIGNER_SECRET=""
-# NODE_ENTRY_POINT_ADDRESS="0x7A72c167643e58b879829e45e0680F03b438cbf8"
-# NODE_DEX_MANAGER_ADDRESS="0x205576b546d57E9eD42648F62eA60A2E598dE4A1"
-
-# # Token contract addresses
-# # USDT owner address: 0x75ce7AEE59347612ed29ff5c249e34ED1bc17D15
-# # Sample USDT contract address: 0x58bB3D8c7EBDA94Eff7d1473a0A2838d07B46767
-# # Sample USDT token key: 1:0x58bb3d8c7ebda94eff7d1473a0a2838d07b46767:0:6
-# NODE_TOKEN_CONTRACT_ADDRESS_USDT="0x58bB3D8c7EBDA94Eff7d1473a0A2838d07B46767"
-# # WETH owner address: 0x75ce7AEE59347612ed29ff5c249e34ED1bc17D15
-# # Sample WETH contract address: 0x8299b8f6C2dCD8Ab0432e49DBAda523B37Ba7c78
-# # Sample WETH token key: 1:0x8299b8f6c2dcd8ab0432e49dbada523b37ba7c78:0:18
-# NODE_TOKEN_CONTRACT_ADDRESS_WETH="0x8299b8f6C2dCD8Ab0432e49DBAda523B37Ba7c78"
-
-
-# -------------- base goerli
-# Chain Info: https://chainlist.org/chain/84531
-# Block Explorer: https://goerli.basescan.org/
-# ------------------------------------------------
-# NODE_CHAIN_RPC_URL="https://goerli.base.org"
-# # Signer Info: https://goerli.basescan.org/address/0x75ce7aee59347612ed29ff5c249e34ed1bc17d15
-# NODE_SIGNER_SECRET=""
-# NODE_ENTRY_POINT_ADDRESS="0x7A72c167643e58b879829e45e0680F03b438cbf8"
-# NODE_DEX_MANAGER_ADDRESS="0x205576b546d57E9eD42648F62eA60A2E598dE4A1"
-
-# # Token contract addresses
-# # USDT owner address: 0x75ce7AEE59347612ed29ff5c249e34ED1bc17D15
-# # Sample USDT contract address: 0x58bB3D8c7EBDA94Eff7d1473a0A2838d07B46767
-# # Sample USDT token key: 1:0x58bb3d8c7ebda94eff7d1473a0a2838d07b46767:0:6
-# NODE_TOKEN_CONTRACT_ADDRESS_USDT="0x58bB3D8c7EBDA94Eff7d1473a0A2838d07B46767"
-# # WETH owner address: 0x75ce7AEE59347612ed29ff5c249e34ED1bc17D15
-# # Sample WETH contract address: 0x8299b8f6C2dCD8Ab0432e49DBAda523B37Ba7c78
-# # Sample WETH token key: 1:0x8299b8f6c2dcd8ab0432e49dbada523b37ba7c78:0:18
-# NODE_TOKEN_CONTRACT_ADDRESS_WETH="0x8299b8f6C2dCD8Ab0432e49DBAda523B37Ba7c78"
-
-
 # ------------------------------------------------
 # AA Dex accounts
 NODE_DEX_ACCOUNT_SECRET_ALICE="0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
 NODE_DEX_ACCOUNT_SECRET_BILL="0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"
 NODE_DEX_ACCOUNT_SECRET_CARL="0x8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba"
 NODE_DEX_ACCOUNT_SECRET_DAISY="0xf214f2b2cd398c806f84e317254e0f0b801d0643303237d97a22a48e01628897"
+
+
+# -------------- hardhat
+# ChainID: 31337
+# ------------------------------------------------
+NODE_CHAIN_RPC_URL="http://127.0.0.1:8545/"
+NODE_SIGNER_SECRET="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+NODE_ENTRY_POINT_ADDRESS="0x5FbDB2315678afecb367f032d93F642f64180aa3"
+NODE_DEX_MANAGER_ADDRESS="0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+# Token contract addresses
+NODE_TOKEN_CONTRACT_ADDRESS_USDT="0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+NODE_TOKEN_CONTRACT_ADDRESS_IVE="0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
