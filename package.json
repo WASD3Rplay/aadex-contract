@@ -11,6 +11,7 @@
     "compile": "hardhat compile",
     "build": "tsc --build",
     "deploy-aadex": "ts-node scripts/deploy_aadex.ts",
+    "add-aadex-admin": "ts-node scripts/add_aadex_admin.ts",
     "deposit-native": "ts-node scripts/deposit_native.ts",
     "deploy-sample-usdt": "ts-node scripts/deploy_sample_usdt.ts",
     "deposit-sample-usdt": "ts-node scripts/deposit_sample_usdt.ts",
