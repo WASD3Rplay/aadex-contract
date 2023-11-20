@@ -2,8 +2,10 @@ import { BigNumberish, Wallet } from "ethers"
 import { arrayify, defaultAbiCoder, keccak256 } from "ethers/lib/utils"
 
 export enum DexOrderType {
-  BUY = 0,
-  SELL = 1,
+  BUY_LIMIT = 0,
+  SELL_LIMIT = 1,
+  BUY_MARKET = 2,
+  SELL_MARKET = 3,
 }
 
 export const getDexOrderData = (

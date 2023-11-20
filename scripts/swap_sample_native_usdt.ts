@@ -300,23 +300,53 @@ const main = async (): Promise<void> => {
 
   // Bill wants to buy 0.1 ETH for 120 USDT
   // which price is 1 ETH for 1200 USDT.
-  const dexOrder1 = await createDexOrder(billWallet, 1, DexOrderType.BUY, "1200", "0.1")
+  const dexOrder1 = await createDexOrder(
+    billWallet,
+    1,
+    DexOrderType.BUY_LIMIT,
+    "1200",
+    "0.1",
+  )
 
   // Alice wants to sell 1 ETH for 1000 USDT,
   // which price is 1 ETH for 1000 USDT.
-  const dexOrder2 = await createDexOrder(aliceWallet, 2, DexOrderType.SELL, "1000", "1")
+  const dexOrder2 = await createDexOrder(
+    aliceWallet,
+    2,
+    DexOrderType.SELL_LIMIT,
+    "1000",
+    "1",
+  )
 
   // Bill wants to buy 0.4 ETH for 440 USDT
   // which price is 1 ETH for 1100 USDT.
-  const dexOrder3 = await createDexOrder(billWallet, 3, DexOrderType.BUY, "1100", "0.4")
+  const dexOrder3 = await createDexOrder(
+    billWallet,
+    3,
+    DexOrderType.BUY_LIMIT,
+    "1100",
+    "0.4",
+  )
 
   // Carl wants to sell 2 ETH for 2200 USDT,
   // which price is 1 ETH for 1100 USDT.
-  const dexOrder4 = await createDexOrder(carlWallet, 4, DexOrderType.SELL, "1100", "2")
+  const dexOrder4 = await createDexOrder(
+    carlWallet,
+    4,
+    DexOrderType.SELL_LIMIT,
+    "1100",
+    "2",
+  )
 
   // Daisy wants to buy 1 ETH for 1200 USDT
   // which price is 1 ETH for 1200 USDT.
-  const dexOrder5 = await createDexOrder(daisyWallet, 5, DexOrderType.BUY, "1200", "1")
+  const dexOrder5 = await createDexOrder(
+    daisyWallet,
+    5,
+    DexOrderType.BUY_LIMIT,
+    "1200",
+    "1",
+  )
 
   const tradeId = 1
   const usdtDecimals = await getUSDTDecimals()

@@ -126,10 +126,14 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
 
     // 2. Verify parameters
     require(baseTokenAmount <= sellerOrder.requestAmount, 'Request amount is not acceptable in seller dex order');
-    require(
-      quoteTokenAmount <= (buyerOrder.requestAmount * buyerOrder.price) / 10 ** baseDti.decimals,
-      'Request amount is not acceptable in buyer dex order'
-    );
+    if (buyerOrder.price > 0) {
+      require(
+        quoteTokenAmount <= (buyerOrder.requestAmount * buyerOrder.price) / 10 ** baseDti.decimals,
+        'Request amount is not acceptable in buyer limit order'
+      );
+    } else {
+      require(quoteTokenAmount <= buyerOrder.requestAmount, 'Request amount is not acceptable in buyer market order');
+    }
 
     // 3. Process base token related
     // Increase BUYER base token amount
