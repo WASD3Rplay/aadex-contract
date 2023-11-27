@@ -134,6 +134,8 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
     } else {
       require(quoteTokenAmount <= buyerOrder.requestAmount, 'Request amount is not acceptable in buyer market order');
     }
+    require(baseTokenAmount >= buyerFeeAmount, 'Buyer fee amount is too big');
+    require(quoteTokenAmount >= sellerFeeAmount, 'Seller fee amount is too big');
 
     // 3. Process base token related
     // Increase BUYER base token amount

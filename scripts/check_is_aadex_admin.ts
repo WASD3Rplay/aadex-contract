@@ -19,12 +19,15 @@ const main = async (): Promise<void> => {
     getDexManagerAddress(),
   )
 
-  // >>>> DEV
-  const adminAddress = "0x5BF04B71a94c046d283FD0Cd821197f19aC577B4"
+  const su = await dexmanagerCtrl.getSU()
+  console.log("SU address:", su)
 
-  const txreceipt = await dexmanagerCtrl.addAdmin(adminAddress)
-  console.log("Admin Address:", adminAddress)
-  console.log("Tx Hash:", txreceipt.txhash)
+  const isSUAdmin = await dexmanagerCtrl.isAdmin(superuserWallet.address)
+  console.log("Is SU Admin:", superuserWallet.address, isSUAdmin)
+
+  const adminAddr = "0x1478AAFb174E2D8e83411fF4c191AAdeB1603661"
+  const isAdmin = await dexmanagerCtrl.isAdmin(adminAddr)
+  console.log(`Is ${adminAddr} Admin:`, isAdmin)
 }
 
 main().catch((error) => {

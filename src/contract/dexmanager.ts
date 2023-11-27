@@ -140,10 +140,18 @@ export class DexManagerContractCtrl {
     return Number(nonce)
   }
 
+  getSU = async (): Promise<string> => {
+    return await this.contract.dexSuperuser()
+  }
+
   addAdmin = async (adminAddr: string): Promise<TxContractReceipt> => {
     const tx = await this.contract.addAdmin(adminAddr)
     const receipt = await tx.wait()
     return new TxContractReceipt(receipt)
+  }
+
+  isAdmin = async (adminAddr: string): Promise<boolean> => {
+    return await this.contract.dexAdmins(adminAddr)
   }
 
   getNativeTokenKey = async (): Promise<string> => {
