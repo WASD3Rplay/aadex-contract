@@ -16,8 +16,8 @@ const main = async (): Promise<void> => {
   const ethProvider = getEthProvider()
   const tokenOwnerWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 
-  const tokenName = "Wasd3r Demo Wrapped ETH"
-  const tokenSymbol = "WETH"
+  const tokenName = "Wasd3r Demo SuperWalk Token"
+  const tokenSymbol = "GRND"
   const contractAddress = getTokenContractAddress(tokenSymbol)
 
   let tokenContractCtrl: ERC20ContractCtrl | null = null

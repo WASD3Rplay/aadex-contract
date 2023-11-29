@@ -55,6 +55,26 @@ export class ERC20ContractCtrl {
     )
   }
 
+  setName = async (name: string): Promise<TxContractReceipt> => {
+    const tx = await this.contract.setName(name)
+    const receipt = await tx.wait()
+    return new TxContractReceipt(receipt)
+  }
+
+  getName = async (): Promise<string> => {
+    return await this.contract.name()
+  }
+
+  setSymbol = async (symbol: string): Promise<TxContractReceipt> => {
+    const tx = await this.contract.setSymbol(symbol)
+    const receipt = await tx.wait()
+    return new TxContractReceipt(receipt)
+  }
+
+  getSymbol = async (): Promise<string> => {
+    return await this.contract.symbol()
+  }
+
   approve = async (
     toAddress: string,
     amount: string | number | BigNumber,
