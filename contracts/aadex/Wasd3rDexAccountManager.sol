@@ -135,6 +135,8 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     );
 
     DexDepositInfo storage ddi = dexAccounts[from][tokenKey];
+
+    require(amount >= 0, 'Amount should be bigger than zero');
     require(ddi.amount >= amount, 'Deposit amount is less than the input amount to subtract');
 
     ddi.amount = ddi.amount - amount;
@@ -211,20 +213,22 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
    * @param tokenKey unique token key string
    * @param amount withdraw token amount
    */
-  function withdrawDexToken(address withdrawAddress, string memory tokenKey, uint256 amount) public {
+  function withdrawDexToken(address payable withdrawAddress, string memory tokenKey, uint256 amount) public {
     DexAccountValid storage dav = dexAccountsValid[msg.sender];
     DexDepositInfo storage ddi = dexAccounts[msg.sender][tokenKey];
     DexTokenInfo storage dti = dexTokens[tokenKey];
 
     require(dav.isInitialized && dav.isValid, 'Withdraw account (from address) is invalid');
+    require(amount >= 0, 'Amount should be bigger than zero');
     require(ddi.amount >= amount, 'Not enough deposit to withdraw');
 
     ddi.amount = ddi.amount - amount;
 
     // native token
     if (dti.tokenType == 0) {
-      (bool success, ) = withdrawAddress.call{value: amount}('');
-      require(success, 'Fail to withdraw native token');
+      // To avoid Re-Entrancy attack
+      // https://docs.soliditylang.org/en/v0.4.21/security-considerations.html#re-entrancy
+      withdrawAddress.transfer(amount);
     }
     // ERC20
     else if (dti.tokenType == 1) {
