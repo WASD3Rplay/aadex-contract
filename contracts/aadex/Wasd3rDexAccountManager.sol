@@ -219,7 +219,7 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
     DexTokenInfo storage dti = dexTokens[tokenKey];
 
     require(dav.isInitialized && dav.isValid, 'Withdraw account (from address) is invalid');
-    require(amount >= 0, 'Amount should be bigger than zero');
+    require(amount > 0, 'Amount should be bigger than zero');
     require(ddi.amount >= amount, 'Not enough deposit to withdraw');
 
     ddi.amount = ddi.amount - amount;
