@@ -16,18 +16,18 @@ const main = async (): Promise<void> => {
   const ethProvider = getEthProvider()
   const usdtOwnerWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 
-  const usdtCtrl = await deployERC20Contract(
-    ethProvider,
-    usdtOwnerWallet,
-    Wasd3rSampleErc20USDT__factory,
-  )
-  // For register only, comment the above and comment out the below
-  // const usdtCtrl = await getERC20ContractCtrl(
+  // const usdtCtrl = await deployERC20Contract(
   //   ethProvider,
   //   usdtOwnerWallet,
-  //   getTokenContractAddress("USDT"),
   //   Wasd3rSampleErc20USDT__factory,
   // )
+  // For register only, comment the above and comment out the below
+  const usdtCtrl = await getERC20ContractCtrl(
+    ethProvider,
+    usdtOwnerWallet,
+    getTokenContractAddress("USDT"),
+    Wasd3rSampleErc20USDT__factory,
+  )
 
   const superuserWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 

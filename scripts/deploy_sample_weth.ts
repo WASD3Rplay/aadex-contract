@@ -18,7 +18,13 @@ const main = async (): Promise<void> => {
 
   const tokenName = "Wasd3r Demo Wrapped ETH"
   const tokenSymbol = "WETH"
-  const contractAddress = getTokenContractAddress(tokenSymbol)
+
+  let contractAddress = ""
+  try {
+    contractAddress = getTokenContractAddress(tokenSymbol)
+  } catch (error) {
+    console.log("Need to deploy new contract")
+  }
 
   let tokenContractCtrl: ERC20ContractCtrl | null = null
 
@@ -46,6 +52,7 @@ const main = async (): Promise<void> => {
     )
     await tokenContractCtrl.setName(tokenName)
     await tokenContractCtrl.setSymbol(tokenSymbol)
+    contractAddress = tokenContractCtrl.contractAddress
   }
 
   const superuserWallet = new Wallet(getSignerSecret(), ethProvider.provider)
