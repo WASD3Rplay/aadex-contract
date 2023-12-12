@@ -1,6 +1,6 @@
 import { Wallet } from "ethers"
 
-import { getEthProvider, getSignerSecret } from "../src"
+import { ZERO_ADDRESS, getEthProvider, getSignerSecret } from "../src"
 import { deployDexManager } from "../src/contract/dexmanager"
 import { deployEntryPoint } from "../src/contract/entrypoint"
 
@@ -30,6 +30,13 @@ const main = async (): Promise<void> => {
     "DexManager contract tx:",
     dexManagerDeployedContract.deployTransaction.hash,
   )
+
+  const nativeTokenKey = await dexManagerContractCtrl.getNativeTokenKey()
+  const isNativeTokenValid = await dexManagerContractCtrl.isValidDexToken(
+    nativeTokenKey,
+  )
+  console.log("Native Token Key:", nativeTokenKey)
+  console.log("       is valid?:", isNativeTokenValid)
 }
 
 main().catch((error) => {

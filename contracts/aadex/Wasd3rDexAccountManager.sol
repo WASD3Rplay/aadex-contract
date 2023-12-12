@@ -100,7 +100,6 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
    */
   function addDexToken(address to, string memory tokenKey, uint256 amount) internal returns (DexDepositInfo storage) {
     DexAccountValid memory dav = dexAccountsValid[to];
-    require(amount >= 0, 'Amount should be bigger than zero');
     require(
       !dav.isInitialized || (dav.isInitialized && dav.isValid),
       'Deposit account (to address) is invalid to add the input amount'
@@ -136,7 +135,6 @@ abstract contract Wasd3rDexAccountManager is Wasd3rDexTokenManager {
 
     DexDepositInfo storage ddi = dexAccounts[from][tokenKey];
 
-    require(amount >= 0, 'Amount should be bigger than zero');
     require(ddi.amount >= amount, 'Deposit amount is less than the input amount to subtract');
 
     ddi.amount = ddi.amount - amount;

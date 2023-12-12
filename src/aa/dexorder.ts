@@ -4,8 +4,10 @@ import { arrayify, defaultAbiCoder, keccak256 } from "ethers/lib/utils"
 export enum DexOrderType {
   BUY_LIMIT = 0,
   SELL_LIMIT = 1,
-  BUY_MARKET = 2,
-  SELL_MARKET = 3,
+  BUY_MARKET_TOTAL = 2,
+  BUY_MARKET_AMOUNT = 3,
+  SELL_MARKET_TOTAL = 4,
+  SELL_MARKET_AMOUNT = 5,
 }
 
 export const getDexOrderData = (

@@ -47,10 +47,12 @@ const main = async (): Promise<void> => {
     0,
   )
   const usdtTokenKey = txreceipt.events[0].args?.[1]
+  const isTokenValid = await dexmanagerCtrl.isValidDexToken(usdtTokenKey)
 
   console.log("USDT owner address:", usdtOwnerWallet.address)
   console.log("Sample USDT contract address:", usdtCtrl.contractAddress)
   console.log("Sample USDT token key:", usdtTokenKey)
+  console.log("            is valid?:", isTokenValid)
 }
 
 main().catch((error) => {

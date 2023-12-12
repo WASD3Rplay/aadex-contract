@@ -1,13 +1,9 @@
-import { BigNumber, Signer, Wallet, ethers } from "ethers"
+import { BigNumber, Wallet, ethers } from "ethers"
 
 import {
-  AADexManagerContractCtrl,
-  AASigner,
   DexManagerContractCtrl,
   DexOrderType,
   ERC20ContractCtrl,
-  SendUserOpsFunc,
-  Wasd3rDexEntryPoint__factory,
   ZERO_ADDRESS,
   createNSignDexOrder,
   getAccountSecret,
@@ -28,7 +24,6 @@ const DEX_MANAGER_CONTRACT_ADDRESS = getDexManagerAddress()
 const ethProvider = getEthProvider()
 const adminWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 const aliceWallet = new Wallet(getAccountSecret("ALICE"), ethProvider.provider)
-const billWallet = new Wallet(getAccountSecret("BILL"), ethProvider.provider)
 
 let _dexManagerContractCtrl: DexManagerContractCtrl
 let _usdtContractCtrl: ERC20ContractCtrl
@@ -47,71 +42,18 @@ const getAdminDexManagerContractCtrl = async () => {
   return _dexManagerContractCtrl
 }
 
-const localUserOpsSender = (signer: Signer, beneficiary?: string): SendUserOpsFunc => {
-  const entryPoint = Wasd3rDexEntryPoint__factory.connect(
-    ENTRY_POINT_CONTRACT_ADDRESS,
-    signer,
-  )
-
-  return async function (maxPriorityFeePerGas, maxFeePerGas, userOps) {
-    const tx = await entryPoint.handleOps(
-      userOps,
-      beneficiary ?? (await signer.getAddress()),
-      {
-        maxPriorityFeePerGas,
-        maxFeePerGas,
-      },
-    )
-    return tx
-  }
-}
-
-const getAADexManagerContractCtrl = async (): Promise<AADexManagerContractCtrl> => {
-  const dexManagerContractCtrl = await getAdminDexManagerContractCtrl()
-
-  const sendUserOpsFunc = localUserOpsSender(adminWallet)
-
-  const senderAANonce = await dexManagerContractCtrl.getNonce()
-  const maxCallGasLimit = 80000 * 6
-  const aasigner = new AASigner(
-    ethProvider,
-    await ethProvider.getChainId(),
-    adminWallet,
-    DEX_MANAGER_CONTRACT_ADDRESS,
-    senderAANonce,
-    ENTRY_POINT_CONTRACT_ADDRESS,
-    sendUserOpsFunc,
-    await ethProvider.getBaseFeePerGas(),
-    BigNumber.from(maxCallGasLimit),
-  )
-
-  return new AADexManagerContractCtrl(
-    ethProvider,
-    DEX_MANAGER_CONTRACT_ADDRESS,
-    aasigner,
-  )
-}
-
 const createDexOrder = async (
   signer: Wallet,
   orderId: number,
   orderType: DexOrderType,
   price: string,
-  requestAmount: string,
+  requestAmount: BigNumber,
 ): Promise<any> => {
   const nativeTokenContractAddress = ZERO_ADDRESS
   const usdtContractAddress = getTokenContractAddress("USDT")
 
-  const usdtContract = await getERC20ContractCtrl(
-    ethProvider,
-    signer,
-    usdtContractAddress,
-    Wasd3rSampleErc20USDT__factory,
-  )
-  const usdtDecimals = await usdtContract.getDecimals()
-
+  const usdtDecimals = await getUSDTDecimals()
   const orderPrice = ethers.utils.parseUnits(price, usdtDecimals)
-  const orderRequestAmount = ethers.utils.parseEther(requestAmount)
 
   return await createNSignDexOrder(
     await ethProvider.getChainId(),
@@ -122,7 +64,7 @@ const createDexOrder = async (
     nativeTokenContractAddress,
     usdtContractAddress,
     orderPrice,
-    orderRequestAmount,
+    requestAmount,
   )
 }
 
@@ -250,50 +192,31 @@ const getDexUSDTBalanceOf = async (addr: string): Promise<string> => {
   return ethers.utils.formatUnits(balance, usdtTokenKey.split(":")[3])
 }
 
-const printAccountBalances = async () => {
-  console.info("AA Dex Admin:", adminWallet.address)
-  const adminNativeBalance = await getDexNativeBalanceOf(adminWallet.address)
-  console.info("\t * Native Balance:", adminNativeBalance, "ETH")
-  const adminUSDTBalance = await getDexUSDTBalanceOf(adminWallet.address)
-  console.info("\t * USDT Balance:", adminUSDTBalance, "USDT")
-
-  console.info("Alice:", aliceWallet.address)
-  const aliceNativeBalance = await getDexNativeBalanceOf(aliceWallet.address)
-  console.info("\t * Native Balance:", aliceNativeBalance, "ETH")
-  const aliceUSDTBalance = await getDexUSDTBalanceOf(aliceWallet.address)
-  console.info("\t * USDT Balance:", aliceUSDTBalance, "USDT")
-
-  console.info("Bill:", billWallet.address)
-  const billNativeBalance = await getDexNativeBalanceOf(billWallet.address)
-  console.info("\t * Native Balance:", billNativeBalance, "ETH")
-  const billUSDTBalance = await getDexUSDTBalanceOf(billWallet.address)
-  console.info("\t * USDT Balance:", billUSDTBalance, "USDT")
+const getSignedOrderJson = (order: any): any => {
+  return {
+    ...order,
+    priceStr: order.price.toString(),
+    requestAmountStr: order.requestAmount.toString(),
+  }
 }
 
 const main = async (): Promise<void> => {
-  console.info("Before deposit ..........")
-  await printAccountBalances()
-  console.info("")
+  const usdtDecimals = await getUSDTDecimals()
 
-  // Alice deposits 10 ETH
-  await depositNativeToken(aliceWallet, "10", "10")
-  // Bill deposits 2000 USDT
-  await depositUSDT(billWallet, "15000", "10000")
-
-  console.info("After deposit ..........")
-  await printAccountBalances()
-  console.info("")
+  console.info("Dex Manager Contract Address:", DEX_MANAGER_CONTRACT_ADDRESS)
+  console.info("Chain ID:", await ethProvider.getChainId())
+  console.info("Wallet Address:", aliceWallet.address)
 
   // Bill wants to buy 0.1 ETH
   // which price is 1 ETH for 1200 USDT.
-  const buyLimitOrder1 = await createDexOrder(
-    billWallet,
+  const buyLimitOrder = await createDexOrder(
+    aliceWallet,
     1,
     DexOrderType.BUY_LIMIT,
     "1200",
-    "0.1",
+    ethers.utils.parseEther("0.1"),
   )
-  console.info("buy limit order by Bill", billWallet.address, buyLimitOrder1)
+  console.info("Buy Limit Order:", getSignedOrderJson(buyLimitOrder))
 
   // Alice wants to sell 1 ETH for 1000 USDT,
   // which price is 1 ETH for 1000 USDT.
@@ -302,20 +225,29 @@ const main = async (): Promise<void> => {
     2,
     DexOrderType.SELL_LIMIT,
     "1000",
-    "1",
+    ethers.utils.parseEther("0.05"),
   )
-  console.info("sell limit order by Alice", aliceWallet.address, sellLimitOrder)
+  console.info("Sell Limit Order:", getSignedOrderJson(sellLimitOrder))
 
-  // Bill wants to buy 0.05 ETH
-  // which price is 1 ETH for 1100 USDT.
-  const buyLimitOrder2 = await createDexOrder(
-    billWallet,
+  // Bill wants to buy as much as 5000 USDT.
+  const buyMarketTotalOrder = await createDexOrder(
+    aliceWallet,
     3,
-    DexOrderType.BUY_LIMIT,
-    "1100",
-    "0.05",
+    DexOrderType.BUY_MARKET_TOTAL,
+    "0",
+    ethers.utils.parseUnits("5000", usdtDecimals),
   )
-  console.info("buy limit order by Bill", billWallet.address, buyLimitOrder2)
+  console.info("Buy Market Total Order:", getSignedOrderJson(buyMarketTotalOrder))
+
+  // Alice wants to sell 3 ETH.
+  const sellMarketAmountOrder = await createDexOrder(
+    aliceWallet,
+    4,
+    DexOrderType.SELL_MARKET_AMOUNT,
+    "0",
+    ethers.utils.parseEther("3"),
+  )
+  console.info("Sell Market Amount Order", getSignedOrderJson(sellMarketAmountOrder))
 }
 
 main().catch((error) => {
