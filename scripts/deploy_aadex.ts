@@ -1,4 +1,4 @@
-import { Wallet } from "ethers"
+import { Wallet, ethers } from "ethers"
 
 import { ZERO_ADDRESS, getEthProvider, getSignerSecret } from "../src"
 import { deployDexManager } from "../src/contract/dexmanager"
@@ -30,6 +30,14 @@ const main = async (): Promise<void> => {
     "DexManager contract tx:",
     dexManagerDeployedContract.deployTransaction.hash,
   )
+
+  await entryPointContractCtrl.depositTo(dexManagerContractCtrl.contractAddress, "1")
+  const depositInfo = await entryPointContractCtrl.getDepositInfo(
+    dexManagerContractCtrl.contractAddress,
+  )
+  console.log("DexManager deposit info:")
+  console.log("   * deposit:", ethers.utils.formatEther(depositInfo.deposit), "ETH")
+  console.log("   * stake:  ", ethers.utils.formatEther(depositInfo.stake), "ETH")
 
   const nativeTokenKey = await dexManagerContractCtrl.getNativeTokenKey()
   const isNativeTokenValid = await dexManagerContractCtrl.isValidDexToken(

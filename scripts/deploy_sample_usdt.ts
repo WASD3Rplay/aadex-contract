@@ -16,18 +16,42 @@ const main = async (): Promise<void> => {
   const ethProvider = getEthProvider()
   const usdtOwnerWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 
-  // const usdtCtrl = await deployERC20Contract(
-  //   ethProvider,
-  //   usdtOwnerWallet,
-  //   Wasd3rSampleErc20USDT__factory,
-  // )
-  // For register only, comment the above and comment out the below
-  const usdtCtrl = await getERC20ContractCtrl(
-    ethProvider,
-    usdtOwnerWallet,
-    getTokenContractAddress("USDT"),
-    Wasd3rSampleErc20USDT__factory,
-  )
+  let isForceDeploy = false
+  let forceDeploy = process.env.NODE_FORCE_DEPLOY
+  if (forceDeploy) {
+    forceDeploy = forceDeploy.toUpperCase()
+    if (
+      forceDeploy === "Y" ||
+      forceDeploy === "YES" ||
+      forceDeploy === "T" ||
+      forceDeploy === "TRUE"
+    ) {
+      isForceDeploy = true
+    }
+  }
+
+  let contractAddress = ""
+  try {
+    contractAddress = getTokenContractAddress("USDT")
+  } catch (error) {
+    console.log("Need to deploy new contract")
+  }
+
+  let usdtCtrl
+  if (isForceDeploy || contractAddress !== "") {
+    usdtCtrl = await deployERC20Contract(
+      ethProvider,
+      usdtOwnerWallet,
+      Wasd3rSampleErc20USDT__factory,
+    )
+  } else {
+    usdtCtrl = await getERC20ContractCtrl(
+      ethProvider,
+      usdtOwnerWallet,
+      getTokenContractAddress("USDT"),
+      Wasd3rSampleErc20USDT__factory,
+    )
+  }
 
   const superuserWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 

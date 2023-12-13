@@ -1,4 +1,4 @@
-import { Signer } from "ethers"
+import { Signer, ethers } from "ethers"
 
 import { UserOperation } from "../aa"
 import { EthProvider } from "../eth"
@@ -51,5 +51,15 @@ export class EntryPointContractCtrl {
     txOptions: {},
   ): Promise<any> => {
     return this.contract.handleOps(userOpList, beneficiary, txOptions)
+  }
+
+  depositTo = async (addr: string, amount: string): Promise<any> => {
+    return this.contract.depositTo(addr, {
+      value: ethers.utils.parseEther(amount),
+    })
+  }
+
+  getDepositInfo = async (addr: string): Promise<any> => {
+    return this.contract.getDepositInfo(addr)
   }
 }

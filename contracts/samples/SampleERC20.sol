@@ -11,4 +11,8 @@ contract SampleErc20 is ERC20, ERC20Burnable, Ownable {
   constructor() ERC20('Nectar Sample ERC20 Token', 'NECTAR') {
     // do nothing
   }
+
+  function decimals() public view virtual override returns (uint8) {
+    return 0;
+  }
 }
