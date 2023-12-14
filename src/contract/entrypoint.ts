@@ -1,7 +1,7 @@
 import { Signer, ethers } from "ethers"
 
 import { UserOperation } from "../aa"
-import { EthProvider } from "../eth"
+import { EthProvider, TxContractReceipt } from "../eth"
 
 import { Wasd3rDexEntryPoint, Wasd3rDexEntryPoint__factory } from "./types"
 
@@ -54,9 +54,11 @@ export class EntryPointContractCtrl {
   }
 
   depositTo = async (addr: string, amount: string): Promise<any> => {
-    return this.contract.depositTo(addr, {
+    const tx = await this.contract.depositTo(addr, {
       value: ethers.utils.parseEther(amount),
     })
+    const receipt = await tx.wait()
+    return new TxContractReceipt(receipt)
   }
 
   getDepositInfo = async (addr: string): Promise<any> => {
