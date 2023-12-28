@@ -38,7 +38,7 @@ const main = async (): Promise<void> => {
   }
 
   let usdtCtrl
-  if (isForceDeploy || contractAddress !== "") {
+  if (isForceDeploy || contractAddress === "") {
     usdtCtrl = await deployERC20Contract(
       ethProvider,
       usdtOwnerWallet,

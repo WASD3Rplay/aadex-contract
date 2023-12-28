@@ -42,7 +42,7 @@ const findOrDeployDecimal18Contract = async (
 
   let tokenContractCtrl: ERC20ContractCtrl | null = null
 
-  if (isForceDeploy || contractAddress !== "") {
+  if (isForceDeploy || contractAddress === "") {
     // Need to deploy
     tokenContractCtrl = await deployERC20Contract(
       ethProvider,
@@ -100,6 +100,7 @@ const findOrDeployDecimal18Contract = async (
     tokenContractCtrl.contractAddress,
   )
   console.log(`Sample ${tokenSymbol} token key:`, tokenKey)
+  console.log("            is valid?:", isValidDexToken)
 }
 
 export default findOrDeployDecimal18Contract
