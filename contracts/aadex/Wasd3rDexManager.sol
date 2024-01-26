@@ -8,6 +8,7 @@ import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import '../core/BaseAccount.sol';
 import '../libs/LibDexOrder.sol';
 
+import './IWasd3rDexManager.sol';
 import './Wasd3rDexAccountManager.sol';
 
 /* solhint-disable avoid-low-level-calls */
@@ -15,11 +16,9 @@ import './Wasd3rDexAccountManager.sol';
 /**
  * @title Wasd3rDexManager - manages Wasd3r Dex overall.
  */
-contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
+contract Wasd3rDexManager is IWasd3rDexManager, Wasd3rDexAccountManager, BaseAccount {
   using ECDSA for bytes32;
   using LibDexOrder for DexOrder;
-
-  IEntryPoint public _entryPoint;
 
   constructor() {
     initDexAccountManager();
@@ -27,26 +26,6 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
 
   receive() external payable {
     depositDexNativeToken(msg.sender);
-  }
-
-  modifier onlyEntryPointOrDexAdmin() {
-    require(
-      msg.sender == address(entryPoint()) || dexAdmins[msg.sender],
-      'Only EntryPoint or DexManager admins can call this function'
-    );
-    _;
-  }
-
-  function entryPoint() public view virtual override returns (IEntryPoint) {
-    return _entryPoint;
-  }
-
-  /**
-   * (SU) Set entiry point.
-   * @param ep EntryPoint contract address
-   */
-  function setEntryPoint(address ep) public onlyDexSu {
-    _entryPoint = IEntryPoint(ep);
   }
 
   function _validateSignature(
@@ -118,6 +97,8 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
     uint256 quoteTokenAmount,
     address feeCollector
   ) internal {
+    require(dexManager().isDexAdmin(msg.sender), 'Swap function should be called by dex admin');
+
     // 1. Verify buyer and seller signature.
     require(_verifyOrderSign(buyer, buyerOrder), 'Order is not signed by buyer');
     require(_verifyOrderSign(seller, sellerOrder), 'Order is not signed by seller');
@@ -221,7 +202,6 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
     uint256 quoteTokenAmount,
     address feeCollector
   ) public {
-    _requireFromEntryPoint();
     _swap(
       tradeId,
       tradeItemId,

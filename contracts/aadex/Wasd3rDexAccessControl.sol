@@ -49,6 +49,14 @@ abstract contract Wasd3rDexAccessControl {
     _;
   }
 
+  function isDexSu(address addr) public view returns (bool) {
+    return addr == dexSuperuser;
+  }
+
+  function isDexAdmin(address addr) public view returns (bool) {
+    return dexAdmins[addr];
+  }
+
   /**
    * (internal) Initialize this access control (AC) contract.
    */
