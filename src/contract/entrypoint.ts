@@ -1,4 +1,4 @@
-import { Signer, ethers } from "ethers"
+import { BigNumber, Signer, ethers } from "ethers"
 
 import { UserOperation } from "../aa"
 import { EthProvider, TxContractReceipt } from "../eth"
@@ -63,5 +63,10 @@ export class EntryPointContractCtrl {
 
   getDepositInfo = async (addr: string): Promise<any> => {
     return this.contract.getDepositInfo(addr)
+  }
+
+  getNonce = async (addr: string): Promise<BigNumber> => {
+    const nonce = await this.contract.nonceSequenceNumber(addr, 0)
+    return nonce
   }
 }

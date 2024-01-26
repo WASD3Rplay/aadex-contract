@@ -80,7 +80,7 @@ export class ERC20ContractCtrl {
     amount: string | number | BigNumber,
   ): Promise<TxContractReceipt> => {
     if (typeof amount === "string") {
-      amount = Number(ethers.utils.parseUnits(amount, await this.getDecimals()))
+      amount = BigNumber.from(ethers.utils.parseUnits(amount, await this.getDecimals()))
     }
 
     const tx = await this.contract.approve(toAddress, amount)

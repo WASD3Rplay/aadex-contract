@@ -28,7 +28,22 @@ export const getDexManagerAddress = (throwErr = true): string => {
   return addr ?? ""
 }
 
-export const getTokenContractAddress = (symbol: string, throwErr = true): string => {
+export const getTokenSymbol = (throwErr = true): string => {
+  const symbol = process.env.NODE_TOKEN_SYMBOL
+  if (throwErr && symbol === undefined) {
+    throw new Error("Cannot find NODE_TOKEN_SYMBOL")
+  }
+  return symbol ?? ""
+}
+
+export const getTokenContractAddress = (
+  symbol: string | null = null,
+  throwErr = true,
+): string => {
+  if (symbol === null) {
+    symbol = getTokenSymbol()
+  }
+
   const value = process.env[`NODE_TOKEN_CONTRACT_ADDRESS_${symbol}`]
   if (throwErr && value === undefined) {
     throw new Error(`Cannot find a token contract for ${symbol}`)

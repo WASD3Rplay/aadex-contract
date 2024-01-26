@@ -5,6 +5,7 @@ import {
   getEthProvider,
   getSignerSecret,
   getTokenContractAddress,
+  getTokenSymbol,
 } from "../src"
 
 const main = async (): Promise<void> => {
@@ -15,11 +16,7 @@ const main = async (): Promise<void> => {
     throw new Error("Need to set NODE_TO_ADDRESS")
   }
 
-  const tokenSymbol = process.env.NODE_TOKEN_SYMBOL
-  if (!tokenSymbol) {
-    throw new Error("Need to set NODE_TOKEN_SYMBOL")
-  }
-
+  const tokenSymbol = getTokenSymbol()
   let contractAddress
   try {
     contractAddress = getTokenContractAddress(tokenSymbol)
@@ -34,7 +31,7 @@ const main = async (): Promise<void> => {
     signerWallet,
     contractAddress,
   )
-  await tokenContractCtrl.transferToken(toAddr, "1000")
+  await tokenContractCtrl.transferToken(toAddr, "10000")
   const balance = await tokenContractCtrl.balanceOf(toAddr)
 
   console.log(`${tokenSymbol} token owner address:`, toAddr)
