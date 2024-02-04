@@ -4,6 +4,7 @@ import {
   getERC20ContractCtrl,
   getEthProvider,
   getSignerSecret,
+  getToAddress,
   getTokenContractAddress,
   getTokenSymbol,
 } from "../src"
@@ -11,7 +12,7 @@ import {
 const main = async (): Promise<void> => {
   const ethProvider = getEthProvider()
 
-  const toAddr = process.env.NODE_TO_ADDRESS
+  const toAddr = getToAddress()
   if (!toAddr) {
     throw new Error("Need to set NODE_TO_ADDRESS")
   }

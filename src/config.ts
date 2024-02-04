@@ -28,6 +28,22 @@ export const getDexManagerAddress = (throwErr = true): string => {
   return addr ?? ""
 }
 
+export const getAdminAddress = (throwErr = true): string => {
+  const addr = process.env.NODE_ADMIN_ADDRESS
+  if (throwErr && addr === undefined) {
+    throw new Error("Cannot find NODE_ADMIN_ADDRESS")
+  }
+  return addr ?? ""
+}
+
+export const getToAddress = (throwErr = true): string => {
+  const addr = process.env.NODE_TO_ADDRESS
+  if (throwErr && addr === undefined) {
+    throw new Error("Cannot find NODE_TO_ADDRESS")
+  }
+  return addr ?? ""
+}
+
 export const getTokenSymbol = (throwErr = true): string => {
   const symbol = process.env.NODE_TOKEN_SYMBOL
   if (throwErr && symbol === undefined) {

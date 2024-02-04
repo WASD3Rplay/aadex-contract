@@ -1,6 +1,7 @@
 import { Wallet } from "ethers"
 
 import {
+  getAdminAddress,
   getDexManagerAddress,
   getDexManagerContractCtrl,
   getEntryPointAddress,
@@ -19,10 +20,7 @@ const main = async (): Promise<void> => {
     getDexManagerAddress(),
   )
 
-  // >>>> DEV
-  // const adminAddress = "0x5BF04B71a94c046d283FD0Cd821197f19aC577B4"
-  // >>>> STAGING
-  const adminAddress = "0x1478AAFb174E2D8e83411fF4c191AAdeB1603661"
+  const adminAddress = getAdminAddress()
 
   const txreceipt = await dexmanagerCtrl.addAdmin(adminAddress)
   console.log("Admin Address:", adminAddress)
