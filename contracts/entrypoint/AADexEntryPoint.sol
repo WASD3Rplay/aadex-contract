@@ -20,7 +20,7 @@ import '../core/Helpers.sol';
 import '../core/NonceManager.sol';
 import '../utils/Exec.sol';
 
-contract Wasd3rDexEntryPoint is IEntryPoint, StakeManager, NonceManager, ReentrancyGuard {
+contract AADexEntryPoint is IEntryPoint, StakeManager, NonceManager, ReentrancyGuard {
   using LibUserOperation for UserOperation;
 
   SenderCreator private immutable senderCreator = new SenderCreator();

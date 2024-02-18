@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Wasd3r Contracts (v0.1.0)
+// AADex Contracts (v0.2.0)
 
 pragma solidity ^0.8.12;
 
@@ -8,44 +8,60 @@ import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import '../core/BaseAccount.sol';
 import '../libs/LibDexOrder.sol';
 
-import './Wasd3rDexAccountManager.sol';
+import './IAADexManager.sol';
+import './AADexAccountManager.sol';
 
 /* solhint-disable avoid-low-level-calls */
 /* solhint-disable not-rely-on-time */
-/**
- * @title Wasd3rDexManager - manages Wasd3r Dex overall.
- */
-contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
+
+/// @title AADexManager manages main function endpoints of AADex.
+/// @author Aaron aaron@wasd3r.xyz @aaronbbabam
+contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
   using ECDSA for bytes32;
   using LibDexOrder for DexOrder;
 
-  IEntryPoint public _entryPoint;
-
-  constructor() {
-    initDexAccountManager();
-  }
+  /* ------------------------------------------------------------------------------------------------------------------
+   * Catch native token transfer
+   */
 
   receive() external payable {
     depositDexNativeToken(msg.sender);
   }
 
+  /* -------------------------------------------------------------------------------------------------------------------
+   * Modifiers
+   */
+
   modifier onlyEntryPointOrDexAdmin() {
     require(
-      msg.sender == address(entryPoint()) || dexAdmins[msg.sender],
-      'Only EntryPoint or DexManager admins can call this function'
+      msg.sender == address(entryPoint()) || admins[msg.sender],
+      'Only EntryPoint or admins can call this function'
     );
     _;
   }
+
+  /* ------------------------------------------------------------------------------------------------------------------
+   * Initialize
+   */
+
+  constructor() {
+    // Initialize all contracts: Account Manager, Token Manager, and Access Control.
+    initDexAccountManager();
+  }
+
+  /* ------------------------------------------------------------------------------------------------------------------
+   * Manage Entry Point
+   */
+
+  IEntryPoint public _entryPoint;
 
   function entryPoint() public view virtual override returns (IEntryPoint) {
     return _entryPoint;
   }
 
-  /**
-   * (SU) Set entiry point.
-   * @param ep EntryPoint contract address
-   */
-  function setEntryPoint(address ep) public onlyDexSu {
+  /// Set entiry point.
+  /// @param ep EntryPoint contract address
+  function setEntryPoint(address ep) public dexCritical {
     _entryPoint = IEntryPoint(ep);
   }
 
@@ -56,12 +72,35 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
     bytes32 hash = userOpHash.toEthSignedMessageHash();
     address userOpSigner = hash.recover(userOp.signature);
 
-    if (!dexAdmins[userOpSigner]) {
+    if (!admins[userOpSigner]) {
       return _packValidationData(true, 0, 0);
     }
     return 0;
   }
 
+  /* ------------------------------------------------------------------------------------------------------------------
+   * Manage Swap Caller
+   */
+  function addSwapCaller(address addr) public {
+    addAdmin(addr);
+  }
+
+  /* ------------------------------------------------------------------------------------------------------------------
+   * Swap
+   */
+
+  /// Event when swap happened.
+  /// @param tradeId trade ID
+  /// @param tradeItemId trade item ID
+  /// @param buyer buyer account address
+  /// @param seller seller account address
+  /// @param buyerFeeAmount fee amount that buyer should pay in base token
+  /// @param sellerFeeAmount fee amount that seller should pay in quote token
+  /// @param baseTokenKey base token key
+  /// @param baseTokenAmount base token amount to swap
+  /// @param quoteTokenKey quote token key
+  /// @param quoteTokenAmount quote token amount to sawp
+  /// @param feeCollector fee collector address
   event DexSwapped(
     uint256 tradeId,
     uint256 tradeItemId,
@@ -76,33 +115,32 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
     address feeCollector
   );
 
-  function _verifyOrderSign(address orderSigner, DexOrder calldata dexOrder) private view returns (bool) {
-    bytes32 dexOrderHash = keccak256(abi.encode(dexOrder.hash(), address(this), block.chainid));
+  function _verifyOrderSign(address oSigner, DexOrder calldata dOrder) private view returns (bool) {
+    bytes32 dexOrderHash = keccak256(abi.encode(dOrder.hash(), address(this), block.chainid));
     bytes32 ethHash = dexOrderHash.toEthSignedMessageHash();
-    address signer = ethHash.recover(dexOrder.signature);
-    return orderSigner == signer;
+    address signer = ethHash.recover(dOrder.signature);
+    return oSigner == signer;
   }
 
-  /**
-   * (internal) Swap buyer's quote token and seller's base token.
-   * This function should be called by trusty and authorized person,
-   * who can create and send a transaction with multiple swap UserOperations
-   * to avoid front running (MEV) attacks.
-   * TODO: make swap function for each market separately and keep following the last swap time to avoid the front running attack.
-   * @param tradeId trade ID, equivalent to a group of trade items
-   * @param tradeItemId trade item ID, equivalent to a user operation
-   * @param buyerOrder DexOrder created by buyer
-   * @param buyer buyer EOA address which signed the `buyerOrder`
-   * @param buyerFeeAmount buyer would pay a fee as the base ticker
-   * @param sellerOrder DexOrder created by seller
-   * @param seller seller EOA address which signed the `sellerOrder`
-   * @param sellerFeeAmount seller would pay a fee as the quote ticker
-   * @param baseTokenKey base token key
-   * @param baseTokenAmount base token amount
-   * @param quoteTokenKey quote token key
-   * @param quoteTokenAmount quote token amount
-   * @param feeCollector fee collector address
-   */
+  /// Swap buyer's quote token amount and seller's base token amount.
+  ///
+  /// This function should be called by trusty and authorized person,
+  /// who can create and send a transaction with multiple swap UserOperations
+  /// to avoid front running (MEV) attacks.
+  ///
+  /// @param tradeId trade ID, equivalent to a group of trade items
+  /// @param tradeItemId trade item ID, equivalent to a user operation
+  /// @param buyerOrder DexOrder created by buyer
+  /// @param buyer buyer EOA address which signed the `buyerOrder`
+  /// @param buyerFeeAmount buyer would pay a fee as the base ticker
+  /// @param sellerOrder DexOrder created by seller
+  /// @param seller seller EOA address which signed the `sellerOrder`
+  /// @param sellerFeeAmount seller would pay a fee as the quote ticker
+  /// @param baseTokenKey base token key
+  /// @param baseTokenAmount base token amount
+  /// @param quoteTokenKey quote token key
+  /// @param quoteTokenAmount quote token amount
+  /// @param feeCollector fee collector address
   function _swap(
     uint256 tradeId,
     uint256 tradeItemId,
@@ -139,19 +177,19 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
 
     // 3. Process base token related
     // Increase BUYER base token amount
-    addDexToken(buyer, baseTokenKey, baseTokenAmount - buyerFeeAmount);
+    _increaseDexTokenAmount(buyer, baseTokenKey, baseTokenAmount - buyerFeeAmount);
     // Decrease SELLER base token amount
-    subtractDexToken(seller, baseTokenKey, baseTokenAmount);
+    _decreaseDexTokenAmount(seller, baseTokenKey, baseTokenAmount);
     // Increase fee collector (ADMIN) base token amount by BUYER's fee
-    addDexToken(feeCollector, baseTokenKey, buyerFeeAmount);
+    _increaseDexTokenAmount(feeCollector, baseTokenKey, buyerFeeAmount);
 
     // 4. Process quote token related
     // Decrease BUYER quote token amount
-    subtractDexToken(buyer, quoteTokenKey, quoteTokenAmount);
+    _decreaseDexTokenAmount(buyer, quoteTokenKey, quoteTokenAmount);
     // Increase SELLER quote token amount
-    addDexToken(seller, quoteTokenKey, quoteTokenAmount - sellerFeeAmount);
+    _increaseDexTokenAmount(seller, quoteTokenKey, quoteTokenAmount - sellerFeeAmount);
     // Increase fee collector (ADMIN) quote token amount by SELLER's fee
-    addDexToken(feeCollector, quoteTokenKey, sellerFeeAmount);
+    _increaseDexTokenAmount(feeCollector, quoteTokenKey, sellerFeeAmount);
 
     emit DexSwapped(
       tradeId,
@@ -168,10 +206,7 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
     );
   }
 
-  /**
-   * (ADMIN) Swap buyer's quote token and seller's base token.
-   */
-  function swapByAdmin(
+  function swapBySwapCaller(
     uint256 tradeId,
     uint256 tradeItemId,
     DexOrder calldata buyerOrder,
@@ -185,7 +220,7 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
     string memory quoteTokenKey,
     uint256 quoteTokenAmount,
     address feeCollector
-  ) public onlyDexAdmin {
+  ) public dexEssential {
     _swap(
       tradeId,
       tradeItemId,
@@ -203,9 +238,6 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
     );
   }
 
-  /**
-   * (EntryPoint) Swap buyer's quote token and seller's base token.
-   */
   function swap(
     uint256 tradeId,
     uint256 tradeItemId,
@@ -237,5 +269,15 @@ contract Wasd3rDexManager is Wasd3rDexAccountManager, BaseAccount {
       quoteTokenAmount,
       feeCollector
     );
+  }
+
+  /* ------------------------------------------------------------------------------------------------------------------
+   * Public Views
+   */
+
+  /// Return whethere given address is admin or not.
+  /// @param addr admin address
+  function isSwapCaller(address addr) public view returns (bool) {
+    return admins[addr];
   }
 }
