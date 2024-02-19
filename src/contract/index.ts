@@ -1,11 +1,17 @@
+export { EntryPointContractCtrl, getEntryPointContractCtrl } from "./entrypoint"
+
 export { AADexManagerContractCtrl } from "./aadexmanager"
 export { DexManagerContractCtrl, getDexManagerContractCtrl } from "./dexmanager"
-export { EntryPointContractCtrl, getEntryPointContractCtrl } from "./entrypoint"
+
+export { AASwapCallerContractCtrl } from "./aaswapcaller"
+export { SwapCallerContractCtrl, getSwapCallerContractCtrl } from "./swapcaller"
+
 export { ERC20ContractCtrl, getERC20ContractCtrl } from "./erc20"
+
 export {
-  Wasd3rDexEntryPoint,
-  Wasd3rDexEntryPoint__factory,
-  Wasd3rDexManager,
-  Wasd3rDexManager__factory,
+  AADexEntryPoint,
+  AADexEntryPoint__factory,
+  AADexManager,
+  AADexManager__factory,
   DexOrderStruct,
 } from "./types"

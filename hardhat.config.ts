@@ -22,8 +22,9 @@ const config: HardhatUserConfig = {
       },
     ],
     overrides: {
-      "contracts/aadex/Wasd3rDexEntryPoint.sol": optimizedComilerSettings,
-      "contracts/aadex/Wasd3rDexManager.sol": optimizedComilerSettings,
+      "contracts/aadex/AADexManager.sol": optimizedComilerSettings,
+      "contracts/accounts/AADexSwapCaller.sol": optimizedComilerSettings,
+      "contracts/entrypoint/AADexEntryPoint.sol": optimizedComilerSettings,
     },
   },
   networks: {

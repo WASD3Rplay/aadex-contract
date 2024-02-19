@@ -3,13 +3,13 @@ import { BigNumber, Signer, ethers } from "ethers"
 import { UserOperation } from "../aa"
 import { EthProvider, TxContractReceipt } from "../eth"
 
-import { Wasd3rDexEntryPoint, Wasd3rDexEntryPoint__factory } from "./types"
+import { AADexEntryPoint, AADexEntryPoint__factory } from "./types"
 
 export const deployEntryPoint = async (
   ethProvider: EthProvider,
   signer: Signer,
 ): Promise<{ ctrl: EntryPointContractCtrl; contract: any }> => {
-  const contract = await new Wasd3rDexEntryPoint__factory(signer).deploy()
+  const contract = await new AADexEntryPoint__factory(signer).deploy()
   await contract.deployed()
 
   return {
@@ -31,14 +31,14 @@ export const getEntryPointContractCtrl = async (
 }
 
 export class EntryPointContractCtrl {
-  contract: Wasd3rDexEntryPoint
+  contract: AADexEntryPoint
 
   constructor(
     readonly ethProvider: EthProvider,
     readonly contractAddress: string,
     readonly signer: Signer,
   ) {
-    this.contract = Wasd3rDexEntryPoint__factory.connect(contractAddress, this.signer)
+    this.contract = AADexEntryPoint__factory.connect(contractAddress, this.signer)
   }
 
   getNewContract = (signer: Signer): EntryPointContractCtrl => {

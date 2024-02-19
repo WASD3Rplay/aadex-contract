@@ -79,13 +79,6 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
   }
 
   /* ------------------------------------------------------------------------------------------------------------------
-   * Manage Swap Caller
-   */
-  function addSwapCaller(address addr) public {
-    addAdmin(addr);
-  }
-
-  /* ------------------------------------------------------------------------------------------------------------------
    * Swap
    */
 

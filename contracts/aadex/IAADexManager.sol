@@ -14,10 +14,6 @@ interface IAADexManager {
   /// @param addr swap caller address
   function isSwapCaller(address addr) external view returns (bool);
 
-  /// Add a new swap caller who can call `swap` function.
-  /// @param addr swap caller address
-  function addSwapCaller(address addr) external;
-
   /// Swap buyer's quote token amount and seller's base token amount.
   /// @param tradeId trade ID, equivalent to a group of trade items
   /// @param tradeItemId trade item ID, equivalent to a user operation

@@ -3,11 +3,7 @@ import { BigNumber, Signer, Wallet, ethers } from "ethers"
 import { getDexManagerAddress, getEntryPointAddress, getSignerSecret } from "../config"
 import { EthProvider, TxContractReceipt, getEthProvider } from "../eth"
 
-import {
-  Wasd3rDexAccountManager,
-  Wasd3rDexManager,
-  Wasd3rDexManager__factory,
-} from "./types"
+import { AADexAccountManager, AADexManager, AADexManager__factory } from "./types"
 
 export const depositEth = async (
   depositAmount: string,
@@ -97,7 +93,7 @@ export const deployDexManager = async (
   signer: Signer,
   entryPointContractAddr: string,
 ): Promise<{ ctrl: DexManagerContractCtrl; contract: any }> => {
-  const contract = await new Wasd3rDexManager__factory(signer).deploy()
+  const contract = await new AADexManager__factory(signer).deploy()
   await contract.deployed()
   await (await contract.setEntryPoint(entryPointContractAddr)).wait()
 
@@ -121,14 +117,14 @@ export const getDexManagerContractCtrl = async (
 }
 
 export class DexManagerContractCtrl {
-  contract: Wasd3rDexManager
+  contract: AADexManager
 
   constructor(
     readonly ethProvider: EthProvider,
     readonly contractAddress: string,
     readonly signer: Signer,
   ) {
-    this.contract = Wasd3rDexManager__factory.connect(contractAddress, this.signer)
+    this.contract = AADexManager__factory.connect(contractAddress, this.signer)
   }
 
   getNewContract = (signer: Signer): DexManagerContractCtrl => {
@@ -141,7 +137,7 @@ export class DexManagerContractCtrl {
   }
 
   getSU = async (): Promise<string> => {
-    return await this.contract.dexSuperuser()
+    return await this.contract.superuser()
   }
 
   addAdmin = async (adminAddr: string): Promise<TxContractReceipt> => {
@@ -151,7 +147,7 @@ export class DexManagerContractCtrl {
   }
 
   isAdmin = async (adminAddr: string): Promise<boolean> => {
-    return await this.contract.dexAdmins(adminAddr)
+    return await this.contract.admins(adminAddr)
   }
 
   getNativeTokenKey = async (): Promise<string> => {
@@ -174,12 +170,12 @@ export class DexManagerContractCtrl {
   }
 
   getDexTokenInfo = async (tokenKey: string): Promise<any> => {
-    const tokenInfo = await this.contract.getDexTokenInfo(tokenKey)
+    const tokenInfo = await this.contract.dexTokens(tokenKey)
     return tokenInfo
   }
 
   isValidDexToken = async (tokenKey: string): Promise<boolean> => {
-    return await this.contract.isValidDexToken(tokenKey)
+    return (await this.contract.dexTokens(tokenKey)).isValid
   }
 
   registerDexToken = async (
@@ -235,11 +231,10 @@ export class DexManagerContractCtrl {
   }
 
   withdrawDexToken = async (
-    withdrawAddr: string,
     tokenKey: string,
     amount: number | BigNumber,
   ): Promise<TxContractReceipt> => {
-    const tx = await this.contract.withdrawDexToken(withdrawAddr, tokenKey, amount)
+    const tx = await this.contract.withdrawDexToken(tokenKey, amount)
     const receipt = await tx.wait()
     return new TxContractReceipt(receipt)
   }
@@ -259,7 +254,7 @@ export class DexManagerContractCtrl {
   getDexDepositInfo = async (
     addr: string,
     tokenKey: string,
-  ): Promise<Wasd3rDexAccountManager.DexDepositInfoStructOutput> => {
+  ): Promise<AADexAccountManager.DexDepositInfoStructOutput> => {
     const depositInfo = await this.contract.getDexDepositInfo(addr, tokenKey)
     return depositInfo
   }

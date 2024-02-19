@@ -26,11 +26,7 @@ contract AADexSwapCaller is BaseAccount {
    */
 
   constructor(address dexManager, address ep) {
-    _eoa = msg.sender;
-
     _dexManager = IAADexManager(dexManager);
-    _dexManager.addSwapCaller(address(this));
-
     _entryPoint = IEntryPoint(ep);
   }
 
