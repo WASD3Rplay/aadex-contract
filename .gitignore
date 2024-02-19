@@ -139,3 +139,6 @@ cache
 # build
 typechain-types/
 lib/
+
+# project related
+env.*.*
