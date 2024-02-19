@@ -1,12 +1,11 @@
 import { Wallet, ethers } from "ethers"
 
 import {
-  getDexManagerAddress,
   getEntryPointAddress,
   getEthProvider,
   getSignerSecret,
+  getToAddress,
 } from "../src"
-import { getDexManagerContractCtrl } from "../src/contract/dexmanager"
 import { getEntryPointContractCtrl } from "../src/contract/entrypoint"
 
 const main = async (): Promise<void> => {
@@ -20,27 +19,15 @@ const main = async (): Promise<void> => {
     getEntryPointAddress(),
   )
 
-  const dexManagerContractCtrl = await getDexManagerContractCtrl(
-    ethProvider,
-    superuserWallet,
-    entryPointContractCtrl.contractAddress,
-    getDexManagerAddress(),
-  )
-
   console.log("Superuser address:", superuserWallet.address)
   console.log("EntryPoint contract address:", entryPointContractCtrl.contractAddress)
-  console.log("DexManager contract address:", dexManagerContractCtrl.contractAddress)
 
-  const receipt = await entryPointContractCtrl.depositTo(
-    dexManagerContractCtrl.contractAddress,
-    "40",
-  )
-  // console.debug("Deposit result", receipt)
+  const toAddress = getToAddress()
 
-  const depositInfo = await entryPointContractCtrl.getDepositInfo(
-    dexManagerContractCtrl.contractAddress,
-  )
-  console.log("DexManager deposit info:")
+  await entryPointContractCtrl.depositTo(toAddress, "10")
+  const depositInfo = await entryPointContractCtrl.getDepositInfo(toAddress)
+
+  console.log(`Deposit info in EntryPoint of ${toAddress}:`)
   console.log("   * deposit:", ethers.utils.formatEther(depositInfo.deposit), "ETH")
   console.log("   * stake:  ", ethers.utils.formatEther(depositInfo.stake), "ETH")
 }

@@ -8,9 +8,9 @@ import {
   getEthProvider,
   getSignerSecret,
   getTokenContractAddress,
-} from "../src"
-import { ERC20ContractCtrl, deployERC20Contract } from "../src/contract/erc20"
-import { Wasd3rSampleErc20Decimal18Token__factory } from "../src/contract/types"
+} from "../../src"
+import { ERC20ContractCtrl, deployERC20Contract } from "../../src/contract/erc20"
+import { Wasd3rSampleErc20Decimal18Token__factory } from "../../src/contract/types"
 
 const findOrDeployDecimal18Contract = async (
   tokenName: string,

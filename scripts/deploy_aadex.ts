@@ -1,6 +1,6 @@
 import { Wallet, ethers } from "ethers"
 
-import { ZERO_ADDRESS, getEthProvider, getSignerSecret } from "../src"
+import { getEthProvider, getSignerSecret } from "../src"
 import { deployDexManager } from "../src/contract/dexmanager"
 import { deployEntryPoint } from "../src/contract/entrypoint"
 

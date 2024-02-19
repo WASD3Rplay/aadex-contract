@@ -8,9 +8,9 @@ import {
   getEthProvider,
   getSignerSecret,
   getTokenContractAddress,
-} from "../src"
-import { deployERC20Contract } from "../src/contract/erc20"
-import { Wasd3rSampleErc20USDT__factory } from "../src/contract/types"
+} from "../../src"
+import { deployERC20Contract } from "../../src/contract/erc20"
+import { Wasd3rSampleErc20USDT__factory } from "../../src/contract/types"
 
 const main = async (): Promise<void> => {
   const ethProvider = getEthProvider()
