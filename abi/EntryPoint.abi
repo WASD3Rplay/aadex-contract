@@ -952,7 +952,7 @@
                 "type": "uint256"
               }
             ],
-            "internalType": "struct Wasd3rDexEntryPoint.MemoryUserOp",
+            "internalType": "struct AADexEntryPoint.MemoryUserOp",
             "name": "mUserOp",
             "type": "tuple"
           },
@@ -977,7 +977,7 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct Wasd3rDexEntryPoint.UserOpInfo",
+        "internalType": "struct AADexEntryPoint.UserOpInfo",
         "name": "opInfo",
         "type": "tuple"
       },

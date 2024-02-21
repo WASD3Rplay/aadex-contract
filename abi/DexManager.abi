@@ -48,7 +48,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "requester",
+        "name": "req",
         "type": "address"
       }
     ],
@@ -61,13 +61,13 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "requester",
+        "name": "req",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "numOfRequesters",
+        "name": "numOfReqs",
         "type": "uint256"
       }
     ],
@@ -166,44 +166,6 @@
       }
     ],
     "name": "DexAccountEnabled",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "byWhom",
-        "type": "address"
-      }
-    ],
-    "name": "DexAccountTokenDepositDisabled",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "byWhom",
-        "type": "address"
-      }
-    ],
-    "name": "DexAccountTokenDepositEnabled",
     "type": "event"
   },
   {
@@ -328,7 +290,7 @@
       {
         "indexed": false,
         "internalType": "string",
-        "name": "tokenKey",
+        "name": "tKey",
         "type": "string"
       }
     ],
@@ -347,37 +309,37 @@
       {
         "indexed": false,
         "internalType": "string",
-        "name": "tokenKey",
+        "name": "tKey",
         "type": "string"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "tokenAddress",
+        "name": "tAddr",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "string",
-        "name": "tokenName",
+        "name": "tName",
         "type": "string"
       },
       {
         "indexed": false,
         "internalType": "uint8",
-        "name": "tokenType",
+        "name": "tType",
         "type": "uint8"
       },
       {
         "indexed": false,
         "internalType": "uint8",
-        "name": "tokenDecimals",
+        "name": "tDecs",
         "type": "uint8"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "tId",
         "type": "uint256"
       }
     ],
@@ -411,6 +373,38 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "_newSu",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "_newSuReqs",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -421,6 +415,25 @@
     "name": "addAdmin",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "admins",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -458,7 +471,7 @@
       },
       {
         "internalType": "string",
-        "name": "tokenKey",
+        "name": "tKey",
         "type": "string"
       },
       {
@@ -476,7 +489,7 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "tokenKey",
+        "name": "tKey",
         "type": "string"
       }
     ],
@@ -548,38 +561,6 @@
         "internalType": "bool",
         "name": "isValid",
         "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "dexAdmins",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "dexSuperuser",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -677,7 +658,7 @@
       },
       {
         "internalType": "string",
-        "name": "tokenKey",
+        "name": "tKey",
         "type": "string"
       }
     ],
@@ -701,7 +682,7 @@
       },
       {
         "internalType": "string",
-        "name": "tokenKey",
+        "name": "tKey",
         "type": "string"
       }
     ],
@@ -735,7 +716,7 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct Wasd3rDexAccountManager.DexDepositInfo",
+        "internalType": "struct AADexAccountManager.DexDepositInfo",
         "name": "info",
         "type": "tuple"
       }
@@ -763,57 +744,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "tokenKey",
-        "type": "string"
-      }
-    ],
-    "name": "getDexTokenInfo",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "bool",
-            "name": "isValid",
-            "type": "bool"
-          },
-          {
-            "internalType": "address",
-            "name": "contractAddress",
-            "type": "address"
-          },
-          {
-            "internalType": "uint8",
-            "name": "decimals",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "tokenType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "string",
-            "name": "tokenName",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct Wasd3rDexTokenManager.DexTokenInfo",
-        "name": "info",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "getNonce",
     "outputs": [
@@ -830,22 +760,22 @@
     "inputs": [
       {
         "internalType": "uint8",
-        "name": "tokenType",
+        "name": "tType",
         "type": "uint8"
       },
       {
         "internalType": "address",
-        "name": "tokenAddress",
+        "name": "tAddr",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "tId",
         "type": "uint256"
       },
       {
         "internalType": "uint8",
-        "name": "tokenDecimals",
+        "name": "tDecs",
         "type": "uint8"
       }
     ],
@@ -863,12 +793,12 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "tokenKey",
-        "type": "string"
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
       }
     ],
-    "name": "isValidDexToken",
+    "name": "isSwapCaller",
     "outputs": [
       {
         "internalType": "bool",
@@ -883,52 +813,33 @@
     "inputs": [
       {
         "internalType": "uint8",
-        "name": "tokenType",
+        "name": "tType",
         "type": "uint8"
       },
       {
         "internalType": "address",
-        "name": "tokenAddress",
+        "name": "tAddr",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "tId",
         "type": "uint256"
       },
       {
         "internalType": "uint8",
-        "name": "tokenDecimals",
+        "name": "tDecs",
         "type": "uint8"
       },
       {
         "internalType": "string",
-        "name": "tokenName",
+        "name": "tName",
         "type": "string"
       }
     ],
     "name": "registerDexToken",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "replaceSuRequesters",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -942,19 +853,6 @@
     "name": "requestToReplaceSu",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "requestedNewSu",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -975,6 +873,19 @@
     "name": "setEntryPoint",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "superuser",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1266,7 +1177,7 @@
         "type": "address"
       }
     ],
-    "name": "swapByAdmin",
+    "name": "swapBySwapCaller",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1360,13 +1271,8 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "withdrawAddress",
-        "type": "address"
-      },
-      {
         "internalType": "string",
-        "name": "tokenKey",
+        "name": "tKey",
         "type": "string"
       },
       {

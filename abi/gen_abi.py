@@ -14,18 +14,19 @@ def gen_abi():
         "..",
         "artifacts",
         "contracts",
-        "aadex",
     )
 
     entrypoint_build_json_file = os.path.join(
         contract_build_dir,
-        "Wasd3rDexEntryPoint.sol",
-        "Wasd3rDexEntryPoint.json",
+        "entrypoint",
+        "AADexEntryPoint.sol",
+        "AADexEntryPoint.json",
     )
     dexmanager_build_json_file = os.path.join(
         contract_build_dir,
-        "Wasd3rDexManager.sol",
-        "Wasd3rDexManager.json",
+        "aadex",
+        "AADexManager.sol",
+        "AADexManager.json",
     )
 
     with open(entrypoint_build_json_file, "r") as file:
