@@ -23,7 +23,7 @@ NEWJEANS_SIGNER_SECRET="8ad814bf0f35ac18d35bec52da78da1a6c8ef9f2a20b2c87b574278c
 # -------------------------------------------------------------------------------------------------------
 # Start process
 
-cp env.hardhat .env
+cp ./dotenvs/dotenv.hardhat .env
 
 # npm run clean
 npm run compile
@@ -49,15 +49,16 @@ NODE_FORCE_DEPLOY=true npx ts-node scripts/samples/deploy_sample_hunt.ts
 # Register ETH/USDT admin
 
 echo ""
-echo " >>>>>>>>>>>>>>>> Jisoo Admin for ETH/USDT market"
+echo " >>>>>>>>>>>>>>>> Admin JISOO of ETH/USDT market"
 echo " ... Top up native token for TX fee"
 NODE_TO_ADDRESS="$ADMIN_JISOO_ADDRESS" npx ts-node ./scripts/transfer_native.ts
+# AADexSwapCaller > _validateSignature 에서 userOpSigner가 admin인지 체크함.
 echo " ... Add ADMIN: EOA as a TX signer"
 NODE_ADMIN_ADDRESS="$ADMIN_JISOO_ADDRESS" npx ts-node ./scripts/add_aadex_admin.ts
 echo " ... Deploy Swap Caller (contract account, CA)"
-NODE_SIGNER_SECRET="$ADMIN_JISOO_SECRET" npx ts-node ./scripts/deploy_swap_caller.ts
-echo " ... Add ADMIN: CA as a UserOp sender"
-NODE_ADMIN_ADDRESS="$ADMIN_JISOO_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/add_aadex_admin.ts
+NODE_MARKET_ADMIN_SECRET="$ADMIN_JISOO_SECRET" npx ts-node ./scripts/deploy_swap_caller.ts
+# echo " ... Add ADMIN: CA as a UserOp sender"
+# NODE_ADMIN_ADDRESS="$ADMIN_JISOO_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/add_aadex_admin.ts
 echo " ... Deposit CA account in EntryPoint for paymaster logic"
 # paymaster가 따로 있으면 paymaster 계정만 deposit 해주면 됨.
 NODE_TO_ADDRESS="$ADMIN_JISOO_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/deposit_to_entrypoint.ts
@@ -67,25 +68,19 @@ NODE_TO_ADDRESS="$ADMIN_JISOO_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/depo
 # Register HUNT/USDT admin
 
 echo ""
-echo " >>>>>>>>>>>>>>>> Jenny Admin for HUNT/USDT market"
+echo " >>>>>>>>>>>>>>>> Admin JENNY of HUNT/USDT market"
 echo " ... Top up native token for TX fee"
 NODE_TO_ADDRESS="$ADMIN_JENNY_ADDRESS" npx ts-node ./scripts/transfer_native.ts
+# AADexSwapCaller > _validateSignature 에서 userOpSigner가 admin인지 체크함.
 echo " ... Add ADMIN: EOA as a TX signer"
 NODE_ADMIN_ADDRESS="$ADMIN_JENNY_ADDRESS" npx ts-node ./scripts/add_aadex_admin.ts
 echo " ... Deploy Swap Caller (contract account, CA)"
-NODE_SIGNER_SECRET="$ADMIN_JENNY_SECRET" npx ts-node ./scripts/deploy_swap_caller.ts
-echo " ... Add ADMIN: CA as a UserOp sender"
-NODE_ADMIN_ADDRESS="$ADMIN_JENNY_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/add_aadex_admin.ts
+NODE_MARKET_ADMIN_SECRET="$ADMIN_JENNY_SECRET" npx ts-node ./scripts/deploy_swap_caller.ts
+# echo " ... Add ADMIN: CA as a UserOp sender"
+# NODE_ADMIN_ADDRESS="$ADMIN_JENNY_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/add_aadex_admin.ts
 echo " ... Deposit CA account in EntryPoint for paymaster logic"
 # paymaster가 따로 있으면 paymaster 계정만 deposit 해주면 됨.
 NODE_TO_ADDRESS="$ADMIN_JENNY_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/deposit_to_entrypoint.ts
-
-
-# -------------------------------------------------------------------------------------------------------
-
-# echo ""
-# echo " >>>>>>>>>>>>>>>> Deposit to EntryPoint"
-# NODE_TO_ADDRESS=0x5FbDB2315678afecb367f032d93F642f64180aa3 npx ts-node ./scripts/transfer_native.ts
 
 
 # -------------------------------------------------------------------------------------------------------
@@ -137,3 +132,24 @@ echo "* Deposit USDT to AADex"
 NODE_TOKEN_SYMBOL=USDT NODE_SIGNER_SECRET=$NEWJEANS_SIGNER_SECRET npx ts-node ./scripts/deposit_erc20_to_aadex.ts
 echo "* Deposit HUNT to AADex"
 NODE_TOKEN_SYMBOL=HUNT NODE_SIGNER_SECRET=$NEWJEANS_SIGNER_SECRET npx ts-node ./scripts/deposit_erc20_to_aadex.ts
+
+
+# -------------------------------------------------------------------------------------------------------
+# Test Deposit ETH into Swap Caller's trading wallet of DexManager
+echo ""
+echo " >>>>>>>>>>>>>>>> Deposit ETH to admin JISOO"
+NODE_TO_ADDRESS="$ADMIN_JISOO_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/deposit_native_to_aadex.ts
+
+
+# -------------------------------------------------------------------------------------------------------
+# Test Withdraw ETH from Swap Caller's trading wallet of DexManager to Superuser funding wallet
+echo ""
+echo " >>>>>>>>>>>>>>>> Withdraw ETH from admin JISOO to superuser"
+NODE_ADMIN_ADDRESS="$ADMIN_JISOO_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/withdraw_admin_native.ts
+
+
+# -------------------------------------------------------------------------------------------------------
+# Test Withdraw ETH from Swap Caller's trading wallet of DexManager to Superuser funding wallet
+# echo ""
+# echo " >>>>>>>>>>>>>>>> Withdraw USDT from admin JISOO to superuser"
+# NODE_TOKEN_SYMBOL=HUNT NODE_ADMIN_ADDRESS="$USER_NEWJEANS_ADDRESS" npx ts-node ./scripts/withdraw_admin_erc20.ts
