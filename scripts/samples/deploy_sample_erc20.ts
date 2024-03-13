@@ -86,7 +86,7 @@ const findOrDeployDecimal18Contract = async (
     const txreceipt = await dexmanagerCtrl.registerDexToken(
       1,
       tokenContractCtrl.contractAddress,
-      "WETH",
+      tokenSymbol,
       await tokenContractCtrl.getDecimals(),
       0,
     )

@@ -5,6 +5,7 @@ import {
   getEntryPointAddress,
   getEthProvider,
   getSignerSecret,
+  getToAddress,
   transferEth,
 } from "../src"
 import { getDexManagerContractCtrl } from "../src/contract/dexmanager"
@@ -14,8 +15,6 @@ const main = async (): Promise<void> => {
 
   const signerWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 
-  await transferEth(signerWallet, getDexManagerAddress(), "3")
-
   const dexManagerContractCtrl = await getDexManagerContractCtrl(
     ethProvider,
     signerWallet,
@@ -23,11 +22,23 @@ const main = async (): Promise<void> => {
     getDexManagerAddress(),
   )
 
-  const balance = await dexManagerContractCtrl.getDexNativeBalanceOf(
-    signerWallet.address,
-  )
+  let toAddress = ""
+  try {
+    toAddress = getToAddress()
+  } catch (error) {
+    toAddress = ""
+  }
 
-  console.log("AADex user address:", signerWallet.address)
+  if (toAddress === signerWallet.address || !toAddress) {
+    toAddress = signerWallet.address
+    await transferEth(signerWallet, getDexManagerAddress(), "3")
+  } else {
+    await dexManagerContractCtrl.depositNativeToken(toAddress, "3")
+  }
+
+  const balance = await dexManagerContractCtrl.getDexNativeBalanceOf(toAddress)
+
+  console.log("AADex trading AA address:", toAddress)
   console.log("Deposited native balance:", balance.toString(), "ETH")
 }
 

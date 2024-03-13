@@ -1,16 +1,24 @@
 import { Wallet, ethers } from "ethers"
 
-import { getEthProvider, getSignerSecret } from "../src"
+import { getChainRpcUrl, getEthProvider, getSignerSecret } from "../src"
 import { deployDexManager } from "../src/contract/dexmanager"
 import { deployEntryPoint } from "../src/contract/entrypoint"
 
 const main = async (): Promise<void> => {
+  console.log(">>>>>>>>>>> ", getChainRpcUrl())
   const ethProvider = getEthProvider()
 
   const superuserWallet = new Wallet(getSignerSecret(), ethProvider.provider)
+  console.log("Superuser address:", superuserWallet.address)
 
   const { ctrl: entryPointContractCtrl, contract: entryPointDeployedContract } =
     await deployEntryPoint(ethProvider, superuserWallet)
+
+  console.log("EntryPoint contract address:", entryPointContractCtrl.contractAddress)
+  console.log(
+    "EntryPoint contract tx:",
+    entryPointDeployedContract.deployTransaction.hash,
+  )
 
   const { ctrl: dexManagerContractCtrl, contract: dexManagerDeployedContract } =
     await deployDexManager(
@@ -18,20 +26,13 @@ const main = async (): Promise<void> => {
       superuserWallet,
       entryPointContractCtrl.contractAddress,
     )
-
-  console.log("Superuser address:", superuserWallet.address)
-  console.log("EntryPoint contract address:", entryPointContractCtrl.contractAddress)
-  console.log(
-    "EntryPoint contract tx:",
-    entryPointDeployedContract.deployTransaction.hash,
-  )
   console.log("DexManager contract address:", dexManagerContractCtrl.contractAddress)
   console.log(
     "DexManager contract tx:",
     dexManagerDeployedContract.deployTransaction.hash,
   )
 
-  await entryPointContractCtrl.depositTo(dexManagerContractCtrl.contractAddress, "1")
+  await entryPointContractCtrl.depositTo(dexManagerContractCtrl.contractAddress, "0.25")
   const depositInfo = await entryPointContractCtrl.getDepositInfo(
     dexManagerContractCtrl.contractAddress,
   )

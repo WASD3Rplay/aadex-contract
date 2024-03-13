@@ -6,6 +6,7 @@ import {
   getEntryPointAddress,
   getEthProvider,
   getSignerSecret,
+  getToAddress,
   getTokenContractAddress,
   getTokenSymbol,
   transferEth,
@@ -61,7 +62,7 @@ const main = async (): Promise<void> => {
     tokenKey,
   )
 
-  console.log("AADex user address:", signerWallet.address)
+  console.log("AADex trading AA address:", signerWallet.address)
   console.log("Token:", tokenSymbol, `(${tokenKey})`)
   console.log(
     "Deposited native balance:",
