@@ -185,14 +185,27 @@ abstract contract AADexAccountManager is AADexTokenManager {
   /// @param total total amount after withdraw
   event DexAccountWithdrawn(address indexed from, address indexed to, string tokenKey, uint256 amount, uint256 total);
 
+  function _withdrawDexToken(address from, address to, string memory tKey, uint256 amount) private {
+    DexDepositInfo storage ddi = _decreaseDexTokenAmount(from, tKey, amount);
+
+    // Set the last withdraw time.
+    uint blockNo = ddi.lastWithdrawBlockNo;
+    if (blockNo != block.number) {
+      ddi.lastWithdrawBlockNo = block.number;
+      ddi.lastWithdrawBlockNoIdx = 0;
+    } else {
+      ddi.lastWithdrawBlockNoIdx++;
+    }
+
+    emit DexAccountWithdrawn(from, to, tKey, amount, ddi.amount);
+  }
+
   /// Withdraw given token amount from the deposit info of the token by `tKey` for the account by `msg.sender`.
   /// Only account owner can withdraw.
   /// @param tKey target token key
   /// @param amount request amount to withdraw
   function withdrawDexToken(string memory tKey, uint256 amount) public {
     require(amount > 0, 'Amount should be bigger than zero');
-
-    _decreaseDexTokenAmount(msg.sender, tKey, amount);
 
     DexTokenInfo storage dti = dexTokens[tKey];
 
@@ -212,17 +225,30 @@ abstract contract AADexAccountManager is AADexTokenManager {
       require(false, 'Unsupported token type');
     }
 
-    // Set the last withdraw time.
-    DexDepositInfo storage ddi = dexAccounts[msg.sender][tKey];
-    uint blockNo = ddi.lastWithdrawBlockNo;
-    if (blockNo != block.number) {
-      ddi.lastWithdrawBlockNo = block.number;
-      ddi.lastWithdrawBlockNoIdx = 0;
+    _withdrawDexToken(msg.sender, msg.sender, tKey, amount);
+  }
+
+  /* ------------------------------------------------------------------------------------------------------------------
+   * Transfer token
+   */
+
+  /// Transfer given token amount by `tKey` from `from` trading wallet to `to` trading wallet.
+  /// Only account owner can transfer.
+  /// @param from address to which the token was transferred
+  /// @param to address to which the token was transferred
+  /// @param tKey target token key
+  /// @param amount request amount to withdraw
+  function transferDexToken(address from, address to, string memory tKey, uint256 amount) public {
+    require(amount > 0, 'Amount should be bigger than zero');
+
+    if (superuser == msg.sender || admins[msg.sender]) {
+      require(admins[from], 'The superuser or admin can transfer only tokens of admins');
     } else {
-      ddi.lastWithdrawBlockNoIdx++;
+      require(msg.sender == from, 'Message sender can transfer only owned tokens');
     }
 
-    emit DexAccountWithdrawn(msg.sender, msg.sender, tKey, amount, ddi.amount);
+    _withdrawDexToken(from, to, tKey, amount);
+    _depositDexToken(from, to, tKey, amount);
   }
 
   /* ------------------------------------------------------------------------------------------------------------------
