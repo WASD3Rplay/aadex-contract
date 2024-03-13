@@ -30,6 +30,10 @@ export class EthProvider {
     return this.provider.getTransactionReceipt(txhash)
   }
 
+  getUnformattedBalance = async (addr: string): Promise<BigNumber> => {
+    return await this.provider.getBalance(addr)
+  }
+
   getBalance = async (addr: string): Promise<string> => {
     const balance = await this.provider.getBalance(addr)
     return ethers.utils.formatEther(balance)

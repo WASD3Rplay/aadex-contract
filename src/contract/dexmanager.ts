@@ -230,6 +230,17 @@ export class DexManagerContractCtrl {
     return new TxContractReceipt(receipt)
   }
 
+  transferDexToken = async (
+    from: string,
+    to: string,
+    tokenKey: string,
+    amount: number | BigNumber,
+  ): Promise<TxContractReceipt> => {
+    const tx = await this.contract.transferDexToken(from, to, tokenKey, amount)
+    const receipt = await tx.wait()
+    return new TxContractReceipt(receipt)
+  }
+
   withdrawDexToken = async (
     tokenKey: string,
     amount: number | BigNumber,

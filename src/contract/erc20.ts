@@ -95,10 +95,18 @@ export class ERC20ContractCtrl {
     return this.decimals
   }
 
+  getUnformattedBalanceOf = async (address: string): Promise<BigNumber> => {
+    return await this.contract.balanceOf(address)
+  }
+
   balanceOf = async (address: string): Promise<string> => {
     const balance = await this.contract.balanceOf(address)
     const decimals = await this.getDecimals()
     return ethers.utils.formatUnits(balance, decimals)
+  }
+
+  getBalanceOf = async (address: string): Promise<string> => {
+    return this.balanceOf(address)
   }
 
   mintToken = async (

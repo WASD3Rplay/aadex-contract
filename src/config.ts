@@ -12,6 +12,14 @@ export const getSignerSecret = (throwErr = true): string => {
   return value ?? ""
 }
 
+export const getMarketAdminSecret = (throwErr = true): string => {
+  const value = process.env.NODE_MARKET_ADMIN_SECRET
+  if (throwErr && (value === undefined || value.length === 0)) {
+    throw new Error("Cannot find a market admin secret")
+  }
+  return value ?? ""
+}
+
 export const getEntryPointAddress = (throwErr = true): string => {
   const addr = process.env.NODE_ENTRY_POINT_ADDRESS
   if (throwErr && addr === undefined) {
