@@ -8,6 +8,7 @@ import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import '../aadex/IAADexManager.sol';
 import '../core/BaseAccount.sol';
 import '../libs/LibDexOrder.sol';
+import '../utils/Exec.sol';
 
 /* solhint-disable avoid-low-level-calls */
 /* solhint-disable not-rely-on-time */
@@ -18,15 +19,22 @@ contract AADexSwapCaller is BaseAccount {
   using ECDSA for bytes32;
   using LibDexOrder for DexOrder;
 
-  address private _eoa;
+  address public owner;
   IAADexManager public _dexManager;
+
+  /* ------------------------------------------------------------------------------------------------------------------
+   * Catch native token transfer
+   */
+
+  receive() payable external {}
 
   /* ------------------------------------------------------------------------------------------------------------------
    * Initialize
    */
 
-  constructor(address dexManager, address ep) {
-    _dexManager = IAADexManager(dexManager);
+  constructor(address dm, address ep) {
+    owner = msg.sender;
+    _dexManager = IAADexManager(dm);
     _entryPoint = IEntryPoint(ep);
   }
 
@@ -43,7 +51,7 @@ contract AADexSwapCaller is BaseAccount {
   /// Set entiry point.
   /// @param ep EntryPoint contract address
   function setEntryPoint(address ep) public {
-    require(msg.sender == _eoa, 'Only contract account owner can call this function');
+    require(msg.sender == owner, 'Only contract account owner can call this function');
     _entryPoint = IEntryPoint(ep);
   }
 
@@ -54,7 +62,7 @@ contract AADexSwapCaller is BaseAccount {
     bytes32 hash = userOpHash.toEthSignedMessageHash();
     address userOpSigner = hash.recover(userOp.signature);
 
-    if (!_dexManager.isSwapCaller(userOpSigner)) {
+    if (owner != userOpSigner) {
       return _packValidationData(true, 0, 0);
     }
     return 0;
@@ -96,5 +104,30 @@ contract AADexSwapCaller is BaseAccount {
       quoteTokenAmount,
       feeCollector
     );
+  }
+
+  /* ------------------------------------------------------------------------------------------------------------------
+   * Transfer token
+   */
+
+  /// Transfer given token amount by `tKey` from `from` trading wallet to `to` trading wallet.
+  /// Only account owner can transfer.
+  /// @param tokenContract token contract address, if native, address should be zero address(0x0).
+  /// @param to account address to which the token would be transferred
+  /// @param amount request amount to transfer
+  function transferToken(address tokenContract, address to, uint256 amount) public {
+    require(amount > 0, 'Amount should be bigger than zero');
+
+    require(_dexManager.isSwapCaller(msg.sender), 'The dex manager admins can transfer tokens');
+
+    if (tokenContract == address(0x0)) {
+      payable(to).transfer(amount);
+    } else {
+      (bool check, bytes memory data) = address(tokenContract).call(
+        abi.encodeWithSignature('transfer(address,uint256)', to, amount)
+      );
+      bool returnBool = abi.decode(data, (bool));
+      require(returnBool, 'Fail to transfer ERC20 token');
+    }
   }
 }
