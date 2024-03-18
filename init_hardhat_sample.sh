@@ -56,10 +56,9 @@ NODE_TO_ADDRESS="$ADMIN_JISOO_ADDRESS" npx ts-node ./scripts/transfer_native.ts
 echo " ... Add ADMIN: EOA as a TX signer"
 NODE_ADMIN_ADDRESS="$ADMIN_JISOO_ADDRESS" npx ts-node ./scripts/add_aadex_admin.ts
 echo " ... Deploy Swap Caller (contract account, CA)"
+# `deploy_swap_caller` does register SwapCaller as an admin
 NODE_MARKET_ADMIN_SECRET="$ADMIN_JISOO_SECRET" npx ts-node ./scripts/deploy_swap_caller.ts
-# echo " ... Add ADMIN: CA as a UserOp sender"
-# NODE_ADMIN_ADDRESS="$ADMIN_JISOO_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/add_aadex_admin.ts
-echo " ... Deposit CA account in EntryPoint for paymaster logic"
+echo " ... Deposit 0.5 ETH in SwapCaller balance of EntryPoint for paymaster logic"
 # paymaster가 따로 있으면 paymaster 계정만 deposit 해주면 됨.
 NODE_TO_ADDRESS="$ADMIN_JISOO_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/deposit_to_entrypoint.ts
 
@@ -75,10 +74,9 @@ NODE_TO_ADDRESS="$ADMIN_JENNY_ADDRESS" npx ts-node ./scripts/transfer_native.ts
 echo " ... Add ADMIN: EOA as a TX signer"
 NODE_ADMIN_ADDRESS="$ADMIN_JENNY_ADDRESS" npx ts-node ./scripts/add_aadex_admin.ts
 echo " ... Deploy Swap Caller (contract account, CA)"
+# `deploy_swap_caller` does register SwapCaller as an admin
 NODE_MARKET_ADMIN_SECRET="$ADMIN_JENNY_SECRET" npx ts-node ./scripts/deploy_swap_caller.ts
-# echo " ... Add ADMIN: CA as a UserOp sender"
-# NODE_ADMIN_ADDRESS="$ADMIN_JENNY_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/add_aadex_admin.ts
-echo " ... Deposit CA account in EntryPoint for paymaster logic"
+echo " ... Deposit 0.5 ETH in SwapCaller balance of EntryPoint for paymaster logic"
 # paymaster가 따로 있으면 paymaster 계정만 deposit 해주면 됨.
 NODE_TO_ADDRESS="$ADMIN_JENNY_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/deposit_to_entrypoint.ts
 
@@ -149,7 +147,22 @@ NODE_ADMIN_ADDRESS="$ADMIN_JISOO_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/w
 
 
 # -------------------------------------------------------------------------------------------------------
-# Test Withdraw ETH from Swap Caller's trading wallet of DexManager to Superuser funding wallet
+# Test Withdraw USDT from Swap Caller's trading wallet of DexManager to Superuser funding wallet
 # echo ""
 # echo " >>>>>>>>>>>>>>>> Withdraw USDT from admin JISOO to superuser"
 # NODE_TOKEN_SYMBOL=HUNT NODE_ADMIN_ADDRESS="$USER_NEWJEANS_ADDRESS" npx ts-node ./scripts/withdraw_admin_erc20.ts
+
+
+# -------------------------------------------------------------------------------------------------------
+# Transfer from SwapCaller to EOA account
+
+echo ""
+echo " >>>>>>>>>>>>>>>> Admin JISOO SwapCaller: $ADMIN_JISOO_SWAP_CALLER_CA_ADDRESS"
+echo "* Top up ETH"
+NODE_TO_ADDRESS="$ADMIN_JISOO_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/transfer_native.ts
+echo "* Transfer ETH from SwapCaller"
+NODE_SWAP_CALLER_ADDRESS="$ADMIN_JISOO_ADDRESS" npx ts-node ./scripts/transfer_native_from_swapcaller.ts
+echo "* Top up USDT"
+NODE_TOKEN_SYMBOL=USDT NODE_TO_ADDRESS="$ADMIN_JISOO_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/transfer_erc20.ts
+echo "* Transfer USDT from SwapCaller"
+NODE_TOKEN_SYMBOL=USDT NODE_SWAP_CALLER_ADDRESS="$ADMIN_JISOO_ADDRESS" npx ts-node ./scripts/transfer_erc20_from_swapcaller.ts

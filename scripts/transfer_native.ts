@@ -1,14 +1,17 @@
 import { Wallet } from "ethers"
 
-import { getEthBalance, getEthProvider, getSignerSecret, transferEth } from "../src"
+import {
+  getEthBalance,
+  getEthProvider,
+  getSignerSecret,
+  getToAddress,
+  transferEth,
+} from "../src"
 
 const main = async (): Promise<void> => {
   const ethProvider = getEthProvider()
 
-  const toAddr = process.env.NODE_TO_ADDRESS
-  if (!toAddr) {
-    throw new Error("Need to set NODE_TO_ADDRESS")
-  }
+  const toAddr = getToAddress()
 
   const signerWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 

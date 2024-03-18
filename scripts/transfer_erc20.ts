@@ -13,9 +13,6 @@ const main = async (): Promise<void> => {
   const ethProvider = getEthProvider()
 
   const toAddr = getToAddress()
-  if (!toAddr) {
-    throw new Error("Need to set NODE_TO_ADDRESS")
-  }
 
   const tokenSymbol = getTokenSymbol()
   let contractAddress

@@ -42,9 +42,11 @@ const main = async (): Promise<void> => {
       entryPointContractAddress,
       dexManagerContractAddress,
     )
+  const swapCallerOwner = await swapCallerContractCtrl.getOwner()
 
   console.log("Market Admin address:", marketAdminWallet.address)
   console.log("SwapCaller contract address:", swapCallerContractCtrl.contractAddress)
+  console.log("SwapCaller contract owner:", swapCallerOwner)
   console.log(
     "SwapCaller contract tx:",
     swapCallerDeployedContract.deployTransaction.hash,

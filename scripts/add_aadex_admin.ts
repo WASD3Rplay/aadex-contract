@@ -21,10 +21,17 @@ const main = async (): Promise<void> => {
   )
 
   const adminAddress = getAdminAddress()
+  let isDexManagerAdmin = await dexmanagerCtrl.isAdmin(adminAddress)
+  if (isDexManagerAdmin) {
+    console.log("Address", adminAddress, "is already admin!!")
+    return
+  }
 
-  const txreceipt = await dexmanagerCtrl.addAdmin(adminAddress)
+  await dexmanagerCtrl.addAdmin(adminAddress)
+  isDexManagerAdmin = await dexmanagerCtrl.isAdmin(adminAddress)
+
   console.log("Admin Address:", adminAddress)
-  console.log("Tx Hash:", txreceipt.txhash)
+  console.log("   * isAdmin:", isDexManagerAdmin)
 }
 
 main().catch((error) => {
