@@ -1,7 +1,8 @@
-import { Signer } from "ethers"
+import { BigNumber, Signer, ethers } from "ethers"
 
 import { getDexManagerAddress, getEntryPointAddress } from "../config"
-import { EthProvider } from "../eth"
+import { ZERO_ADDRESS } from "../constants"
+import { EthProvider, TxContractReceipt, TxReceipt } from "../eth"
 
 import { AADexSwapCaller, AADexSwapCaller__factory } from "./types"
 
@@ -60,5 +61,38 @@ export class SwapCallerContractCtrl {
   getNonce = async (): Promise<number> => {
     const nonce = await this.contract.getNonce()
     return Number(nonce)
+  }
+
+  getOwner = async (): Promise<string> => {
+    return await this.contract.owner()
+  }
+
+  transferToken = async (
+    tokenContractAddress: string,
+    toAddress: string,
+    amount: string | number | BigNumber,
+    decimals: number | BigNumber,
+  ): Promise<TxReceipt> => {
+    if (typeof amount === "string") {
+      amount = ethers.utils.parseUnits(amount, decimals)
+    }
+
+    const tx = await this.contract.transferToken(
+      tokenContractAddress,
+      toAddress,
+      amount,
+    )
+    const receipt = await tx.wait()
+    return new TxContractReceipt(receipt)
+  }
+
+  transferEth = async (
+    toAddress: string,
+    amount: string | number | BigNumber,
+  ): Promise<TxReceipt> => {
+    if (typeof amount === "string") {
+      amount = ethers.utils.parseEther(amount)
+    }
+    return this.transferToken(ZERO_ADDRESS, toAddress, amount, 18)
   }
 }
