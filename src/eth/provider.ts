@@ -1,5 +1,6 @@
 import { BigNumber, BytesLike, Wallet, ethers } from "ethers"
-
+import { Web3Provider } from "zksync-ethers"
+import { Web3Provider as EthersWeb3Provider, ExternalProvider } from "@ethersproject/providers"
 import { getChainRpcUrl } from "../config"
 
 export class EthProvider {
@@ -74,5 +75,32 @@ export const getEthProvider = (url?: any): EthProvider => {
     url = getChainRpcUrl()
   }
 
-  return new EthProvider(new ethers.providers.JsonRpcProvider(url))
+  // Initialize the Ethers Web3Provider
+  const jsonRpcProvider = new ethers.providers.JsonRpcProvider(url);
+
+  // Directly adapt the jsonRpcProvider to match the ExternalProvider interface
+  const adaptedProvider: ExternalProvider = {
+    request: (request: { method: string; params?: any[] }) => jsonRpcProvider.send(request.method, request.params || []),
+  };
+
+  // Use the adaptedProvider with the Web3Provider from zksync-ethers
+  return new EthProvider(new Web3Provider(adaptedProvider));
+
+
+  // const ethersWeb3Provider = new EthersWeb3Provider(url);
+
+  // // Create an adapter to match the ExternalProvider interface
+  // const adaptedProvider: ExternalProvider = {
+  //   request: ({ method, params }) => ethersWeb3Provider.send(method, params as any[]),
+  //   send: (request, callback) => {
+  //     ethersWeb3Provider.send(request.method, request.params as any[])
+  //       .then(response => callback(null, {result: response}))
+  //       .catch(error => callback(error, null));
+  //   }
+  // };
+
+  // // Use the adaptedProvider with the Web3Provider from zksync-ethers
+  // return new EthProvider(new Web3Provider(adaptedProvider));
+
+  // return new EthProvider(new Web3Provider(new EthersWeb3Provider(url)));
 }
