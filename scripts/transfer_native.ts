@@ -15,11 +15,15 @@ const main = async (): Promise<void> => {
 
   const signerWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 
-  await transferEth(signerWallet, toAddr, "100")
-  const balance = await getEthBalance(ethProvider, toAddr)
+  await transferEth(signerWallet, toAddr, "0.1")
+  const fromBalance = await getEthBalance(ethProvider, signerWallet.address)
+  const toBalance = await getEthBalance(ethProvider, toAddr)
 
-  console.log("Native token owner address:", toAddr)
-  console.log("Native token owner's balance:", balance, "ETH")
+  console.log("Native Token Transfer ....")
+  console.log("FROM address:", signerWallet.address)
+  console.log("FROM balance:", fromBalance, "ETH")
+  console.log("TO address:", toAddr)
+  console.log("TO balance:", toBalance, "ETH")
 }
 
 main().catch((error) => {
