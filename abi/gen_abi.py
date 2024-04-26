@@ -5,6 +5,7 @@ import os
 
 ENTRY_POINT_ABI_FILENAME = "EntryPoint.abi"
 DEX_MANAGER_ABI_FILENAME = "DexManager.abi"
+SWAP_CALLER_ABI_FILENAME = "SwapCaller.abi"
 
 
 def gen_abi():
@@ -28,12 +29,21 @@ def gen_abi():
         "AADexManager.sol",
         "AADexManager.json",
     )
+    swapcaller_build_json_file = os.path.join(
+        contract_build_dir,
+        "accounts",
+        "AADexSwapCaller.sol",
+        "AADexSwapCaller.json",
+    )
 
     with open(entrypoint_build_json_file, "r") as file:
         entrypoint_build_json = json.load(file)
 
     with open(dexmanager_build_json_file, "r") as file:
         dexmanager_build_json = json.load(file)
+
+    with open(swapcaller_build_json_file, "r") as file:
+        swapcaller_build_json = json.load(file)
 
     entrypoint_abi_file = os.path.join(
         current_dir,
@@ -43,6 +53,10 @@ def gen_abi():
         current_dir,
         DEX_MANAGER_ABI_FILENAME,
     )
+    swapcaller_abi_file = os.path.join(
+        current_dir,
+        SWAP_CALLER_ABI_FILENAME,
+    )
 
     # Create EntryPoint.abi
     with open(entrypoint_abi_file, "w") as file:
@@ -51,6 +65,10 @@ def gen_abi():
     # Create DexManager.abi
     with open(dexmanager_abi_file, "w") as file:
         json.dump(dexmanager_build_json["abi"], file, indent=2)
+
+    # Create SwapCaller.abi
+    with open(swapcaller_abi_file, "w") as file:
+        json.dump(swapcaller_build_json["abi"], file, indent=2)
 
 
 gen_abi()

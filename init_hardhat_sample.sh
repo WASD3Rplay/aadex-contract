@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Backend admin
+ADMIN_SANA_ADDRESS=0x160EfD74bfd21A98daE0498BC213985d9D8ca730
+
 # ETH/USDT market admin
 ADMIN_JISOO_ADDRESS=0x34e98393960250c1eAe9DB6E694FB0dCDb6B8bB7
 ADMIN_JISOO_SECRET=3b3122492029ca6e2d93ccd28300793b8451ad63f71d1a764e031161ac2de81f
@@ -166,3 +169,12 @@ echo "* Top up USDT"
 NODE_TOKEN_SYMBOL=USDT NODE_TO_ADDRESS="$ADMIN_JISOO_SWAP_CALLER_CA_ADDRESS" npx ts-node ./scripts/transfer_erc20.ts
 echo "* Transfer USDT from SwapCaller"
 NODE_TOKEN_SYMBOL=USDT NODE_SWAP_CALLER_ADDRESS="$ADMIN_JISOO_ADDRESS" npx ts-node ./scripts/transfer_erc20_from_swapcaller.ts
+
+
+# -------------------------------------------------------------------------------------------------------
+# Prepare Backend admin
+
+echo ""
+echo " >>>>>>>>>>>>>>>> for SANA: $ADMIN_SANA_ADDRESS"
+echo "* Top up ETH"
+NODE_TO_ADDRESS="$ADMIN_SANA_ADDRESS" npx ts-node ./scripts/transfer_native.ts

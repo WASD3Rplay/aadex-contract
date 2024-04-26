@@ -15,8 +15,6 @@ interface IAADexManager {
   function isSwapCaller(address addr) external view returns (bool);
 
   /// Swap buyer's quote token amount and seller's base token amount.
-  /// @param tradeId trade ID, equivalent to a group of trade items
-  /// @param tradeItemId trade item ID, equivalent to a user operation
   /// @param buyerOrder DexOrder created by buyer
   /// @param buyer buyer EOA address which signed the `buyerOrder`
   /// @param buyerFeeAmount buyer would pay a fee as the base ticker
@@ -29,8 +27,6 @@ interface IAADexManager {
   /// @param quoteTokenAmount quote token amount
   /// @param feeCollector fee collector address
   function swapBySwapCaller(
-    uint256 tradeId,
-    uint256 tradeItemId,
     DexOrder calldata buyerOrder,
     address buyer,
     uint256 buyerFeeAmount,

@@ -121,8 +121,6 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
   /// who can create and send a transaction with multiple swap UserOperations
   /// to avoid front running (MEV) attacks.
   ///
-  /// @param tradeId trade ID, equivalent to a group of trade items
-  /// @param tradeItemId trade item ID, equivalent to a user operation
   /// @param buyerOrder DexOrder created by buyer
   /// @param buyer buyer EOA address which signed the `buyerOrder`
   /// @param buyerFeeAmount buyer would pay a fee as the base ticker
@@ -135,8 +133,6 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
   /// @param quoteTokenAmount quote token amount
   /// @param feeCollector fee collector address
   function _swap(
-    uint256 tradeId,
-    uint256 tradeItemId,
     DexOrder calldata buyerOrder,
     address buyer,
     uint256 buyerFeeAmount,
@@ -157,6 +153,7 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
 
     // 2. Verify parameters
     require(baseTokenAmount <= sellerOrder.requestAmount, 'Request amount is not acceptable in seller dex order');
+
     if (buyerOrder.price > 0) {
       require(
         quoteTokenAmount <= (buyerOrder.requestAmount * buyerOrder.price) / 10 ** baseDti.decimals,
@@ -183,25 +180,9 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
     _increaseDexTokenAmount(seller, quoteTokenKey, quoteTokenAmount - sellerFeeAmount);
     // Increase fee collector (ADMIN) quote token amount by SELLER's fee
     _increaseDexTokenAmount(feeCollector, quoteTokenKey, sellerFeeAmount);
-
-    emit DexSwapped(
-      tradeId,
-      tradeItemId,
-      buyer,
-      seller,
-      buyerFeeAmount,
-      sellerFeeAmount,
-      baseTokenKey,
-      baseTokenAmount,
-      quoteTokenKey,
-      quoteTokenAmount,
-      feeCollector
-    );
   }
 
   function swapBySwapCaller(
-    uint256 tradeId,
-    uint256 tradeItemId,
     DexOrder calldata buyerOrder,
     address buyer,
     uint256 buyerFeeAmount,
@@ -215,8 +196,6 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
     address feeCollector
   ) public dexEssential {
     _swap(
-      tradeId,
-      tradeItemId,
       buyerOrder,
       buyer,
       buyerFeeAmount,
@@ -248,13 +227,25 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
   ) public {
     _requireFromEntryPoint();
     _swap(
-      tradeId,
-      tradeItemId,
       buyerOrder,
       buyer,
       buyerFeeAmount,
       sellerOrder,
       seller,
+      sellerFeeAmount,
+      baseTokenKey,
+      baseTokenAmount,
+      quoteTokenKey,
+      quoteTokenAmount,
+      feeCollector
+    );
+
+    emit DexSwapped(
+      tradeId,
+      tradeItemId,
+      buyer,
+      seller,
+      buyerFeeAmount,
       sellerFeeAmount,
       baseTokenKey,
       baseTokenAmount,

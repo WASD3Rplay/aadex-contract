@@ -80,7 +80,9 @@ abstract contract AADexAccountManager is AADexTokenManager {
     }
 
     DexDepositInfo storage ddi = dexAccounts[to][tKey];
-    ddi.amount = ddi.amount + amount;
+    unchecked {
+      ddi.amount = ddi.amount + amount;
+    }
     return ddi;
   }
 
@@ -99,7 +101,9 @@ abstract contract AADexAccountManager is AADexTokenManager {
     DexDepositInfo storage ddi = dexAccounts[from][tKey];
     require(ddi.amount >= amount, 'Deposit amount is less than the input amount to decrease');
 
-    ddi.amount = ddi.amount - amount;
+    unchecked {
+      ddi.amount = ddi.amount - amount;
+    }
     return ddi;
   }
 
