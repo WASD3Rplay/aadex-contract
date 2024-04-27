@@ -26,7 +26,7 @@ contract AADexSwapCaller is BaseAccount {
    * Catch native token transfer
    */
 
-  receive() payable external {}
+  receive() external payable {}
 
   /* ------------------------------------------------------------------------------------------------------------------
    * Initialize
@@ -72,6 +72,32 @@ contract AADexSwapCaller is BaseAccount {
    * Swap
    */
 
+  /// Event when swap happened.
+  /// @param tradeId trade ID
+  /// @param tradeItemId trade item ID
+  /// @param buyer buyer account address
+  /// @param seller seller account address
+  /// @param buyerFeeAmount fee amount that buyer should pay in base token
+  /// @param sellerFeeAmount fee amount that seller should pay in quote token
+  /// @param baseTokenKey base token key
+  /// @param baseTokenAmount base token amount to swap
+  /// @param quoteTokenKey quote token key
+  /// @param quoteTokenAmount quote token amount to sawp
+  /// @param feeCollector fee collector address
+  event DexSwapped(
+    uint256 tradeId,
+    uint256 tradeItemId,
+    address indexed buyer,
+    address indexed seller,
+    uint256 buyerFeeAmount,
+    uint256 sellerFeeAmount,
+    string baseTokenKey,
+    uint256 baseTokenAmount,
+    string quoteTokenKey,
+    uint256 quoteTokenAmount,
+    address feeCollector
+  );
+
   /// Swap buyer's quote token and seller's base token.
   function swap(
     uint256 tradeId,
@@ -89,14 +115,27 @@ contract AADexSwapCaller is BaseAccount {
     address feeCollector
   ) public {
     _requireFromEntryPoint();
+
     _dexManager.swapBySwapCaller(
-      tradeId,
-      tradeItemId,
       buyerOrder,
       buyer,
       buyerFeeAmount,
       sellerOrder,
       seller,
+      sellerFeeAmount,
+      baseTokenKey,
+      baseTokenAmount,
+      quoteTokenKey,
+      quoteTokenAmount,
+      feeCollector
+    );
+
+    emit DexSwapped(
+      tradeId,
+      tradeItemId,
+      buyer,
+      seller,
+      buyerFeeAmount,
       sellerFeeAmount,
       baseTokenKey,
       baseTokenAmount,

@@ -32,18 +32,17 @@ const main = async (): Promise<void> => {
     dexManagerDeployedContract.deployTransaction.hash,
   )
 
-  await entryPointContractCtrl.depositTo(dexManagerContractCtrl.contractAddress, "0.25")
-  const depositInfo = await entryPointContractCtrl.getDepositInfo(
-    dexManagerContractCtrl.contractAddress,
-  )
-  console.log("DexManager deposit info:")
-  console.log("   * deposit:", ethers.utils.formatEther(depositInfo.deposit), "ETH")
-  console.log("   * stake:  ", ethers.utils.formatEther(depositInfo.stake), "ETH")
+  // await entryPointContractCtrl.depositTo(dexManagerContractCtrl.contractAddress, "0.25")
+  // const depositInfo = await entryPointContractCtrl.getDepositInfo(
+  //   dexManagerContractCtrl.contractAddress,
+  // )
+  // console.log("DexManager deposit info:")
+  // console.log("   * deposit:", ethers.utils.formatEther(depositInfo.deposit), "ETH")
+  // console.log("   * stake:  ", ethers.utils.formatEther(depositInfo.stake), "ETH")
 
   const nativeTokenKey = await dexManagerContractCtrl.getNativeTokenKey()
-  const isNativeTokenValid = await dexManagerContractCtrl.isValidDexToken(
-    nativeTokenKey,
-  )
+  const isNativeTokenValid =
+    await dexManagerContractCtrl.isValidDexToken(nativeTokenKey)
   console.log("Native Token Key:", nativeTokenKey)
   console.log("       is valid?:", isNativeTokenValid)
 }

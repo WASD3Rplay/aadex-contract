@@ -127,6 +127,10 @@ export class DexManagerContractCtrl {
     this.contract = AADexManager__factory.connect(contractAddress, this.signer)
   }
 
+  setEntryPoint = (address: string): Promise<any> => {
+    return this.contract.setEntryPoint(address)
+  }
+
   getNewContract = (signer: Signer): DexManagerContractCtrl => {
     return new DexManagerContractCtrl(this.ethProvider, this.contractAddress, signer)
   }

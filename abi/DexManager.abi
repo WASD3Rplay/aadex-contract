@@ -1038,16 +1038,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "tradeId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tradeItemId",
-        "type": "uint256"
-      },
-      {
         "components": [
           {
             "internalType": "uint256",
