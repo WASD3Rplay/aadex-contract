@@ -20,7 +20,6 @@ contract AADexSwapCaller is BaseAccount {
   using LibDexOrder for DexOrder;
 
   address public owner;
-  IAADexManager public _dexManager;
 
   /* ------------------------------------------------------------------------------------------------------------------
    * Catch native token transfer
@@ -36,6 +35,23 @@ contract AADexSwapCaller is BaseAccount {
     owner = msg.sender;
     _dexManager = IAADexManager(dm);
     _entryPoint = IEntryPoint(ep);
+  }
+
+  /* ------------------------------------------------------------------------------------------------------------------
+   * Manage Dex Manager
+   */
+
+  IAADexManager public _dexManager;
+
+  function dexManager() public view virtual returns (IAADexManager) {
+    return _dexManager;
+  }
+
+  /// Set dex manager.
+  /// @param dm DexManager contract address
+  function setDexManager(address dm) public {
+    require(msg.sender == owner, 'Only contract account owner can call this function');
+    _dexManager = IAADexManager(dm);
   }
 
   /* ------------------------------------------------------------------------------------------------------------------
