@@ -116,6 +116,19 @@
   },
   {
     "inputs": [],
+    "name": "dexManager",
+    "outputs": [
+      {
+        "internalType": "contract IAADexManager",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "entryPoint",
     "outputs": [
       {
@@ -151,6 +164,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "dm",
+        "type": "address"
+      }
+    ],
+    "name": "setDexManager",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
