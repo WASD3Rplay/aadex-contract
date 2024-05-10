@@ -86,6 +86,10 @@ export class AASigner extends Signer {
     return this.aaSenderAddress
   }
 
+  getUserOpNonce(): number {
+    return this.aaSenderNonce + this.userOps.length
+  }
+
   async _createUserOperation(
     transaction: Deferrable<TransactionRequest>,
   ): Promise<UserOperation> {
@@ -104,7 +108,7 @@ export class AASigner extends Signer {
 
     const partialUserOp = {
       sender: this.aaSenderAddress,
-      nonce: this.aaSenderNonce + this.userOps.length,
+      nonce: this.getUserOpNonce(),
       callData: tx.data as BytesLike,
       callGasLimit: (tx.gasLimit ?? this.maxCallGasLimit) as BigNumberish,
       maxPriorityFeePerGas,
