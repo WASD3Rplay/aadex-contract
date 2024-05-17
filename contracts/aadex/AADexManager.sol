@@ -20,6 +20,8 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
   using ECDSA for bytes32;
   using LibDexOrder for DexOrder;
 
+  string version = '1.7';
+
   /* ------------------------------------------------------------------------------------------------------------------
    * Catch native token transfer
    */

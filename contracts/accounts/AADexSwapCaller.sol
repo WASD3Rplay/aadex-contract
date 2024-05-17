@@ -19,6 +19,8 @@ contract AADexSwapCaller is BaseAccount {
   using ECDSA for bytes32;
   using LibDexOrder for DexOrder;
 
+  string version = '1.7';
+
   address public owner;
 
   /* ------------------------------------------------------------------------------------------------------------------
