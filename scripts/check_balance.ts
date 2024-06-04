@@ -10,6 +10,7 @@ import {
   getEthProvider,
   getSignerSecret,
   getTokenContractAddress,
+  getToAddress,
 } from "../src"
 import { Wasd3rSampleErc20USDT__factory } from "../src/contract/types"
 
@@ -75,7 +76,8 @@ const getDexUSDTBalanceOf = async (addr: string): Promise<string> => {
 }
 
 const main = async (): Promise<void> => {
-  const address = "0x75ce7aee59347612ed29ff5c249e34ed1bc17d15"
+  //const address = "0x75ce7aee59347612ed29ff5c249e34ed1bc17d15"
+  const address = getToAddress()
 
   const dexManagerContractCtrl = await getAdminDexManagerContractCtrl()
   const accountValid = await dexManagerContractCtrl.getDexAccountValid(address)
