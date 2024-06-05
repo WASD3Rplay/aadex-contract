@@ -65,7 +65,7 @@ const main = async (): Promise<void> => {
 
   let balance = await dexmanagerCtrl.getDexNativeBalanceOf(accountAddress)
   let hBalance = ethers.utils.formatEther(balance)
-  console.info("\t * Native Balance:", hBalance, "ETH (", balance, ")")
+  console.info("\t * Native Balance:", hBalance, "ETH (", balance.toString(), ")")
 
   balance = await dexmanagerCtrl.getDexBalanceOf(accountAddress, tokenKey)
   hBalance = ethers.utils.formatUnits(balance, tokenDecimals)
@@ -74,7 +74,7 @@ const main = async (): Promise<void> => {
     hBalance,
     tokenSymbol,
     " (",
-    balance,
+    balance.toString(),
     ")",
   )
 }
