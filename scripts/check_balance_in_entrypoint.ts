@@ -23,9 +23,6 @@ const main = async (): Promise<void> => {
   console.log("EntryPoint contract address:", entryPointContractCtrl.contractAddress)
 
   const toAddress = getToAddress()
-  const amount = process.env.NODE_AMOUNT || "0.01"
-
-  await entryPointContractCtrl.depositTo(toAddress, amount)
   const depositInfo = await entryPointContractCtrl.getDepositInfo(toAddress)
 
   console.log(`Deposit info in EntryPoint of ${toAddress}:`)
