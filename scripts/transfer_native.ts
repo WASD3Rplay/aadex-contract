@@ -5,6 +5,7 @@ import {
   getEthProvider,
   getSignerSecret,
   getToAddress,
+  getAmount,
   transferEth,
 } from "../src"
 
@@ -15,7 +16,8 @@ const main = async (): Promise<void> => {
 
   const signerWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 
-  await transferEth(signerWallet, toAddr, "0.1")
+  const amount = getAmount()
+  await transferEth(signerWallet, toAddr, amount)
   const fromBalance = await getEthBalance(ethProvider, signerWallet.address)
   const toBalance = await getEthBalance(ethProvider, toAddr)
 

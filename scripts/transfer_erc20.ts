@@ -7,6 +7,7 @@ import {
   getToAddress,
   getTokenContractAddress,
   getTokenSymbol,
+  getAmount,
 } from "../src"
 
 const main = async (): Promise<void> => {
@@ -29,7 +30,8 @@ const main = async (): Promise<void> => {
     signerWallet,
     contractAddress,
   )
-  await tokenContractCtrl.transferToken(toAddr, "10000")
+  const amount = getAmount()
+  await tokenContractCtrl.transferToken(toAddr, amount)
   const balance = await tokenContractCtrl.balanceOf(toAddr)
 
   console.log(`${tokenSymbol} token owner address:`, toAddr)
