@@ -59,6 +59,14 @@ export const getToAddress = (throwErr = true): string => {
   return addr ?? ""
 }
 
+export const getAmount = (throwErr = true): string => {
+  const addr = process.env.NODE_AMOUNT
+  if (throwErr && addr === undefined) {
+    throw new Error("Cannot find NODE_AMOUNT")
+  }
+  return addr ?? ""
+}
+
 export const getSwapCallerAddress = (throwErr = true): string => {
   const addr = process.env.NODE_SWAP_CALLER_ADDRESS
   if (throwErr && addr === undefined) {

@@ -6,6 +6,7 @@ import {
   getSwapCallerAddress,
   getSwapCallerContractCtrl,
   getToAddress,
+  getAmount,
 } from "../src"
 
 const main = async (): Promise<void> => {
@@ -46,7 +47,8 @@ const main = async (): Promise<void> => {
   console.log("...... before Transfer ETH")
   await printBalances()
 
-  await swapCallerCtrl.transferEth(toAddress, "1")
+  const amount = getAmount()
+  await swapCallerCtrl.transferEth(toAddress, amount)
 
   console.log("...... after Transfer ETH")
   await printBalances()
