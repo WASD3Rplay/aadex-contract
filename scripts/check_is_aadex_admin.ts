@@ -6,6 +6,7 @@ import {
   getEntryPointAddress,
   getEthProvider,
   getSignerSecret,
+  getToAddress,
 } from "../src"
 
 const main = async (): Promise<void> => {
@@ -25,7 +26,7 @@ const main = async (): Promise<void> => {
   const isSUAdmin = await dexmanagerCtrl.isAdmin(superuserWallet.address)
   console.log("Is SU Admin:", superuserWallet.address, isSUAdmin)
 
-  const adminAddr = "0x1478AAFb174E2D8e83411fF4c191AAdeB1603661"
+  const adminAddr = getToAddress()
   const isAdmin = await dexmanagerCtrl.isAdmin(adminAddr)
   console.log(`Is ${adminAddr} Admin:`, isAdmin)
 }
