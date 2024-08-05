@@ -111,16 +111,16 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
     address feeCollector
   );
 
-  function _isValidSignature(address signer, bytes32 hash, bytes memory signature) internal view returns (bool) {
+  function _isValidSignature(address signer, bytes32 dataHash, bytes memory signature) internal view returns (bool) {
     if (signer.code.length == 0) {
-      (address recovered, ECDSA.RecoverError err) = ECDSA.tryRecover(hash, signature);
+      (address recovered, ECDSA.RecoverError err) = ECDSA.tryRecover(dataHash, signature);
       return err == ECDSA.RecoverError.NoError && recovered == signer;
     } else {
-      bytes32 swHash = keccak256(
-        abi.encodePacked('\x19Ethereum Signed Message:\n', Strings.toString(hash.length), hash)
-      );
+      // bytes32 swHash = keccak256(
+      //   abi.encodePacked('\x19Ethereum Signed Message:\n', Strings.toString(dataHash.length), dataHash)
+      // );
       (bool success, bytes memory result) = signer.staticcall(
-        abi.encodeCall(IERC1271.isValidSignature, (swHash, signature))
+        abi.encodeCall(IERC1271.isValidSignature, (dataHash, signature))
       );
       return (success &&
         result.length >= 32 &&
@@ -128,8 +128,8 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
     }
   }
 
-  function isValidSignature(address signer, bytes32 hash, bytes memory signature) public view returns (bool) {
-    return _isValidSignature(signer, hash, signature);
+  function isValidSignature(address signer, bytes32 dataHash, bytes memory signature) public view returns (bool) {
+    return _isValidSignature(signer, dataHash, signature);
   }
 
   function _verifyOrderSign(address oSigner, DexOrder calldata dOrder) private view returns (bool) {
