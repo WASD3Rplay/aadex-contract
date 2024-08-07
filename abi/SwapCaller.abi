@@ -89,6 +89,81 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "message",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "int32",
+        "name": "step",
+        "type": "int32"
+      },
+      {
+        "indexed": false,
+        "internalType": "int32",
+        "name": "subStep",
+        "type": "int32"
+      }
+    ],
+    "name": "SwapCallerStepLog",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "message",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "int32",
+        "name": "step",
+        "type": "int32"
+      },
+      {
+        "indexed": false,
+        "internalType": "int32",
+        "name": "subStep",
+        "type": "int32"
+      }
+    ],
+    "name": "SwapCallerStepLog2",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "message",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "int32",
+        "name": "step",
+        "type": "int32"
+      },
+      {
+        "indexed": false,
+        "internalType": "int32",
+        "name": "subStep",
+        "type": "int32"
+      }
+    ],
+    "name": "SwapCallerStepLog3",
+    "type": "event"
+  },
+  {
     "inputs": [],
     "name": "_dexManager",
     "outputs": [
@@ -445,6 +520,24 @@
         "type": "uint256"
       }
     ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdrawTokenFromEntryPoint",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },

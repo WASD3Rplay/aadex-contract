@@ -818,7 +818,7 @@
       },
       {
         "internalType": "bytes32",
-        "name": "hash",
+        "name": "dataHash",
         "type": "bytes32"
       },
       {
@@ -827,7 +827,7 @@
         "type": "bytes"
       }
     ],
-    "name": "isValidSignature",
+    "name": "isValid1271Signature",
     "outputs": [
       {
         "internalType": "bool",

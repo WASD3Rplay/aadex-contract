@@ -95,4 +95,23 @@ export class SwapCallerContractCtrl {
     }
     return this.transferToken(ZERO_ADDRESS, toAddress, amount, 18)
   }
+
+  withdrawFromEntryPoint = async (toAddress: string, amount: string): Promise<any> => {
+    const tx = await this.contract.withdrawTokenFromEntryPoint(
+      toAddress,
+      ethers.utils.parseEther(amount),
+    )
+    const receipt = await tx.wait()
+    return new TxContractReceipt(receipt)
+  }
+
+  getDexManager = async (): Promise<string> => {
+    return await this.contract.dexManager()
+  }
+
+  setDexManager = async (address: string): Promise<any> => {
+    const tx = await this.contract.setDexManager(address)
+    const receipt = await tx.wait()
+    return new TxContractReceipt(receipt)
+  }
 }

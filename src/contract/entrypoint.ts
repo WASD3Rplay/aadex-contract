@@ -61,6 +61,12 @@ export class EntryPointContractCtrl {
     return new TxContractReceipt(receipt)
   }
 
+  withdrawTo = async (addr: string, amount: string): Promise<any> => {
+    const tx = await this.contract.withdrawTo(addr, ethers.utils.parseEther(amount))
+    const receipt = await tx.wait()
+    return new TxContractReceipt(receipt)
+  }
+
   getDepositInfo = async (addr: string): Promise<any> => {
     return this.contract.getDepositInfo(addr)
   }

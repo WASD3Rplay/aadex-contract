@@ -41,6 +41,20 @@ const main = async (): Promise<void> => {
     return
   }
   const tokenContractAddress = getTokenContractAddress(tokenSymbol)
+  console.log("Token Contract Address:", tokenContractAddress)
+
+  const entryPointContractAddr = getEntryPointAddress()
+  const dexManagerContractAddr = getDexManagerAddress()
+
+  if (!entryPointContractAddr) {
+    throw new Error("Cannot recognize entry point address:")
+  }
+  console.log("Entry Point Address:", entryPointContractAddr)
+
+  if (!dexManagerContractAddr) {
+    throw new Error("Cannot recognize dex manager address:")
+  }
+  console.log("Dex Manager Address:", dexManagerContractAddr)
 
   const superuserWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 
@@ -57,9 +71,11 @@ const main = async (): Promise<void> => {
   const dexmanagerCtrl = await getDexManagerContractCtrl(
     ethProvider,
     superuserWallet,
-    getEntryPointAddress(),
-    getDexManagerAddress(),
+    entryPointContractAddr,
+    dexManagerContractAddr,
   )
+  console.log("Dex Manager Address:", dexmanagerCtrl.contractAddress)
+
   let tokenKey = await dexmanagerCtrl.getTokenKey(
     tokenType,
     tokenContractAddress,
@@ -67,11 +83,11 @@ const main = async (): Promise<void> => {
     0,
   )
   let isTokenValid = await dexmanagerCtrl.isValidDexToken(tokenKey)
+  console.log(`${tokenSymbol} contract address:`, tokenContractCtrl.contractAddress)
+  console.log(`${tokenSymbol} token key:`, tokenKey)
 
   if (isTokenValid) {
     console.log(`${tokenSymbol} is already regietered!!`)
-    console.log(`${tokenSymbol} contract address:`, tokenContractCtrl.contractAddress)
-    console.log(`${tokenSymbol} token key:`, tokenKey)
     return
   }
 
@@ -86,8 +102,6 @@ const main = async (): Promise<void> => {
   tokenKey = txreceipt.events[0].args?.[1]
   isTokenValid = await dexmanagerCtrl.isValidDexToken(tokenKey)
 
-  console.log(`${tokenSymbol} contract address:`, tokenContractCtrl.contractAddress)
-  console.log(`${tokenSymbol} token key:`, tokenKey)
   console.log("            is valid?:", isTokenValid)
 }
 

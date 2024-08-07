@@ -180,11 +180,25 @@ contract AADexSwapCaller is BaseAccount {
     if (tokenContract == address(0x0)) {
       payable(to).transfer(amount);
     } else {
-      (bool check, bytes memory data) = address(tokenContract).call(
+      (bool success, bytes memory data) = address(tokenContract).call(
         abi.encodeWithSignature('transfer(address,uint256)', to, amount)
       );
       bool returnBool = abi.decode(data, (bool));
+      require(success, 'Fail to call transfer ERC20 token');
       require(returnBool, 'Fail to transfer ERC20 token');
     }
+  }
+
+  /* ------------------------------------------------------------------------------------------------------------------
+   * Withdraw token from EntryPoint
+   */
+
+  function withdrawTokenFromEntryPoint(address to, uint256 amount) public {
+    require(amount > 0, 'Amount should be bigger than zero');
+
+    require(_dexManager.isSwapCaller(msg.sender), 'The dex manager admins can withdraw tokens');
+
+    (bool success, ) = address(_entryPoint).call(abi.encodeWithSignature('withdrawTo(address,uint256)', to, amount));
+    require(success, 'Fail to withdraw token from EntryPoint');
   }
 }

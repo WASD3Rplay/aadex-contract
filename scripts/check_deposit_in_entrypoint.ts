@@ -1,7 +1,6 @@
 import { Wallet, ethers } from "ethers"
 
 import {
-  getAmount,
   getEntryPointAddress,
   getEthProvider,
   getSignerSecret,
@@ -30,9 +29,7 @@ const main = async (): Promise<void> => {
   console.log("EntryPoint contract address:", entryPointContractCtrl.contractAddress)
 
   const toAddress = getToAddress()
-  const amount = getAmount()
 
-  await entryPointContractCtrl.depositTo(toAddress, amount)
   const depositInfo = await entryPointContractCtrl.getDepositInfo(toAddress)
 
   console.log(`Deposit info in EntryPoint of ${toAddress}:`)

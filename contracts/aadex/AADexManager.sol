@@ -111,30 +111,30 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
     address feeCollector
   );
 
-  function _isValidSignature(address signer, bytes32 dataHash, bytes memory signature) internal view returns (bool) {
-    if (signer.code.length == 0) {
-      (address recovered, ECDSA.RecoverError err) = ECDSA.tryRecover(dataHash, signature);
-      return err == ECDSA.RecoverError.NoError && recovered == signer;
-    } else {
-      // bytes32 swHash = keccak256(
-      //   abi.encodePacked('\x19Ethereum Signed Message:\n', Strings.toString(dataHash.length), dataHash)
-      // );
-      (bool success, bytes memory result) = signer.staticcall(
-        abi.encodeCall(IERC1271.isValidSignature, (dataHash, signature))
-      );
-      return (success &&
-        result.length >= 32 &&
-        abi.decode(result, (bytes32)) == bytes32(IERC1271.isValidSignature.selector));
-    }
+  function isValid1271Signature(address signer, bytes32 dataHash, bytes memory signature) public view returns (bool) {
+    (bool success, bytes memory result) = signer.staticcall(
+      abi.encodeCall(IERC1271.isValidSignature, (dataHash, signature))
+    );
+    return (success &&
+      result.length >= 32 &&
+      abi.decode(result, (bytes32)) == bytes32(IERC1271.isValidSignature.selector));
   }
 
-  function isValidSignature(address signer, bytes32 dataHash, bytes memory signature) public view returns (bool) {
-    return _isValidSignature(signer, dataHash, signature);
+  function _isValidSignature(address signer, bytes32 dataHash, bytes memory signature) internal view returns (bool) {
+    if (signer.code.length == 0) {
+      (address recovered, ECDSA.RecoverError err) = ECDSA.tryRecover(dataHash.toEthSignedMessageHash(), signature);
+      return err == ECDSA.RecoverError.NoError && recovered == signer;
+    } else {
+      bytes32 eip191Hash = keccak256(
+        abi.encodePacked('\x19Ethereum Signed Message:\n', Strings.toString(dataHash.length), dataHash)
+      );
+      return isValid1271Signature(signer, eip191Hash, signature);
+    }
   }
 
   function _verifyOrderSign(address oSigner, DexOrder calldata dOrder) private view returns (bool) {
     bytes32 dexOrderHash = keccak256(abi.encode(dOrder.hash(), address(this), block.chainid));
-    return _isValidSignature(oSigner, dexOrderHash.toEthSignedMessageHash(), dOrder.signature);
+    return _isValidSignature(oSigner, dexOrderHash, dOrder.signature);
   }
 
   /// Swap buyer's quote token amount and seller's base token amount.

@@ -3,17 +3,38 @@ import { Wallet, ethers } from "ethers"
 import {
   getAmount,
   getEntryPointAddress,
+  getEntryPointContractCtrl,
   getEthProvider,
   getSignerSecret,
-  getToAddress,
+  getSwapCallerAddress,
+  getSwapCallerContractCtrl,
 } from "../src"
-import { getEntryPointContractCtrl } from "../src/contract/entrypoint"
 
 const main = async (): Promise<void> => {
   const ethProvider = getEthProvider()
 
   const superuserWallet = new Wallet(getSignerSecret(), ethProvider.provider)
   console.log("Superuser address:", superuserWallet.address)
+
+  const swapCallerContractAddr = getSwapCallerAddress()
+
+  if (!swapCallerContractAddr) {
+    throw new Error("Cannot recognize swap caller contract address:")
+  }
+
+  const swapCallerContractCtrl = await getSwapCallerContractCtrl(
+    ethProvider,
+    superuserWallet,
+    swapCallerContractAddr,
+  )
+
+  console.log("Swap Caller contract address:", swapCallerContractCtrl.contractAddress)
+
+  const amount = getAmount()
+
+  await swapCallerContractCtrl.withdrawFromEntryPoint(superuserWallet.address, amount)
+
+  console.log(`${amount} is withdrawn to ${superuserWallet.address}`)
 
   const entryPointContractAddr = getEntryPointAddress()
 
@@ -29,13 +50,10 @@ const main = async (): Promise<void> => {
 
   console.log("EntryPoint contract address:", entryPointContractCtrl.contractAddress)
 
-  const toAddress = getToAddress()
-  const amount = getAmount()
+  const depositInfo =
+    await entryPointContractCtrl.getDepositInfo(swapCallerContractAddr)
 
-  await entryPointContractCtrl.depositTo(toAddress, amount)
-  const depositInfo = await entryPointContractCtrl.getDepositInfo(toAddress)
-
-  console.log(`Deposit info in EntryPoint of ${toAddress}:`)
+  console.log(`Deposit info in EntryPoint of ${swapCallerContractAddr}:`)
   console.log("   * deposit:", ethers.utils.formatEther(depositInfo.deposit), "ETH")
   console.log("   * stake:  ", ethers.utils.formatEther(depositInfo.stake), "ETH")
 }

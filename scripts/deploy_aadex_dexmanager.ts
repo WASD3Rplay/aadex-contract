@@ -7,7 +7,6 @@ import {
   getSignerSecret,
 } from "../src"
 import { deployDexManager } from "../src/contract/dexmanager"
-import { deployEntryPoint } from "../src/contract/entrypoint"
 
 const main = async (): Promise<void> => {
   console.log(">>>>>>>>>>> ", getChainRpcUrl())
