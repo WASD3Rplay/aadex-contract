@@ -19,6 +19,8 @@ contract AADexSwapCaller is BaseAccount {
   using ECDSA for bytes32;
   using LibDexOrder for DexOrder;
 
+  string version = '1.7';
+
   address public owner;
 
   /* ------------------------------------------------------------------------------------------------------------------
@@ -100,7 +102,7 @@ contract AADexSwapCaller is BaseAccount {
   /// @param quoteTokenKey quote token key
   /// @param quoteTokenAmount quote token amount to sawp
   /// @param feeCollector fee collector address
-  event DexSwapped(
+  event DexSwapCallerSwapped(
     uint256 tradeId,
     uint256 tradeItemId,
     address indexed buyer,
@@ -113,6 +115,11 @@ contract AADexSwapCaller is BaseAccount {
     uint256 quoteTokenAmount,
     address feeCollector
   );
+  event DexSwapCallerSwapFailReason(uint256 tradeId, uint256 tradeItemId, string reason);
+  event DexSwapCallerSwapFailUnknown(uint256 tradeId, uint256 tradeItemId, bytes reason);
+
+  event SwapCallerStepLogString(int32 step, int32 subStep, uint256 tradeItemId, string message);
+  event SwapCallerStepLogAddress(int32 step, int32 subStep, uint256 tradeItemId, address addr);
 
   /// Swap buyer's quote token and seller's base token.
   function swap(
@@ -130,35 +137,46 @@ contract AADexSwapCaller is BaseAccount {
     uint256 quoteTokenAmount,
     address feeCollector
   ) public {
+    emit SwapCallerStepLogAddress(0, 0, tradeItemId, msg.sender);
     _requireFromEntryPoint();
 
-    _dexManager.swapBySwapCaller(
-      buyerOrder,
-      buyer,
-      buyerFeeAmount,
-      sellerOrder,
-      seller,
-      sellerFeeAmount,
-      baseTokenKey,
-      baseTokenAmount,
-      quoteTokenKey,
-      quoteTokenAmount,
-      feeCollector
-    );
+    emit SwapCallerStepLogAddress(1, 0, tradeItemId, address(_dexManager));
 
-    emit DexSwapped(
-      tradeId,
-      tradeItemId,
-      buyer,
-      seller,
-      buyerFeeAmount,
-      sellerFeeAmount,
-      baseTokenKey,
-      baseTokenAmount,
-      quoteTokenKey,
-      quoteTokenAmount,
-      feeCollector
-    );
+    try
+      _dexManager.swapBySwapCaller(
+        buyerOrder,
+        buyer,
+        buyerFeeAmount,
+        sellerOrder,
+        seller,
+        sellerFeeAmount,
+        baseTokenKey,
+        baseTokenAmount,
+        quoteTokenKey,
+        quoteTokenAmount,
+        feeCollector
+      )
+    {
+      emit DexSwapCallerSwapped(
+        tradeId,
+        tradeItemId,
+        buyer,
+        seller,
+        buyerFeeAmount,
+        sellerFeeAmount,
+        baseTokenKey,
+        baseTokenAmount,
+        quoteTokenKey,
+        quoteTokenAmount,
+        feeCollector
+      );
+    } catch Error(string memory reason) {
+      // caused by `revert` or `require`
+      emit DexSwapCallerSwapFailReason(tradeId, tradeItemId, reason);
+    } catch (bytes memory reason) {
+      // caused by other cases
+      emit DexSwapCallerSwapFailUnknown(tradeId, tradeItemId, reason);
+    }
   }
 
   /* ------------------------------------------------------------------------------------------------------------------
@@ -178,11 +196,25 @@ contract AADexSwapCaller is BaseAccount {
     if (tokenContract == address(0x0)) {
       payable(to).transfer(amount);
     } else {
-      (bool check, bytes memory data) = address(tokenContract).call(
+      (bool success, bytes memory data) = address(tokenContract).call(
         abi.encodeWithSignature('transfer(address,uint256)', to, amount)
       );
       bool returnBool = abi.decode(data, (bool));
+      require(success, 'Fail to call transfer ERC20 token');
       require(returnBool, 'Fail to transfer ERC20 token');
     }
+  }
+
+  /* ------------------------------------------------------------------------------------------------------------------
+   * Withdraw token from EntryPoint
+   */
+
+  function withdrawTokenFromEntryPoint(address to, uint256 amount) public {
+    require(amount > 0, 'Amount should be bigger than zero');
+
+    require(_dexManager.isSwapCaller(msg.sender), 'The dex manager admins can withdraw tokens');
+
+    (bool success, ) = address(_entryPoint).call(abi.encodeWithSignature('withdrawTo(address,uint256)', to, amount));
+    require(success, 'Fail to withdraw token from EntryPoint');
   }
 }

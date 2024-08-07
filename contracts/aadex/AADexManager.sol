@@ -4,6 +4,7 @@
 pragma solidity ^0.8.12;
 
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
+import '@openzeppelin/contracts/interfaces/IERC1271.sol';
 
 import '../core/BaseAccount.sol';
 import '../libs/LibDexOrder.sol';
@@ -19,6 +20,8 @@ import './AADexAccountManager.sol';
 contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
   using ECDSA for bytes32;
   using LibDexOrder for DexOrder;
+
+  string version = '1.7';
 
   /* ------------------------------------------------------------------------------------------------------------------
    * Catch native token transfer
@@ -108,11 +111,31 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
     address feeCollector
   );
 
+  // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/SignatureChecker.sol
+  function isValid1271Signature(address signer, bytes32 dataHash, bytes memory signature) public view returns (bool) {
+    (bool success, bytes memory result) = signer.staticcall(
+      abi.encodeCall(IERC1271.isValidSignature, (dataHash, signature))
+    );
+    return (success &&
+      result.length >= 32 &&
+      abi.decode(result, (bytes32)) == bytes32(IERC1271.isValidSignature.selector));
+  }
+
+  function _isValidSignature(address signer, bytes32 dataHash, bytes memory signature) internal view returns (bool) {
+    if (signer.code.length == 0) {
+      (address recovered, ECDSA.RecoverError err) = ECDSA.tryRecover(dataHash.toEthSignedMessageHash(), signature);
+      return err == ECDSA.RecoverError.NoError && recovered == signer;
+    } else {
+      bytes32 eip191Hash = keccak256(
+        abi.encodePacked('\x19Ethereum Signed Message:\n', Strings.toString(dataHash.length), dataHash)
+      );
+      return isValid1271Signature(signer, eip191Hash, signature);
+    }
+  }
+
   function _verifyOrderSign(address oSigner, DexOrder calldata dOrder) private view returns (bool) {
     bytes32 dexOrderHash = keccak256(abi.encode(dOrder.hash(), address(this), block.chainid));
-    bytes32 ethHash = dexOrderHash.toEthSignedMessageHash();
-    address signer = ethHash.recover(dOrder.signature);
-    return oSigner == signer;
+    return _isValidSignature(oSigner, dexOrderHash, dOrder.signature);
   }
 
   /// Swap buyer's quote token amount and seller's base token amount.
@@ -149,10 +172,10 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
     require(_verifyOrderSign(buyer, buyerOrder), 'Order is not signed by buyer');
     require(_verifyOrderSign(seller, sellerOrder), 'Order is not signed by seller');
 
-    DexTokenInfo memory baseDti = dexTokens[baseTokenKey];
-
     // 2. Verify parameters
     require(baseTokenAmount <= sellerOrder.requestAmount, 'Request amount is not acceptable in seller dex order');
+
+    DexTokenInfo memory baseDti = dexTokens[baseTokenKey];
 
     if (buyerOrder.price > 0) {
       require(

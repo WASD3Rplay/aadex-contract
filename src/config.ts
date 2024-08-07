@@ -1,4 +1,11 @@
-import "dotenv/config"
+import {config} from "dotenv"
+import * as path from 'path';
+
+// Determine which .env file to use
+const envFile = process.env.APP_ENV || '.env';
+
+// Load the specified .env file
+config({ path: path.resolve(__dirname, `../${envFile}`) });
 
 export const getChainRpcUrl = (): string => {
   return process.env.NODE_CHAIN_RPC_URL ?? "http://127.0.0.1:8545/"
@@ -48,6 +55,14 @@ export const getToAddress = (throwErr = true): string => {
   const addr = process.env.NODE_TO_ADDRESS
   if (throwErr && addr === undefined) {
     throw new Error("Cannot find NODE_TO_ADDRESS")
+  }
+  return addr ?? ""
+}
+
+export const getAmount = (throwErr = true): string => {
+  const addr = process.env.NODE_AMOUNT
+  if (throwErr && addr === undefined) {
+    throw new Error("Cannot find NODE_AMOUNT")
   }
   return addr ?? ""
 }

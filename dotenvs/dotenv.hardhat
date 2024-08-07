@@ -17,6 +17,14 @@ NODE_DEX_ACCOUNT_SECRET_DAISY="0xf214f2b2cd398c806f84e317254e0f0b801d0643303237d
 NODE_CHAIN_RPC_URL="http://127.0.0.1:8545/"
 # Signer Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 NODE_SIGNER_SECRET="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+
+# Superuser address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+# EntryPoint contract address: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+# EntryPoint contract tx: 0x350bcd29c34cabec676b0df626db89a9d294933b2b0b70b93c56b15c9f044c22
+# DexManager contract address: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+# DexManager contract tx: 0x0bd8abfe3246d2af29d2d8d1ce798de1178a25b8bd28f0188d1fd0d831e6ef34
+# Native Token Key: 0:__native__:0:18
+#        is valid?: true
 NODE_ENTRY_POINT_ADDRESS="0x5FbDB2315678afecb367f032d93F642f64180aa3"
 NODE_DEX_MANAGER_ADDRESS="0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
 # Token contract addresses

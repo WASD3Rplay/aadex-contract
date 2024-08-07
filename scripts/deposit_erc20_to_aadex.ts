@@ -6,10 +6,8 @@ import {
   getEntryPointAddress,
   getEthProvider,
   getSignerSecret,
-  getToAddress,
   getTokenContractAddress,
   getTokenSymbol,
-  transferEth,
 } from "../src"
 import { getDexManagerContractCtrl } from "../src/contract/dexmanager"
 
@@ -39,10 +37,8 @@ const main = async (): Promise<void> => {
     tokenContractAddress,
   )
 
-  const amount = "1234"
+  const amount = "100000000"
   const decimals = await tokenContractCtrl.getDecimals()
-
-  await tokenContractCtrl.approve(dexManagerContractCtrl.contractAddress, amount)
 
   const tokenKey = await dexManagerContractCtrl.getTokenKey(
     1,
@@ -51,21 +47,29 @@ const main = async (): Promise<void> => {
     0,
   )
 
+  const account_address = signerWallet.address
+  await tokenContractCtrl.approve(dexManagerContractCtrl.contractAddress, amount)
+
   await dexManagerContractCtrl.depositDexToken(
-    signerWallet.address,
+    account_address,
     tokenKey,
     ethers.utils.parseUnits(amount, decimals),
+    {
+      maxFeePerGas: ethers.utils.parseUnits("2295000000", 0),
+      maxPriorityFeePerGas: ethers.utils.parseUnits("795000000", 0),
+      gasLimit: 150000,
+    },
   )
 
   const balance = await dexManagerContractCtrl.getDexBalanceOf(
-    signerWallet.address,
+    account_address,
     tokenKey,
   )
 
-  console.log("AADex trading AA address:", signerWallet.address)
+  console.log("AADex trading AA address:", account_address)
   console.log("Token:", tokenSymbol, `(${tokenKey})`)
   console.log(
-    "Deposited native balance:",
+    "Deposited balance:",
     ethers.utils.formatUnits(balance, decimals),
     tokenSymbol,
   )

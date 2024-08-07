@@ -1,7 +1,6 @@
 import { Wallet, ethers } from "ethers"
 
 import {
-  getAmount,
   getEntryPointAddress,
   getEthProvider,
   getSignerSecret,
@@ -13,26 +12,17 @@ const main = async (): Promise<void> => {
   const ethProvider = getEthProvider()
 
   const superuserWallet = new Wallet(getSignerSecret(), ethProvider.provider)
-  console.log("Superuser address:", superuserWallet.address)
-
-  const entryPointContractAddr = getEntryPointAddress()
-
-  if (!entryPointContractAddr) {
-    throw new Error("Cannot recognize entry point address:")
-  }
 
   const entryPointContractCtrl = await getEntryPointContractCtrl(
     ethProvider,
     superuserWallet,
-    entryPointContractAddr,
+    getEntryPointAddress(),
   )
 
+  console.log("Superuser address:", superuserWallet.address)
   console.log("EntryPoint contract address:", entryPointContractCtrl.contractAddress)
 
   const toAddress = getToAddress()
-  const amount = getAmount()
-
-  await entryPointContractCtrl.depositTo(toAddress, amount)
   const depositInfo = await entryPointContractCtrl.getDepositInfo(toAddress)
 
   console.log(`Deposit info in EntryPoint of ${toAddress}:`)

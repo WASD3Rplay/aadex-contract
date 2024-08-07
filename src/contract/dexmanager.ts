@@ -1,4 +1,4 @@
-import { BigNumber, Signer, Wallet, ethers } from "ethers"
+import { BigNumber, PayableOverrides, Signer, Wallet, ethers } from "ethers"
 
 import { getDexManagerAddress, getEntryPointAddress, getSignerSecret } from "../config"
 import { EthProvider, TxContractReceipt, getEthProvider } from "../eth"
@@ -36,7 +36,9 @@ export const depositEth = async (
       depositAccount ?? ethOwnerWallet.address,
       ethTokenKey,
       0,
-      ethers.utils.parseEther(depositAmount),
+      {
+        value: ethers.utils.parseEther(depositAmount),
+      },
     ),
   }
 }
@@ -221,15 +223,20 @@ export class DexManagerContractCtrl {
     depositAccount: string,
     tokenKey: string,
     amount: number | BigNumber,
-    value?: string | number | BigNumber,
+    options?: {
+      value?: string | number | BigNumber
+    } & PayableOverrides,
   ): Promise<TxContractReceipt> => {
-    if (value !== undefined && typeof value === "string") {
-      value = ethers.utils.parseEther(value)
+    if (options?.value !== undefined && typeof options?.value === "string") {
+      options.value = ethers.utils.parseEther(options.value)
     }
 
-    const tx = await this.contract.depositDexToken(depositAccount, tokenKey, amount, {
-      value,
-    })
+    const tx = await this.contract.depositDexToken(
+      depositAccount,
+      tokenKey,
+      amount,
+      options,
+    )
     const receipt = await tx.wait()
     return new TxContractReceipt(receipt)
   }

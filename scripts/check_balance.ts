@@ -1,91 +1,82 @@
 import { Wallet, ethers } from "ethers"
 
 import {
-  DexManagerContractCtrl,
-  ERC20ContractCtrl,
   getDexManagerAddress,
   getDexManagerContractCtrl,
   getERC20ContractCtrl,
   getEntryPointAddress,
   getEthProvider,
   getSignerSecret,
+  getToAddress,
   getTokenContractAddress,
+  getTokenSymbol,
 } from "../src"
 import { Wasd3rSampleErc20USDT__factory } from "../src/contract/types"
 
-const ENTRY_POINT_CONTRACT_ADDRESS = getEntryPointAddress()
-const DEX_MANAGER_CONTRACT_ADDRESS = getDexManagerAddress()
-
-const ethProvider = getEthProvider()
-const adminWallet = new Wallet(getSignerSecret(), ethProvider.provider)
-
-let _dexManagerContractCtrl: DexManagerContractCtrl
-let _usdtContractCtrl: ERC20ContractCtrl
-let _usdtTokenKey: string
-
-const getAdminDexManagerContractCtrl = async () => {
-  if (_dexManagerContractCtrl === undefined) {
-    _dexManagerContractCtrl = await getDexManagerContractCtrl(
-      ethProvider,
-      adminWallet,
-      ENTRY_POINT_CONTRACT_ADDRESS,
-      DEX_MANAGER_CONTRACT_ADDRESS,
-    )
-  }
-  return _dexManagerContractCtrl
-}
-
-const getAdminUSDTContractCtrl = async () => {
-  if (_usdtContractCtrl === undefined) {
-    _usdtContractCtrl = await getERC20ContractCtrl(
-      ethProvider,
-      adminWallet,
-      getTokenContractAddress("USDT"),
-      Wasd3rSampleErc20USDT__factory,
-    )
-  }
-  return _usdtContractCtrl
-}
-
-const getDexNativeBalanceOf = async (addr: string): Promise<string> => {
-  const dexManagerContractCtrl = await getAdminDexManagerContractCtrl()
-  const balance = await dexManagerContractCtrl.getDexNativeBalanceOf(addr)
-  return ethers.utils.formatEther(balance)
-}
-
-const getUSDTTokenKey = async (): Promise<string> => {
-  if (_usdtTokenKey === undefined) {
-    const dexManagerContractCtrl = await getAdminDexManagerContractCtrl()
-    const usdtContractCtrl = await getAdminUSDTContractCtrl()
-    _usdtTokenKey = await dexManagerContractCtrl.getTokenKey(
-      1,
-      usdtContractCtrl.contractAddress,
-      await usdtContractCtrl.getDecimals(),
-      0,
-    )
-  }
-  return _usdtTokenKey
-}
-
-const getDexUSDTBalanceOf = async (addr: string): Promise<string> => {
-  const dexManagerContractCtrl = await getAdminDexManagerContractCtrl()
-  const usdtTokenKey = await getUSDTTokenKey()
-  const balance = await dexManagerContractCtrl.getDexBalanceOf(addr, usdtTokenKey)
-  return ethers.utils.formatUnits(balance, usdtTokenKey.split(":")[3])
-}
-
 const main = async (): Promise<void> => {
-  const address = "0x75ce7aee59347612ed29ff5c249e34ed1bc17d15"
+  const ethProvider = getEthProvider()
 
-  const dexManagerContractCtrl = await getAdminDexManagerContractCtrl()
-  const accountValid = await dexManagerContractCtrl.getDexAccountValid(address)
+  let tokenSymbol = ""
+  try {
+    tokenSymbol = getTokenSymbol()
+  } catch (error) {
+    console.error("Need to input token symbol by env var NODE_TOKEN_SYMBOL")
+    return
+  }
+  const tokenContractAddress = getTokenContractAddress(tokenSymbol)
+
+  const superuserWallet = new Wallet(getSignerSecret(), ethProvider.provider)
+
+  const tokenContractCtrl = await getERC20ContractCtrl(
+    ethProvider,
+    superuserWallet,
+    tokenContractAddress,
+    Wasd3rSampleErc20USDT__factory,
+  )
+  const tokenDecimals = await tokenContractCtrl.getDecimals()
+
+  const tokenType = 1 // ERC20
+
+  const dexmanagerCtrl = await getDexManagerContractCtrl(
+    ethProvider,
+    superuserWallet,
+    getEntryPointAddress(),
+    getDexManagerAddress(),
+  )
+  let tokenKey = await dexmanagerCtrl.getTokenKey(
+    tokenType,
+    tokenContractAddress,
+    tokenDecimals,
+    0,
+  )
+  let isTokenValid = await dexmanagerCtrl.isValidDexToken(tokenKey)
+  if (!isTokenValid) {
+    console.log(`${tokenSymbol} is not valid!!`)
+    console.log(`${tokenSymbol} contract address:`, tokenContractCtrl.contractAddress)
+    console.log(`${tokenSymbol} token key:`, tokenKey)
+    return
+  }
+
+  const accountAddress = getToAddress()
+  console.info("Dex AA Account:", accountAddress)
+
+  const accountValid = await dexmanagerCtrl.getDexAccountValid(accountAddress)
   console.info(" >>>>>>> ", accountValid)
 
-  console.info("AA Dex Account:", address)
-  const nativeBalance = await getDexNativeBalanceOf(address)
-  console.info("\t * Native Balance:", nativeBalance, "ETH")
-  const usdtBalance = await getDexUSDTBalanceOf(address)
-  console.info("\t * USDT Balance:", usdtBalance, "USDT")
+  let balance = await dexmanagerCtrl.getDexNativeBalanceOf(accountAddress)
+  let hBalance = ethers.utils.formatEther(balance)
+  console.info("\t * Native Balance:", hBalance, "ETH (", balance.toString(), ")")
+
+  balance = await dexmanagerCtrl.getDexBalanceOf(accountAddress, tokenKey)
+  hBalance = ethers.utils.formatUnits(balance, tokenDecimals)
+  console.info(
+    `\t * ${tokenSymbol} Balance:`,
+    hBalance,
+    tokenSymbol,
+    " (",
+    balance.toString(),
+    ")",
+  )
 }
 
 main().catch((error) => {
