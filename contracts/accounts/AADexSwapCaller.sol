@@ -102,7 +102,7 @@ contract AADexSwapCaller is BaseAccount {
   /// @param quoteTokenKey quote token key
   /// @param quoteTokenAmount quote token amount to sawp
   /// @param feeCollector fee collector address
-  event DexSwapped(
+  event DexSwapCallerSwapped(
     uint256 tradeId,
     uint256 tradeItemId,
     address indexed buyer,
@@ -115,6 +115,10 @@ contract AADexSwapCaller is BaseAccount {
     uint256 quoteTokenAmount,
     address feeCollector
   );
+
+  event SwapCallerStepLog(string message, int32 step, int32 subStep);
+  event SwapCallerStepLog2(bytes32 message, int32 step, int32 subStep);
+  event SwapCallerStepLog3(uint256 message, int32 step, int32 subStep);
 
   /// Swap buyer's quote token and seller's base token.
   function swap(
@@ -132,7 +136,10 @@ contract AADexSwapCaller is BaseAccount {
     uint256 quoteTokenAmount,
     address feeCollector
   ) public {
+    emit SwapCallerStepLog(string.concat('Started:', Strings.toHexString(uint256(uint160(msg.sender)), 20)), 0, 0);
     _requireFromEntryPoint();
+
+    emit SwapCallerStepLog(Strings.toHexString(uint256(uint160(address(_dexManager))), 20), 0, 0);
 
     _dexManager.swapBySwapCaller(
       buyerOrder,
@@ -148,7 +155,7 @@ contract AADexSwapCaller is BaseAccount {
       feeCollector
     );
 
-    emit DexSwapped(
+    emit DexSwapCallerSwapped(
       tradeId,
       tradeItemId,
       buyer,
