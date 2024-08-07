@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // AADex Contracts (v0.2.0)
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.20;
 
 import '../interfaces/IWasd3rERC20.sol';
 import '../interfaces/IWasd3rERC1155.sol';

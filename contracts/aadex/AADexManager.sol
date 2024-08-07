@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 // AADex Contracts (v0.2.0)
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.20;
 
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
+import '@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol';
 import '@openzeppelin/contracts/interfaces/IERC1271.sol';
 
 import '../core/BaseAccount.sol';
@@ -72,7 +73,7 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
     UserOperation calldata userOp,
     bytes32 userOpHash
   ) internal virtual override returns (uint256 validationData) {
-    bytes32 hash = userOpHash.toEthSignedMessageHash();
+    bytes32 hash = MessageHashUtils.toEthSignedMessageHash(userOpHash);
     address userOpSigner = hash.recover(userOp.signature);
 
     if (!admins[userOpSigner]) {
@@ -122,7 +123,10 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
 
   function _isValidSignature(address signer, bytes32 dataHash, bytes memory signature) internal view returns (bool) {
     if (signer.code.length == 0) {
-      (address recovered, ECDSA.RecoverError err) = ECDSA.tryRecover(dataHash.toEthSignedMessageHash(), signature);
+      (address recovered, ECDSA.RecoverError err, ) = ECDSA.tryRecover(
+        MessageHashUtils.toEthSignedMessageHash(dataHash),
+        signature
+      );
       return err == ECDSA.RecoverError.NoError && recovered == signer;
     } else {
       bytes32 eip191Hash = keccak256(

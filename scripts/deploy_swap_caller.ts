@@ -33,6 +33,7 @@ const main = async (): Promise<void> => {
   const marketAdminWallet = new Wallet(getMarketAdminSecret(), ethProvider.provider)
 
   const entryPointContractAddress = getEntryPointAddress()
+  console.log("EntryPoint contract address:", entryPointContractAddress)
   const dexManagerContractAddress = getDexManagerAddress()
 
   const { ctrl: swapCallerContractCtrl, contract: swapCallerDeployedContract } =
@@ -58,6 +59,7 @@ const main = async (): Promise<void> => {
     entryPointContractAddress,
     dexManagerContractAddress,
   )
+  console.log("DexManager contract address:", dexManagerContractCtrl.contractAddress)
 
   let isSwapcallerAdmin = await dexManagerContractCtrl.isAdmin(
     swapCallerContractCtrl.contractAddress,

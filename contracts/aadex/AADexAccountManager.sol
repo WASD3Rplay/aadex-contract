@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // AADex Contracts (v0.2.0)
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.20;
 
 import './AADexTokenManager.sol';
 

@@ -7,7 +7,7 @@ import {
   getSignerSecret,
 } from "../src"
 import { getDexManagerContractCtrl } from "../src/contract/dexmanager"
-import { deployEntryPoint } from "../src/contract/entrypoint"
+import { deployInfinitismEntryPoint } from "../src/contract/infinitism-entrypoint"
 
 const main = async (): Promise<void> => {
   console.log(">>>>>>>>>>> ", getChainRpcUrl())
@@ -17,7 +17,7 @@ const main = async (): Promise<void> => {
   console.log("Superuser address:", superuserWallet.address)
 
   const { ctrl: entryPointContractCtrl, contract: entryPointDeployedContract } =
-    await deployEntryPoint(ethProvider, superuserWallet)
+    await deployInfinitismEntryPoint(ethProvider, superuserWallet)
 
   console.log("EntryPoint contract address:", entryPointContractCtrl.contractAddress)
   console.log(

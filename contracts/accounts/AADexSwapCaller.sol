@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
 // AADex Contracts (v0.2.0)
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.20;
 
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
+import '@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol';
+import '@openzeppelin/contracts/utils/Strings.sol';
 
 import '../aadex/IAADexManager.sol';
 import '../core/BaseAccount.sol';
@@ -77,7 +79,7 @@ contract AADexSwapCaller is BaseAccount {
     UserOperation calldata userOp,
     bytes32 userOpHash
   ) internal virtual override returns (uint256 validationData) {
-    bytes32 hash = userOpHash.toEthSignedMessageHash();
+    bytes32 hash = MessageHashUtils.toEthSignedMessageHash(userOpHash);
     address userOpSigner = hash.recover(userOp.signature);
 
     if (owner != userOpSigner) {
@@ -115,10 +117,10 @@ contract AADexSwapCaller is BaseAccount {
     uint256 quoteTokenAmount,
     address feeCollector
   );
+  event DexSwapCallerSwapFailReason(uint256 tradeId, uint256 tradeItemId, string reason);
+  event DexSwapCallerSwapFailUnknown(uint256 tradeId, uint256 tradeItemId, bytes reason);
 
   event SwapCallerStepLog(string message, int32 step, int32 subStep);
-  event SwapCallerStepLog2(bytes32 message, int32 step, int32 subStep);
-  event SwapCallerStepLog3(uint256 message, int32 step, int32 subStep);
 
   /// Swap buyer's quote token and seller's base token.
   function swap(
@@ -139,35 +141,43 @@ contract AADexSwapCaller is BaseAccount {
     emit SwapCallerStepLog(string.concat('Started:', Strings.toHexString(uint256(uint160(msg.sender)), 20)), 0, 0);
     _requireFromEntryPoint();
 
-    emit SwapCallerStepLog(Strings.toHexString(uint256(uint160(address(_dexManager))), 20), 0, 0);
+    emit SwapCallerStepLog(Strings.toHexString(uint256(uint160(address(_dexManager))), 20), 1, 0);
 
-    _dexManager.swapBySwapCaller(
-      buyerOrder,
-      buyer,
-      buyerFeeAmount,
-      sellerOrder,
-      seller,
-      sellerFeeAmount,
-      baseTokenKey,
-      baseTokenAmount,
-      quoteTokenKey,
-      quoteTokenAmount,
-      feeCollector
-    );
-
-    emit DexSwapCallerSwapped(
-      tradeId,
-      tradeItemId,
-      buyer,
-      seller,
-      buyerFeeAmount,
-      sellerFeeAmount,
-      baseTokenKey,
-      baseTokenAmount,
-      quoteTokenKey,
-      quoteTokenAmount,
-      feeCollector
-    );
+    try
+      _dexManager.swapBySwapCaller(
+        buyerOrder,
+        buyer,
+        buyerFeeAmount,
+        sellerOrder,
+        seller,
+        sellerFeeAmount,
+        baseTokenKey,
+        baseTokenAmount,
+        quoteTokenKey,
+        quoteTokenAmount,
+        feeCollector
+      )
+    {
+      emit DexSwapCallerSwapped(
+        tradeId,
+        tradeItemId,
+        buyer,
+        seller,
+        buyerFeeAmount,
+        sellerFeeAmount,
+        baseTokenKey,
+        baseTokenAmount,
+        quoteTokenKey,
+        quoteTokenAmount,
+        feeCollector
+      );
+    } catch Error(string memory reason) {
+      // caused by `revert` or `require`
+      emit DexSwapCallerSwapFailReason(tradeId, tradeItemId, reason);
+    } catch (bytes memory reason) {
+      // caused by other cases
+      emit DexSwapCallerSwapFailUnknown(tradeId, tradeItemId, reason);
+    }
   }
 
   /* ------------------------------------------------------------------------------------------------------------------

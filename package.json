@@ -24,7 +24,7 @@
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/properties": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
-    "@openzeppelin/contracts": "^4.9.6",
+    "@openzeppelin/contracts": "^5.0.0",
     "@zetachain/faucet-cli": "^4.1.0",
     "dotenv": "^16.3.1",
     "ethers": "^5.7.2",
