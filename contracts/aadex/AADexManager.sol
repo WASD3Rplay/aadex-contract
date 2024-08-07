@@ -111,6 +111,7 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
     address feeCollector
   );
 
+  // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/SignatureChecker.sol
   function isValid1271Signature(address signer, bytes32 dataHash, bytes memory signature) public view returns (bool) {
     (bool success, bytes memory result) = signer.staticcall(
       abi.encodeCall(IERC1271.isValidSignature, (dataHash, signature))
@@ -171,10 +172,10 @@ contract AADexManager is IAADexManager, AADexAccountManager, BaseAccount {
     require(_verifyOrderSign(buyer, buyerOrder), 'Order is not signed by buyer');
     require(_verifyOrderSign(seller, sellerOrder), 'Order is not signed by seller');
 
-    DexTokenInfo memory baseDti = dexTokens[baseTokenKey];
-
     // 2. Verify parameters
     require(baseTokenAmount <= sellerOrder.requestAmount, 'Request amount is not acceptable in seller dex order');
+
+    DexTokenInfo memory baseDti = dexTokens[baseTokenKey];
 
     if (buyerOrder.price > 0) {
       require(
