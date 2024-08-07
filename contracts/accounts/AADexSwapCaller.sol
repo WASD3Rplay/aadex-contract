@@ -115,10 +115,11 @@ contract AADexSwapCaller is BaseAccount {
     uint256 quoteTokenAmount,
     address feeCollector
   );
+  event DexSwapCallerSwapFailReason(uint256 tradeId, uint256 tradeItemId, string reason);
+  event DexSwapCallerSwapFailUnknown(uint256 tradeId, uint256 tradeItemId, bytes reason);
 
-  event SwapCallerStepLog(string message, int32 step, int32 subStep);
-  event SwapCallerStepLog2(bytes32 message, int32 step, int32 subStep);
-  event SwapCallerStepLog3(uint256 message, int32 step, int32 subStep);
+  event SwapCallerStepLogString(int32 step, int32 subStep, uint256 tradeItemId, string message);
+  event SwapCallerStepLogAddress(int32 step, int32 subStep, uint256 tradeItemId, address addr);
 
   /// Swap buyer's quote token and seller's base token.
   function swap(
@@ -136,38 +137,46 @@ contract AADexSwapCaller is BaseAccount {
     uint256 quoteTokenAmount,
     address feeCollector
   ) public {
-    emit SwapCallerStepLog(string.concat('Started:', Strings.toHexString(uint256(uint160(msg.sender)), 20)), 0, 0);
+    emit SwapCallerStepLogAddress(0, 0, tradeItemId, msg.sender);
     _requireFromEntryPoint();
 
-    emit SwapCallerStepLog(Strings.toHexString(uint256(uint160(address(_dexManager))), 20), 0, 0);
+    emit SwapCallerStepLogAddress(1, 0, tradeItemId, address(_dexManager));
 
-    _dexManager.swapBySwapCaller(
-      buyerOrder,
-      buyer,
-      buyerFeeAmount,
-      sellerOrder,
-      seller,
-      sellerFeeAmount,
-      baseTokenKey,
-      baseTokenAmount,
-      quoteTokenKey,
-      quoteTokenAmount,
-      feeCollector
-    );
-
-    emit DexSwapCallerSwapped(
-      tradeId,
-      tradeItemId,
-      buyer,
-      seller,
-      buyerFeeAmount,
-      sellerFeeAmount,
-      baseTokenKey,
-      baseTokenAmount,
-      quoteTokenKey,
-      quoteTokenAmount,
-      feeCollector
-    );
+    try
+      _dexManager.swapBySwapCaller(
+        buyerOrder,
+        buyer,
+        buyerFeeAmount,
+        sellerOrder,
+        seller,
+        sellerFeeAmount,
+        baseTokenKey,
+        baseTokenAmount,
+        quoteTokenKey,
+        quoteTokenAmount,
+        feeCollector
+      )
+    {
+      emit DexSwapCallerSwapped(
+        tradeId,
+        tradeItemId,
+        buyer,
+        seller,
+        buyerFeeAmount,
+        sellerFeeAmount,
+        baseTokenKey,
+        baseTokenAmount,
+        quoteTokenKey,
+        quoteTokenAmount,
+        feeCollector
+      );
+    } catch Error(string memory reason) {
+      // caused by `revert` or `require`
+      emit DexSwapCallerSwapFailReason(tradeId, tradeItemId, reason);
+    } catch (bytes memory reason) {
+      // caused by other cases
+      emit DexSwapCallerSwapFailUnknown(tradeId, tradeItemId, reason);
+    }
   }
 
   /* ------------------------------------------------------------------------------------------------------------------
