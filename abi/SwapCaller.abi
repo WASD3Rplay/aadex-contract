@@ -31,6 +31,56 @@
         "type": "uint256"
       },
       {
+        "indexed": false,
+        "internalType": "string",
+        "name": "reason",
+        "type": "string"
+      }
+    ],
+    "name": "DexSwapCallerSwapFailReason",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tradeId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tradeItemId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "reason",
+        "type": "bytes"
+      }
+    ],
+    "name": "DexSwapCallerSwapFailUnknown",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tradeId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tradeItemId",
+        "type": "uint256"
+      },
+      {
         "indexed": true,
         "internalType": "address",
         "name": "buyer",
@@ -85,82 +135,69 @@
         "type": "address"
       }
     ],
-    "name": "DexSwapped",
+    "name": "DexSwapCallerSwapped",
     "type": "event"
   },
   {
     "anonymous": false,
     "inputs": [
+      {
+        "indexed": false,
+        "internalType": "int32",
+        "name": "step",
+        "type": "int32"
+      },
+      {
+        "indexed": false,
+        "internalType": "int32",
+        "name": "subStep",
+        "type": "int32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tradeItemId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      }
+    ],
+    "name": "SwapCallerStepLogAddress",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "int32",
+        "name": "step",
+        "type": "int32"
+      },
+      {
+        "indexed": false,
+        "internalType": "int32",
+        "name": "subStep",
+        "type": "int32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tradeItemId",
+        "type": "uint256"
+      },
       {
         "indexed": false,
         "internalType": "string",
         "name": "message",
         "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "int32",
-        "name": "step",
-        "type": "int32"
-      },
-      {
-        "indexed": false,
-        "internalType": "int32",
-        "name": "subStep",
-        "type": "int32"
       }
     ],
-    "name": "SwapCallerStepLog",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "message",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "int32",
-        "name": "step",
-        "type": "int32"
-      },
-      {
-        "indexed": false,
-        "internalType": "int32",
-        "name": "subStep",
-        "type": "int32"
-      }
-    ],
-    "name": "SwapCallerStepLog2",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "message",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "int32",
-        "name": "step",
-        "type": "int32"
-      },
-      {
-        "indexed": false,
-        "internalType": "int32",
-        "name": "subStep",
-        "type": "int32"
-      }
-    ],
-    "name": "SwapCallerStepLog3",
+    "name": "SwapCallerStepLogString",
     "type": "event"
   },
   {

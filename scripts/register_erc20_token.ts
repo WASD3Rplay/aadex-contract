@@ -43,19 +43,6 @@ const main = async (): Promise<void> => {
   const tokenContractAddress = getTokenContractAddress(tokenSymbol)
   console.log("Token Contract Address:", tokenContractAddress)
 
-  const entryPointContractAddr = getEntryPointAddress()
-  const dexManagerContractAddr = getDexManagerAddress()
-
-  if (!entryPointContractAddr) {
-    throw new Error("Cannot recognize entry point address:")
-  }
-  console.log("Entry Point Address:", entryPointContractAddr)
-
-  if (!dexManagerContractAddr) {
-    throw new Error("Cannot recognize dex manager address:")
-  }
-  console.log("Dex Manager Address:", dexManagerContractAddr)
-
   const superuserWallet = new Wallet(getSignerSecret(), ethProvider.provider)
 
   const tokenContractCtrl = await getERC20ContractCtrl(
@@ -67,6 +54,19 @@ const main = async (): Promise<void> => {
   const tokenDecimals = await tokenContractCtrl.getDecimals()
 
   const tokenType = 1 // ERC20
+
+  const entryPointContractAddr = getEntryPointAddress()
+
+  if (!entryPointContractAddr) {
+    throw new Error("Cannot recognize entry point address:")
+  }
+  console.log("Entry Point Address:", entryPointContractAddr)
+
+  const dexManagerContractAddr = getDexManagerAddress()
+
+  if (!dexManagerContractAddr) {
+    throw new Error("Cannot recognize dex manager address:")
+  }
 
   const dexmanagerCtrl = await getDexManagerContractCtrl(
     ethProvider,
