@@ -69,7 +69,7 @@ const main = async (): Promise<void> => {
   console.log("AADex trading AA address:", account_address)
   console.log("Token:", tokenSymbol, `(${tokenKey})`)
   console.log(
-    "Deposited native balance:",
+    "Deposited balance:",
     ethers.utils.formatUnits(balance, decimals),
     tokenSymbol,
   )
