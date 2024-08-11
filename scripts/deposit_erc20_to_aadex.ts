@@ -1,6 +1,7 @@
 import { Wallet, ethers } from "ethers"
 
 import {
+  getAmount,
   getDexManagerAddress,
   getERC20ContractCtrl,
   getEntryPointAddress,
@@ -37,7 +38,7 @@ const main = async (): Promise<void> => {
     tokenContractAddress,
   )
 
-  const amount = "100000000"
+  const amount = getAmount()
   const decimals = await tokenContractCtrl.getDecimals()
 
   const tokenKey = await dexManagerContractCtrl.getTokenKey(
@@ -54,11 +55,11 @@ const main = async (): Promise<void> => {
     account_address,
     tokenKey,
     ethers.utils.parseUnits(amount, decimals),
-    {
-      maxFeePerGas: ethers.utils.parseUnits("2295000000", 0),
-      maxPriorityFeePerGas: ethers.utils.parseUnits("795000000", 0),
-      gasLimit: 150000,
-    },
+    // {
+    //   maxFeePerGas: ethers.utils.parseUnits("2295000000", 0),
+    //   maxPriorityFeePerGas: ethers.utils.parseUnits("795000000", 0),
+    //   gasLimit: 150000,
+    // },
   )
 
   const balance = await dexManagerContractCtrl.getDexBalanceOf(
