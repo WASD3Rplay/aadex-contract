@@ -1,13 +1,13 @@
-import { Wallet, ethers } from "ethers"
+import { Wallet } from "ethers"
 
 import {
+  getAmount,
   getERC20ContractCtrl,
   getEthProvider,
   getSignerSecret,
   getToAddress,
   getTokenContractAddress,
   getTokenSymbol,
-  getAmount,
 } from "../src"
 
 const main = async (): Promise<void> => {
