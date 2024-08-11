@@ -235,7 +235,7 @@ export class DexManagerContractCtrl {
       depositAccount,
       tokenKey,
       amount,
-      options,
+      options || {},
     )
     const receipt = await tx.wait()
     return new TxContractReceipt(receipt)

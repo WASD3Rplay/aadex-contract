@@ -55,11 +55,6 @@ const main = async (): Promise<void> => {
     account_address,
     tokenKey,
     ethers.utils.parseUnits(amount, decimals),
-    // {
-    //   maxFeePerGas: ethers.utils.parseUnits("2295000000", 0),
-    //   maxPriorityFeePerGas: ethers.utils.parseUnits("795000000", 0),
-    //   gasLimit: 150000,
-    // },
   )
 
   const balance = await dexManagerContractCtrl.getDexBalanceOf(
